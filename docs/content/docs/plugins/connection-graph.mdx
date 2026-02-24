@@ -1,0 +1,20 @@
+---
+title: "Connection Graph"
+---
+
+## Connection Graph Plugin Interface Implementation
+
+### Connection Graph Implementation Overview
+
+The Connection Graph plugin maintains a graph of connections for the entire network, so every peer knows about every other peer. The graph of connections is updated as new systems connect or disconnect from the network.
+You can optionally specify a password which you can use to allow certain systems to take part on the graph.
+
+Connection Graph doesn't connect to the other involved systems. It just keeps an aupdated graph of the entire network. If you want all systems connected to each other, see [Fully Connected Mesh](/plugins/fully-connected-mesh2).
+
+Returns the connection graph, stored as map of adjacency lists.
+
+```cpp
+DataStructures::WeightedGraph<ConnectionGraph::SystemAddressAndGroupId, unsigned short, false> *GetGraph(void);
+```
+
+See the sample at _Samples\\ConnectioGraph_

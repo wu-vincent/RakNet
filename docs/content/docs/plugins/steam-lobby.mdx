@@ -1,0 +1,28 @@
+---
+title: "Lobby2Client_Steam"
+---
+
+## Lobby2Client_Steam Overview
+
+### Use Steamworks to join Lobbies, Rooms, and do NAT traversal
+
+The Lobby2Client_Steam plugin provides an interface to Steamworks services that cooperate with RakNet. This avoids the need to host your owns sever, which is otherwise required by RakNet's [NATPunchthrough](/plugins/nat-punchthrough) and [Lobby](/plugins/lobby) systems.
+
+Dependencies:
+
+1.  Assumes the Steam SDK is located at C:\\Steamworks . If not, modify the post-build step paths and linker paths accordingly.
+2.  You can get the Steamworks API from https://partner.steamgames.com/ , which requires a signup and legal agreement.
+3.  You need your own steam_appid.txt file. This sample just copies the one that comes with steam.
+
+Operations include:
+
+-   **Get the list of rooms** - L2MID_Console_SearchRooms
+-   **Leave a room** - L2MID_Console_LeaveRoom
+-   **Create a room** - L2MID_Console_CreateRoom
+-   **Join a room** - L2MID_Console_JoinRoom
+-   **Get details about a specific room** - L2MID_Console_GetRoomDetails
+-   **Send a chat message to a room** - L2MID_Console_SendRoomChatMessage
+-   **Get the members in a room** - Lobby2Client_Steam::GetRoomMembers
+-   **Get notification of NAT Traversal success** - SteamResults::Notification_Console_RoomMemberConnectivityUpdate
+
+_See the sample project Samples\\SteamLobby for an implementation of this system._

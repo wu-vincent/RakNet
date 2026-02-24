@@ -1,0 +1,146 @@
+---
+title: "Swig Extras Tutorial"
+---
+
+## Overview
+This file contains additional instructions for using Swig with the optional dependent extension options.
+
+The base instructions are available in the [Swig Tutorial](/csharp-swig/swig-tutorial)
+## Autopatcher MySql Version
+### Windows
+
+The below instructions detail the extra configuration needed on the Visual Studio Project.
+
+Extra Project Options
+Under General->Common Language Runtime support the option needs to be set to No Common Language Runtime support
+### Additional Include Directories
+Under Dependent Extensions the following additional directories need to be in the include configuration.
+
+-Autopatcher/AutopatcherMySQLRepository
+-Autopatcher
+-bzip2-1.0.3
+-MySQLInterface
+
+MySql header directory needs to be included.
+
+For 5.1 on Vista the directory looks like: C:\\Program Files (x86)\\MySQL\\MySQL Server 5.1\\include
+### Additional sources
+Under Dependent Extensions the following additional source files need to be included in the project.
+
+-bzip2-1.0.3/blocksort.c
+-bzip2-1.0.3/bzip2.c
+-bzip2-1.0.3/bzlib.c
+-bzip2-1.0.3/compress.c
+-bzip2-1.0.3/crctable.c
+-bzip2-1.0.3/decompress.c
+-bzip2-1.0.3/dlltest.c
+-bzip2-1.0.3/huffman.c
+-bzip2-1.0.3/randtable.c
+
+-Autopatcher/ApplyPatch.cpp
+-Autopatcher/AutopatcherClient.cpp
+-Autopatcher/AutopatcherMySQLRepository/AutopatcherMySQLRepository.cpp
+-Autopatcher/AutopatcherServer.cpp
+-Autopatcher/CreatePatch.cpp
+-Autopatcher/MemoryCompressor.cpp
+-MySQLInterface/MySQLInterface.cpp
+
+Additional Libraries
+
+The MySql library needs to be included.
+
+For 5.1 on Vista the location looks like:
+
+For debug:
+C:\\Program Files (x86)\\MySQL\\MySQL Server 5.1\\lib\\debug\\libmysql.lib
+
+For release:
+C:\\Program Files (x86)\\MySQL\\MySQL Server 5.1\\lib\\opt\\libmysql.lib
+
+### Replacement Swig File Generation Tool Steps
+
+These are replacement steps. If the dll project is used the PreBuild.bat needs to be modified, the last steps are instructions on how to do that.
+
+1.  Click the start menu and click on run. In Vista click start->search type "run" hit enter.
+2.  Type cmd and hit enter.
+3.  In the next command PATH_TO_RAKNET_SWIG_FILES is the path to the swig directory. For example C:\\RakNet\\DependentExtensions\\Swig
+4.  Type cd PATH_TO_RAKNET_SWIG_FILES hit enter
+5.  In the next command PATH_TO_RAKNETSOURCE is the path to the swig source directory. For example: C:\\RakNet\\Source. PATH_TO_SWIG is an unquoted path with a trailing slash to the Swig directory Example: C:\\Swig\\. If you added swig to your path variable then PATH_TO_SWIG is not needed and can be ignored or set to "". PATH_TO_DEPENDENTEXTENSIONS is the path to the Dependent Extensions directory Example: C:\\RakNet\\DependentExtensions. OPTION1 in this case will be MYSQL_AUTOPATCHER.
+6.  Type MakeSwigWithExtras.bat PATH_TO_RAKNETSOURCE PATH_TO_SWIG PATH_TO_DEPENDENTEXTENSIONS OPTION1 hit enter
+
+
+-   If you want to use SQLiteClientLoggerPlugin skip #6, the next steps will be used instead.
+-   If you have added swig to your path variable, just use "" for PATH_TO_SWIG
+-   PATH_TO_SQLITEPLUGIN is the path to the SQLite plugin directory. EX: C:\\RakNet\\DependentExtensions\\SQLite3Plugin
+-   Type MakeSwig.bat PATH_TO_RAKNETSOURCE PATH_TO_SWIG  PATH_TO_SQLITEPLUGIN hit enter
+
+8.  If you are not using the DLL_Swig project goto "Creating the Swig Wrapped DLL Project" in the [Swig Tutorial](/csharp-swig/swig-tutorial)
+9.  If you are using the DLL_Swig project, in the project directory there is a file called Prebuild.bat, open it for editing.
+10.  Replace the line "MakeSwig.bat "../../Source"" with the command created in these steps.
+11.  Now goto "Creating the Swig Wrapped DLL Project" in the [Swig Tutorial](/csharp-swig/swig-tutorial). Make sure the extra configuration in this help file is followed.
+
+### Replacement Swig File Generation Manual Steps
+
+1.  Click the start menu and click on run. In Vista click start->search type "run" hit enter.
+2.  Type cmd and hit enter.
+3.  In the next command PATH_TO_RAKNET_SWIG_FILES is the path to the swig directory. For example C:\\RakNet\\DependentExtensions\\Swig
+4.  Type cd PATH_TO_RAKNET_SWIG_FILES hit enter
+5.  In the next command PATH_TO_RAKNETSOURCE is the path to the swig source directory. For example: C:\\RakNet\\Source. PATH_TO_DEPENDENTEXTENSIONS is the path to the Dependent Extensions directory Example: C:\\RakNet\\DependentExtensions.
+6.  Type C:\\Swig\\swig -c++ -csharp -namespace RakNet -I"PATH_TO_RAKNETSOURCE" -I"SwigInterfaceFiles" -I"PATH_TO_DEPENDENTEXTENSIONS" -DSWIG_ADDITIONAL_AUTOPATCHER_MYSQL -outdir SwigOutput\\SwigCSharpOutput -o SwigOutput\\CplusDLLIncludes\\RakNet_wrap.cxx SwigInterfaceFiles\\RakNet.i hit enter
+7.  Goto "Creating the Swig DLL" in the [Swig Tutorial](/csharp-swig/swig-tutorial). Make sure the extra configuration in this help file is followed.
+
+### Linux
+
+
+### Replacement Swig File Tool Steps
+Note: The Linux batch requires Wget,Tar,Make and GCC  to be installed, unless swig is already installed. Most of the time Wget, Tar, Make and GCC are already installed.
+
+1.  Open a terminal if you are not already at one.
+
+2.  In the next command PATH_TO_RAKNET_SWIG_FILES is the path to the swig directory. For example /home/usr/RakNet/DependentExtensions/Swig
+3.  Type cd PATH_TO_RAKNET_SWIG_FILES hit enter
+4.  Type chmod u+x MakeSwig.sh
+
+5.  In the next command PATH_TO_RAKNETSOURCE is the path to the swig source directory. For example: /home/usr/RakNet/Source. PATH_TO_DEPENDENTEXTENSIONS is the path to the Dependent Extensions directory Example: /home/usr/RakNet/DependentExtensions. OPTION1 in this case will be MYSQL_AUTOPATCHER.
+6.  Type MakeSwigWithExtras.sh PATH_TO_RAKNETSOURCE  PATH_TO_DEPENDENTEXTENSIONS OPTION1 hit enter
+
+-   If you want to use SQLiteClientLoggerPlugin skip #6, the next steps will be used instead.
+
+-   PATH_TO_SQLITEPLUGIN is the path to the SQLite plugin directory. EX: /home/usr/RakNet/DependentExtensions/SQLite3Plugin
+
+-   Type MakeSwig.sh PATH_TO_RAKNETSOURCE PATH_TO_SQLITEPLUGIN hit enter
+
+
+8.  Skip to "Creating the C# project" in the [Swig Tutorial](/csharp-swig/swig-tutorial).   
+
+
+### Replacement Manual Swig File Generation Steps
+
+
+1.  Open a terminal
+
+2.  In the next command PATH_TO_RAKNET_SWIG_FILES is the path to the swig directory. For example /home/usr/RakNet/DependentExtensions/Swig
+3.  Type cd PATH_TO_RAKNET_SWIG_FILES hit enter
+4.  In the next command PATH_TO_RAKNETSOURCE is the path to the swig source directory. For example: /home/usr/RakNet/Source
+5.  Type swig -c++ -csharp -namespace RakNet -I"PATH_TO_RAKNETSOURCE" -I"SwigInterfaceFiles" -outdir SwigOutput/SwigCSharpOutput -o SwigOutput/CplusDLLIncludes/RakNet_wrap.cxx SwigInterfaceFiles/RakNet.i and hit enter
+6.  Goto the next section below.
+
+### Replacement Creating the Swig  Dynamic Link Steps
+Note: If you ran the linux batch tool it will have made the dynamic link and attempted to install it, so you may skip these steps if it ran successfully.
+
+1.  In the next command PATH_TO_RAKNET_SWIG_FILES is the path to the swig directory.  EX:: ../DependentExtensions/Swig
+2.  In the next command PATH_TO_DEPENDENTEXTENSIONS is the path to the Dependent Extensions directory. EX: /home/usr/RakNet/DependentExtensions
+3.  First we need to compile the C files seperatly with GCC in C mode type the following command and hit enter: gcc -c PATH_TO_DEPENDENTEXTENSIONS/bzip2-1.0.3/blocksort.c PATH_TO_DEPENDENTEXTENSIONS/bzip2-1.0.3/bzip2.c PATH_TO_DEPENDENTEXTENSIONS/bzip2-1.0.3/bzlib.c PATH_TO_DEPENDENTEXTENSIONS/bzip2-1.0.3/compress.c PATH_TO_DEPENDENTEXTENSIONS/bzip2-1.0.3/crctable.c PATH_TO_DEPENDENTEXTENSIONS/bzip2-1.0.3/decompress.c PATH_TO_DEPENDENTEXTENSIONS/bzip2-1.0.3/dlltest.c PATH_TO_DEPENDENTEXTENSIONS/bzip2-1.0.3/huffman.c $2/bzip2-1.0.3/randtable.c
+
+4.  Now we use those object files and compile the C++ files with C++ mode type the following command and hit enter: g++ *.cpp PATH_TO_RAKNET_SWIG_FILE/SwigOutput/CplusDLLIncludes/RakNet_wrap.cxx blocksort.o bzip2.o bzlib.o compress.o crctable.o decompress.o dlltest.o huffman.o randtable.o PATH_TO_DEPENDENTEXTENSIONS/Autopatcher/ApplyPatch.cpp PATH_TO_DEPENDENTEXTENSIONS/Autopatcher/AutopatcherClient.cpp PATH_TO_DEPENDENTEXTENSIONS/Autopatcher/AutopatcherMySQLRepository/AutopatcherMySQLRepository.cpp PATH_TO_DEPENDENTEXTENSIONS/Autopatcher/AutopatcherServer.cpp PATH_TO_DEPENDENTEXTENSIONS/Autopatcher/CreatePatch.cpp PATH_TO_DEPENDENTEXTENSIONS/Autopatcher/MemoryCompressor.cpp PATH_TO_DEPENDENTEXTENSIONS/MySQLInterface/MySQLInterface.cpp  -l pthread -lmysqlclient -I/usr/include/mysql/ -I./ -IPATH_TO_DEPENDENTEXTENSIONS/Autopatcher/AutopatcherMySQLRepository -IPATH_TO_DEPENDENTEXTENSIONS/Autopatcher -IPATH_TO_DEPENDENTEXTENSIONS/bzip2-1.0.3 -IPATH_TO_DEPENDENTEXTENSIONS/MySQLInterface -shared -o RakNet           
+5.  Note: In the previous command -l pthread is lower case L while -I./ is uppercase i.
+
+-   If you wish to use SQLiteClientLoggerPlugin in the place of #2 use the below instructions
+-    PATH_TO_SQLITEPLUGIN is the path to the SQLite plugin directory. EX: /home/usr/RakNet/DependentExtensions/SQLite3Plugin
+-   g++ *.cpp PATH_TO_RAKNET_SWIG_FILES/SwigOutput/CplusDLLIncludes/RakNet_wrap.cxx PATH_TO_SQLITEPLUGIN\\SQLite3ClientPlugin.cpp  PATH_TO_SQLITEPLUGIN \\SQLite3PLuginCommon.cpp  PATH_TO_SQLITEPLUGIN \\Logger\\ClientOnly\\SQLiteClientLoggerPlugin.cpp  PATH_TO_SQLITEPLUGIN \\Logger\\SQLliteLoggerCommon.cpp  -l pthread -I./ -IPATH_TO_SQLITEPLUGIN\\Logger\\ClientOnly -IPATH_TO_SQLITEPLUGIN\\Logger -IPATH_TO_SQLITEPLUGIN -shared -o RakNet
+
+7.  A file called RakNet should be created that will be copied in the next section
+8.  Go to "Creating the C# project" in the [Swig Tutorial](/csharp-swig/swig-tutorial).
+
+
+{/* function toggleDisplay(divId) { var div = document.getElementById(divId); div.style.display = (div.style.display=="block" ? "none" : "block"); } */}

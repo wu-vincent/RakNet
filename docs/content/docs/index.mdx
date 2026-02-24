@@ -1,0 +1,49 @@
+---
+title: RakNet Documentation
+description: High-performance cross-platform networking library for games and real-time applications
+---
+
+RakNet is a high-performance network library designed for games and other latency-sensitive applications. It provides reliable and unreliable data transfer over UDP, with a rich set of plugins for common multiplayer game features.
+
+## Quick Start
+
+<Cards>
+  <Card title="Introduction" href="/docs/getting-started/introduction" />
+  <Card title="System Overview" href="/docs/getting-started/system-overview" />
+  <Card title="Tutorial" href="/docs/getting-started/tutorial" />
+  <Card title="Compiler Setup" href="/docs/getting-started/compiler-setup" />
+</Cards>
+
+## Key Features
+
+- **Reliable UDP** — multiple reliability and ordering modes for different data types
+- **NAT Punchthrough** — connect peer-to-peer users behind routers without port forwarding
+- **Replica Manager** — automatic object replication, creation, destruction, and serialization
+- **Autopatcher** — delta-compressed patching system for game updates
+- **Voice Chat** — integrated voice communication via RakVoice
+- **Fully Connected Mesh** — peer-to-peer host determination and migration
+- **Secure Connections** — encrypted communication using SLNet's security layer
+- **Cross-Platform** — Windows, Linux, macOS, iOS, Android
+
+## Sections
+
+| Section | Description |
+|---------|-------------|
+| [Getting Started](/getting-started/introduction) | Core concepts, tutorials, and compiler setup |
+| [The Basics](/basics/startup) | Startup, connecting, packets, bitstreams, and more |
+| [Plugins](/plugins/plugin-interface) | Autopatcher, NAT punchthrough, ReplicaManager3, and all plugin interfaces |
+| [C# and SWIG](/csharp-swig/swig-tutorial) | Using RakNet from C# with SWIG bindings and Unity |
+| [Utilities](/utilities/crash-reporter) | Crash reporter, console server, email sender, and more |
+| [Demos](/demos/ogre3d-interpolation-demo) | Ogre 3D and Irrlicht demo walkthroughs |
+| [Reference](/reference/faq) | FAQ, debugging tips, revision log, and samples |
+
+## API Reference (Doxygen)
+
+The full C++ API reference is generated via Doxygen and is not included in this documentation site. To generate it locally:
+
+```bash
+cd /path/to/RakNet
+doxygen Doxyfile
+```
+
+Then open `Help/Doxygen/html/index.html` in your browser.

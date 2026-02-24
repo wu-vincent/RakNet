@@ -1,0 +1,13 @@
+{
+  "title": "Getting Started",
+  "pages": [
+    "introduction",
+    "multiplayer-game-components",
+    "system-overview",
+    "detailed-implementation",
+    "tutorial",
+    "compiler-setup",
+    "compiler-setup-xcode",
+    "dependencies"
+  ]
+}

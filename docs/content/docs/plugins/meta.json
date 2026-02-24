@@ -1,0 +1,26 @@
+{
+  "title": "Plugins",
+  "pages": [
+    "plugin-interface",
+    "autopatcher",
+    "rpc4",
+    "connection-graph",
+    "directory-delta-transfer",
+    "file-list-transfer",
+    "fully-connected-mesh2",
+    "lobby",
+    "steam-lobby",
+    "message-filter",
+    "nat-type-detection",
+    "nat-punchthrough",
+    "packet-logger",
+    "rakvoice",
+    "ready-event",
+    "replica-manager3",
+    "router2",
+    "sqlite3-logger-plugin",
+    "sqlite3-plugin",
+    "team-manager",
+    "two-way-authentication"
+  ]
+}

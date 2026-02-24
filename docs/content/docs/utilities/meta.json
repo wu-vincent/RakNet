@@ -1,0 +1,10 @@
+{
+  "title": "Utilities",
+  "pages": [
+    "crash-reporter",
+    "console-server",
+    "email-sender",
+    "string-compressor",
+    "tcp-interface"
+  ]
+}

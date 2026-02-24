@@ -1,0 +1,387 @@
+---
+title: "RakNet Tutorial"
+---
+
+## Tutorial Project setup
+
+In this tutorial all images and interface references are for Visual Studio 2005, copyrighted by Microsoft. Use the equivalents for your own compiler.
+
+1.  Create a new Win32 Console Project and name it ChatServer
+    ![](/images/tutorial1.jpg)
+
+
+2.  Make it a console application, and an empty project. Windows application is also acceptable.
+    ![](/images/tutorial2.jpg)
+
+
+3.  Add the RakNet source files to your project. You can do this by right clicking on the project name, selecting Add, and then Existing Item from the rollout. Navigate to where you downloaded RakNet, navigate to the Source directory, hold down left shift, select the first file in the list, then click the last file in the list. Then press OK.
+    ![](/images/tutorial3.jpg)
+
+
+4.  Add a main file to your project. Do this by right clicking on the project name, selecting Add, and then new item. Under Visual C++ select code, then c++ file. Name the file main.cpp.
+    ![](/images/tutorial4.jpg)
+
+
+5.  Since we put files in a directory other than the project, we need to include that directory in the include search path so we don't have to type out the entire path every time we #include something. Do this by right clicking the "Chat Server" project name in the project tab. Select properties. In the top pane, change the drop down menu to "All Configurations." Select C/C++ / General / Additional Include Directories. To that item, add the path to the Source directory of your RakNet download, and hit OK.
+    ![](/images/tutorial5.jpg)
+
+
+6.  Next, link in ws2_32.lib, from the same dialog box.
+    ![](/images/tutorial6.jpg)
+
+
+7.  Also change the character set to not set. This is so regular array based strings are used, as opposed to unicode or wide character.
+    ![](/images/tutorial7.jpg)
+
+
+8.  You are ready to begin adding code to main.cpp
+
+## Tutorial Code implementation
+
+### 1. Design
+
+Lets make the chat server as basic as possible to begin with. It will have two main modes: server and client. The server will receive a client message. The client will send a message on startup. We'll hardcode most of the input variables so we don't clutter the code with non-networking stuff.
+
+### 2. First compile
+
+Create your main function. Query the user as to whether they want to run a client or server. Create the peer instance, and call Startup with the appropriate parameters for a Server or Client. Destroy the peer at the end.
+
+Try writing it on your own first. When you are done, see [code sample 1](#tutorial-sample-1) below.
+
+Hit F7 or the equivalent to build. It should build successfully at this point. If it doesn't, refer to the [FAQ](/reference/faq) which gives many reasons for why something won't build and how to fix it. If that doesn't answer your question, post a question in the forum.
+
+### 3. Adding functionality
+
+Now that we have a client and server instantiated, we need to know what it can do. The best way to find out is to go to the source: RakPeerInterface.h. It contains all the functions for the class, plus detailed comments on each function. See the comments for the Startup and Connect functions. You should also take a look at SetMaximumIncomingConnections.
+
+In the code, after the server was created, add code to start the server. That takes certain parameters - set whatever you wish, based on the description provided in the comments.
+
+Do something similar with the client. After the code where it is created, add code to connect it. It takes an IP - add code to read an IP. For the server port, either put code to read the port, or hardcode the server port you entered above. For the client port, either put code to read it, or put 0 to automatically choose.
+
+This is all you need to do to start a server or connect a client. To determine if the connection was successful, we need to be able to read messages from the network system. In RakPeerInterface.h you'll find a Receive function. This function returns a "Packet" structure, which is defined in RakNetTypes.h. It encapsulates one message and is quite simple. Go look at that now.
+
+As you can see from the "char *data" member, all packets contain an array of bytes. These bytes can be anything you want. The length of the array is indicated by the length and bitSize fields. The convention RakNet uses is the first byte is always an identifier that tells you what the rest of the data is. These identifiers are defined in [MessageIdentifiers.h](/basics/network-messages). Go look at that now.
+
+You'll see there are quite a few pre-defined enumerations. You should quickly read the comments on each of them. We only care about the connectivity enumerations for now. So your next programming step is as follows:
+
+1.  Create a loop for the main body of your program.
+2.  In that loop, call Receive and store the pointer returned in a pointer variable of type Packet.
+3.  If the packet variable is not 0 (which means no packets to read), check the first byte of Packet::data. See which of the connectivity related enumerations this byte matches (a switch/case would be handy here).
+4.  Print out the comment that goes along with that enumeration.
+5.  As specified in the comments, when you are done with the Packet pointer deallocate it by passing it to the DeallocatePacket method.
+
+Try writing it on your own first. When you are done, see [code sample 2](#tutorial-sample-2) below.
+
+At this point you should be able to run two instances (In Visual Studio, hit ctrl-F5 twice) and connect to each other. If you cannot connect, then refer to the [FAQ](/reference/faq) or post in the forum.
+
+This is the output from my version of the sample:
+
+**Server output**
+
+```
+(C)lient or (S)erver?
+s
+Starting the server.
+A connection is incoming.
+```
+
+**Client output**
+
+```
+(C)lient or (S)erver?
+c
+Enter server IP or hit enter for 127.0.0.1
+127.0.0.1
+Starting the client.
+Our connection request has been accepted.
+```
+
+We are now ready to send input.
+Your next programming steps are:
+
+1.  Add a user defined enumeration to send as the first byte of your game messages.
+2.  When the client successfully connects, send a string using RakString(). Read it on the server, and print it out.
+
+When you are done, see [code sample 3](#tutorial-sample-3) below.
+
+The client output should be similar to before. The server output should also print "Hello World"
+
+```
+(C)lient or (S)erver?
+s
+Starting the server.
+A connection is incoming.
+Hello World
+```
+
+See the index for a list of major systems not covered here. For further information on setting up your project, see the next page: [Compiler setup](/getting-started/compiler-setup)
+
+### Tutorial Sample 1
+
+```cpp
+#include <stdio.h>
+#include "RakPeerInterface.h"
+
+#define MAX_CLIENTS 10
+#define SERVER_PORT 60000
+
+int main(void)
+{
+	char str[512];
+	RakNet::RakPeerInterface *peer = RakNet::RakPeerInterface::GetInstance();
+	bool isServer;
+
+	printf("(C) or (S)erver?\n");
+	gets(str);
+	if ((str[0]=='c')||(str[0]=='C'))
+	{
+		RakNet::SocketDescriptor sd;
+		peer->Startup(1,&sd, 1);
+		isServer = false;
+	} else {
+		RakNet::SocketDescriptor sd(SERVER_PORT,0);
+		peer->Startup(MAX_CLIENTS, &sd, 1);
+		isServer = true;
+	}
+
+
+	// TODO - Add code body here
+
+	RakNet::RakPeerInterface::DestroyInstance(peer);
+
+	return 0;
+}
+```
+
+
+### Tutorial Sample 2
+
+```cpp
+#include <stdio.h>
+#include <string.h>
+#include "RakPeerInterface.h"
+#include "MessageIdentifiers.h"
+
+#define MAX_CLIENTS 10
+#define SERVER_PORT 60000
+
+int main(void)
+{
+	char str[512];
+
+	RakNet::RakPeerInterface *peer = RakNet::RakPeerInterface::GetInstance();
+	bool isServer;
+	RakNet::Packet *packet;
+	
+	printf("(C) or (S)erver?\n");
+	gets(str);
+
+	if ((str[0]=='c')||(str[0]=='C'))
+	{
+		RakNet::SocketDescriptor sd;
+		peer->Startup(1,&sd, 1);
+		isServer = false;
+	} else {
+		RakNet::SocketDescriptor sd(SERVER_PORT,0);
+		peer->Startup(MAX_CLIENTS, &sd, 1);
+		isServer = true;
+	}
+
+	
+	if (isServer)
+	{
+		printf("Starting the server.\n");
+		// We need to let the server accept incoming connections from the clients
+		peer->SetMaximumIncomingConnections(MAX_CLIENTS);
+	} else {
+		printf("Enter server IP or hit enter for 127.0.0.1\n");
+		gets(str);
+		if (str[0]==0){
+			strcpy(str, "127.0.0.1");
+		}
+		printf("Starting the client.\n");
+		peer->Connect(str, SERVER_PORT, 0,0);
+
+	}
+
+	while (1)
+	{
+		for (packet=peer->Receive(); packet; peer->DeallocatePacket(packet), packet=peer->Receive())
+		{
+			switch (packet->data[0])
+				{
+				case ID_REMOTE_DISCONNECTION_NOTIFICATION:
+					printf("Another client has disconnected.\n");
+					break;
+				case ID_REMOTE_CONNECTION_LOST:
+					printf("Another client has lost the connection.\n");
+					break;
+				case ID_REMOTE_NEW_INCOMING_CONNECTION:
+					printf("Another client has connected.\n");
+					break;
+				case ID_CONNECTION_REQUEST_ACCEPTED:
+					printf("Our connection request has been accepted.\n");
+					break;					
+				case ID_NEW_INCOMING_CONNECTION:
+					printf("A connection is incoming.\n");
+					break;
+				case ID_NO_FREE_INCOMING_CONNECTIONS:
+					printf("The server is full.\n");
+					break;
+				case ID_DISCONNECTION_NOTIFICATION:
+					if (isServer){
+						printf("A client has disconnected.\n");
+					} else {
+						printf("We have been disconnected.\n");
+					}
+					break;
+				case ID_CONNECTION_LOST:
+					if (isServer){
+						printf("A client lost the connection.\n");
+					} else {
+						printf("Connection lost.\n");
+					}
+					break;
+				default:
+					printf("Message with identifier %i has arrived.\n", packet->data[0]);
+					break;
+				}
+		}
+	}
+	
+	
+	RakNet::RakPeerInterface::DestroyInstance(peer);
+
+	return 0;
+}
+```
+
+
+### Tutorial Sample 3
+
+```cpp
+#include <stdio.h>
+#include <string.h>
+#include "RakPeerInterface.h"
+#include "MessageIdentifiers.h"
+#include "BitStream.h"
+#include "RakNetTypes.h"  // MessageID
+
+#define MAX_CLIENTS 10
+#define SERVER_PORT 60000
+
+enum GameMessages
+{
+	ID_GAME_MESSAGE_1=ID_USER_PACKET_ENUM+1
+};
+
+int main(void)
+{
+	char str[512];
+
+	RakNet::RakPeerInterface *peer = RakNet::RakPeerInterface::GetInstance();
+	bool isServer;
+	RakNet::Packet *packet;
+
+	printf("(C) or (S)erver?\n");
+	gets(str);
+
+	if ((str[0]=='c')||(str[0]=='C'))
+	{
+		RakNet::SocketDescriptor sd;
+		peer->Startup(1,&sd, 1);
+		isServer = false;
+	} else {
+		RakNet::SocketDescriptor sd(SERVER_PORT,0);
+		peer->Startup(MAX_CLIENTS, &sd, 1);
+		isServer = true;
+	}
+
+	if (isServer)
+	{
+		printf("Starting the server.\n");
+		// We need to let the server accept incoming connections from the clients
+		peer->SetMaximumIncomingConnections(MAX_CLIENTS);
+	} else {
+		printf("Enter server IP or hit enter for 127.0.0.1\n");
+		gets(str);
+		if (str[0]==0){
+			strcpy(str, "127.0.0.1");
+		}
+		printf("Starting the client.\n");
+		peer->Connect(str, SERVER_PORT, 0,0);
+
+	}
+
+	while (1)
+	{
+		for (packet=peer->Receive(); packet; peer->DeallocatePacket(packet), packet=peer->Receive())
+		{
+			switch (packet->data[0])
+			{
+			case ID_REMOTE_DISCONNECTION_NOTIFICATION:
+				printf("Another client has disconnected.\n");
+				break;
+			case ID_REMOTE_CONNECTION_LOST:
+				printf("Another client has lost the connection.\n");
+				break;
+			case ID_REMOTE_NEW_INCOMING_CONNECTION:
+				printf("Another client has connected.\n");
+				break;
+			case ID_CONNECTION_REQUEST_ACCEPTED:
+				{
+					printf("Our connection request has been accepted.\n");
+
+					// Use a BitStream to write a custom user message
+					// Bitstreams are easier to use than sending casted structures, and handle endian swapping automatically
+					RakNet::BitStream bsOut;
+					bsOut.Write((RakNet::MessageID)ID_GAME_MESSAGE_1);
+					bsOut.Write("Hello world");
+					peer->Send(&bsOut,HIGH_PRIORITY,RELIABLE_ORDERED,0,packet->systemAddress,false);
+				}
+				break;
+			case ID_NEW_INCOMING_CONNECTION:
+				printf("A connection is incoming.\n");
+				break;
+			case ID_NO_FREE_INCOMING_CONNECTIONS:
+				printf("The server is full.\n");
+				break;
+			case ID_DISCONNECTION_NOTIFICATION:
+				if (isServer){
+					printf("A client has disconnected.\n");
+				} else {
+					printf("We have been disconnected.\n");
+				}
+				break;
+			case ID_CONNECTION_LOST:
+				if (isServer){
+					printf("A client lost the connection.\n");
+				} else {
+					printf("Connection lost.\n");
+				}
+				break;
+				
+			case ID_GAME_MESSAGE_1:
+				{
+					RakNet::RakString rs;
+					RakNet::BitStream bsIn(packet->data,packet->length,false);
+					bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
+					bsIn.Read(rs);
+					printf("%s\n", rs.C_String());
+				}
+				break;
+			
+			default:
+				printf("Message with identifier %i has arrived.\n", packet->data[0]);
+				break;
+			}
+		}
+	}
+
+
+	RakNet::RakPeerInterface::DestroyInstance(peer);
+
+	return 0;
+}
+```
+

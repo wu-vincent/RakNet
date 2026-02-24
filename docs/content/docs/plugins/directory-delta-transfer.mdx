@@ -1,0 +1,20 @@
+---
+title: "Directory Delta Transfer Manual"
+---
+
+## Directory Delta Transfer Overview
+
+### Send file differences between directories automatically
+
+DirectoryDeltaTransfer.h is useful if you allow user-moddable content. For example, if each server has a /skins directory, you could run this plugin to upload that directory to the clients. Each client that does not already have a particular skin will get it. You will get download progress notifications via a user-supplied callback. DirectoryDeltaTransfer relies on the FileListTransfer plugin to actually transmit hte files.
+
+Usage:
+
+1.  Attach the plugin and connect to the remote system
+2.  Server and client: Call `directoryDeltaTransfer.SetFileListTransferPlugin(&fileListTransfer);`
+3.  Server: set the application directory: `directoryDeltaTransfer.SetApplicationDirectory("c:\myGame");`
+4.  Server: set the download directory: `directoryDeltaTransfer.AddUploadsFromSubdirectory("skins");`
+5.  Client: to download call: `directoryDeltaTransfer.DownloadFromSubdirectory("skins", "downloaded\\skins", true, serverAddress, &transferCallback, HIGH_PRIORITY, 0);`
+6.  Client: Wait for the callback member `OnFileProgress()`. When onFileStruct->fileIndex is equal to onFileStruct->setCount this download is done.
+
+For full details on all parameters and other available functions, see the header file DirectoryDeltaTransfer.h and the sample at _Samples/DirectoryDeltaTransfer_

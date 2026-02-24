@@ -1,0 +1,104 @@
+---
+title: "Preprocessor directives"
+---
+
+## Preprocessor directives
+
+Define any of these values in RakNetDefinesOverrides.h to override. These are the defaults as set in RakNetDefines.h. Also see NativeFeatureIncludes.h to not compile in features you do not use.
+
+```cpp
+/// Define __GET_TIME_64BIT to have RakNet::TimeMS use a 64, rather than 32 bit value. A 32 bit value will overflow after about 5 weeks.
+/// However, this doubles the bandwidth use for sending times, so don't do it unless you have a reason to.
+/// Comment out if you are using the iPod Touch TG. See http://www.jenkinssoftware.com/forum/index.php?topic=2717.0
+/// This must be the same on all systems, or they won't connect
+#define __GET_TIME_64BIT 1
+```
+
+```cpp
+// Define _FILE_AND_LINE_ to "",0 if you want to strip out file and line info for memory tracking from the EXE
+#define _FILE_AND_LINE_ __FILE__,__LINE__
+```
+
+```cpp
+/// Define __BITSTREAM_NATIVE_END to NOT support endian swapping in the BitStream class. This is faster and is what you should use
+/// unless you actually plan to have different endianness systems connect to each other
+/// Enabled by default.
+// #define __BITSTREAM_NATIVE_END
+```
+
+```cpp
+/// Maximum (stack) size to use with _alloca before using new and delete instead.
+#define MAX_ALLOCA_STACK_ALLOCATION 1048576
+```
+
+```cpp
+// Use WaitForSingleObject instead of sleep.
+// Defining it plays nicer with other systems, and uses less CPU, but gives worse RakNet performance
+// Undefining it uses more CPU time, but is more responsive and faster.
+#define USE_WAIT_FOR_MULTIPLE_EVENTS
+```
+
+```cpp
+/// Uncomment to use RakMemoryOverride for custom memory tracking
+/// See RakMemoryOverride.h.
+#define _USE_RAK_MEMORY_OVERRIDE 0
+```
+
+```cpp
+/// If defined, OpenSSL is enabled for the class TCPInterface
+/// This is necessary to use the SendEmail class with Google POP servers
+/// Note that OpenSSL carries its own license restrictions that you should be aware of. If you don't agree, don't enable this define
+/// This also requires that you enable header search paths to DependentExtensions\openssl-0.9.8g
+#define OPEN_SSL_CLIENT_SUPPORT 0
+```
+
+```cpp
+/// Threshold at which to do a malloc / free rather than pushing data onto a fixed stack for the bitstream class
+/// Arbitrary size, just picking something likely to be larger than most packets
+#define BITSTREAM_STACK_ALLOCATION_SIZE 256
+```
+
+```cpp
+// Redefine if you want to disable or change the target for debug RAKNET_DEBUG_PRINTF
+#define RAKNET_DEBUG_PRINTF printf
+```
+
+```cpp
+// Maximum number of local IP addresses supported
+#define MAXIMUM_NUMBER_OF_INTERNAL_IDS 10
+```
+
+```cpp
+/// This controls the amount of memory used per connection. If more than this many datagrams are sent without an ack, then the ack has no effect
+#define DATAGRAM_MESSAGE_ID_ARRAY_LENGTH 512
+```
+
+```cpp
+/// This is the maximum number of reliable user messages that can be on the wire at a time
+#define RESEND_BUFFER_ARRAY_LENGTH 512
+#define RESEND_BUFFER_ARRAY_MASK 511
+```
+
+```cpp
+/// Uncomment if you want to link in the DLMalloc library to use with RakMemoryOverride
+// #define _LINK_DL_MALLOC
+```
+
+```cpp
+/// Workaround for http://support.microsoft.com/kb/274323
+/// If two calls between RakNet::GetTime() happen farther apart than this time in microseconds, this delta will be returned instead
+/// Note: This will cause ID_TIMESTAMP to be temporarily inaccurate if you set a breakpoint that pauses the UpdateNetworkLoop() thread in RakPeer
+/// Define in RakNetDefinesOverrides.h to enable (non-zero) or disable (0)
+#define GET_TIME_SPIKE_LIMIT 0
+```
+
+```cpp
+// Use sliding window congestion control instead of ping based congestion control
+#define USE_SLIDING_WINDOW_CONGESTION_CONTROL 1
+```
+
+```cpp
+// When a large message is arriving, preallocate the memory for the entire block
+// This results in large messages not taking up time to reassembly with memcpy, but is vulnerable to attackers causing the host to run out of memory
+#define PREALLOCATE_LARGE_MESSAGES 0
+```

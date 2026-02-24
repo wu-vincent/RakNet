@@ -1,0 +1,47 @@
+---
+title: "Custom Memory Management"
+---
+
+## Custom Memory Management
+### Override new, delete, malloc, free, and realloc
+
+Users wishing to provide custom memory management functions can do so via RakMemoryOverride.cpp.
+
+There are 3 global pointers defined in this file, with predefined defaults:
+
+```cpp
+void* (*rakMalloc) (size_t size) = RakMalloc;
+void* (*rakRealloc) (void *p, size_t size) = RakRealloc;
+void (*rakFree) (void *p) = RakFree;
+```
+
+To override, simply set the values of these variables to something else.
+
+For example, to override malloc, you may write:
+
+```cpp
+#include "RakMemoryOverride.h"
+```
+
+```cpp
+void *MyMalloc(size_t size)
+{
+return malloc(size);
+}
+```
+
+```cpp
+int main()
+{
+rakMalloc=MyMalloc;
+// ...
+}
+```
+
+Then edit the file RakNetDefinesOverrides.h and add
+
+```cpp
+#define _USE_RAK_MEMORY_OVERRIDE 1
+```
+
+Alternatively, edit RakNetDefines.h _USE_RAK_MEMORY_OVERRIDE

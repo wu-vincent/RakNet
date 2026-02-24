@@ -1,0 +1,20 @@
+{
+  "title": "RakNet",
+  "pages": [
+    "index",
+    "---Getting Started---",
+    "getting-started",
+    "---The Basics---",
+    "basics",
+    "---Plugins---",
+    "plugins",
+    "---C# and SWIG---",
+    "csharp-swig",
+    "---Utilities---",
+    "utilities",
+    "---Demos---",
+    "demos",
+    "---Reference---",
+    "reference"
+  ]
+}

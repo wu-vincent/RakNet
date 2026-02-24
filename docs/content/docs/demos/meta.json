@@ -1,0 +1,7 @@
+{
+  "title": "Demos",
+  "pages": [
+    "ogre3d-interpolation-demo",
+    "irrlicht-fps-demo"
+  ]
+}

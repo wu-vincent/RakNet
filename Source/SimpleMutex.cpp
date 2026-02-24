@@ -124,7 +124,7 @@ void SimpleMutex::Lock(void)
 	// ...
 	// Display the string.
 	//MessageBox( NULL, (LPCTSTR)messageBuffer, "Error", MB_OK | MB_ICONINFORMATION );
-	RAKNET_DEBUG_PRINTF("SimpleMutex error: %s", messageBuffer);
+	RAKNET_DEBUG_PRINTF("SimpleMutex error: %s", (const char*)messageBuffer);
 	// Free the buffer.
 	LocalFree( messageBuffer );
 

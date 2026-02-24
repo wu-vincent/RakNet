@@ -14,11 +14,11 @@ endif()
 
 file(GLOB ALL_CPP_SRCS CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_SOURCE_DIR}/Samples/PHPDirectoryServer2/PHPDirectoryServer2.cpp"
+    "${CMAKE_SOURCE_DIR}/samples/PHPDirectoryServer2/PHPDirectoryServer2.cpp"
 )
 file(GLOB ALL_HEADER_SRCS CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
-    "${CMAKE_SOURCE_DIR}/Samples/PHPDirectoryServer2/PHPDirectoryServer2.h"
+    "${CMAKE_SOURCE_DIR}/samples/PHPDirectoryServer2/PHPDirectoryServer2.h"
 )
 
 add_executable(IrrlichtDemo WIN32 ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})

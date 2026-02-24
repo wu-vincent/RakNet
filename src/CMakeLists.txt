@@ -1,7 +1,7 @@
 include(GNUInstallDirs)
 
-file(GLOB RAKNET_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/Source/*.cpp")
-file(GLOB RAKNET_HEADERS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/Source/*.h")
+file(GLOB RAKNET_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/*.cpp")
+file(GLOB RAKNET_HEADERS CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/include/RakNet/*.h")
 
 if(NOT WIN32)
     find_package(Threads REQUIRED)
@@ -13,7 +13,7 @@ add_library(RakNet::RakNet ALIAS RakNet)
 
 target_include_directories(RakNet
     PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/Source>
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include/RakNet>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/RakNet>
     PRIVATE
         "${CMAKE_SOURCE_DIR}/DependentExtensions/openssl-1.0.0d/include"

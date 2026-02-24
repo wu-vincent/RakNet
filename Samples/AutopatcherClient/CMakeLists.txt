@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.5)
 project(AutopatcherClient)
 
 set(Autopatcher_SOURCE_DIR ${RakNet_SOURCE_DIR}/DependentExtensions/Autopatcher)

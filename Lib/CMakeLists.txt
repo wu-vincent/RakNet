@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.5)
 
 set( RAKNET_INTERNAL_INCLUDE_DIRS 
 	${RakNet_SOURCE_DIR}/Source 

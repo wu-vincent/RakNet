@@ -1,9 +1,1 @@
-cmake_minimum_required(VERSION 3.5)
-GETCURRENTFOLDER()
-STANDARDSUBPROJECT(FlowControlTest)
-VSUBFOLDER(FlowControlTest "Internal Tests")
-
-
-
-
-
+raknet_add_sample(${CMAKE_CURRENT_SOURCE_DIR})

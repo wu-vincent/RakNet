@@ -1,13 +1,20 @@
-cmake_minimum_required(VERSION 3.5)
-project(LibRPC3)
-IF (NOT WIN32 AND UNIX)
-	FILE(GLOB ALL_HEADER_SRCS *.h)
-	FILE(GLOB ALL_CPP_SRCS *.cpp)
-	FINDBOOST()
-	include_directories("${Boost_INCLUDE_DIRS}" ${RAKNETHEADERFILES}) 
-	add_library(LibRPC3 STATIC ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS} "${Boost_INCLUDE_DIRS}" "${Boost_INCLUDE_DIRS}/boost")
-	target_link_libraries(LibRPC3 ${RAKNET_COMMON_LIBS} ${Boost_LIBRARIES})
-ENDIF(NOT WIN32 AND UNIX)
+find_package(Boost QUIET)
+if(NOT Boost_FOUND)
+    message(STATUS "Boost not found -- RPC3 extension will not be built")
+    return()
+endif()
 
+file(GLOB ALL_CPP_SRCS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
+file(GLOB ALL_HEADER_SRCS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 
-
+add_library(LibRPC3 STATIC ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})
+target_include_directories(LibRPC3
+    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}" ${Boost_INCLUDE_DIRS}
+)
+target_link_libraries(LibRPC3 PUBLIC RakNetLibStatic ${Boost_LIBRARIES})
+set_target_properties(LibRPC3 PROPERTIES FOLDER "DependentExtensions")
+if(MSVC)
+    target_compile_options(LibRPC3 PRIVATE /W0)
+else()
+    target_compile_options(LibRPC3 PRIVATE -w)
+endif()

@@ -1,58 +1,76 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.14)
+project(RakNet VERSION 4.082 LANGUAGES C CXX)
 
-project(RakNet)
-
-if( NOT APPLE )
-# check 64 bit
-if( CMAKE_SIZEOF_VOID_P MATCHES "4" )
-  set( HAVE_64_BIT 0 )
-else(  CMAKE_SIZEOF_VOID_P MATCHES "4")
-  set( HAVE_64_BIT 1 )
-endif(  CMAKE_SIZEOF_VOID_P MATCHES "4")
-endif( NOT APPLE )
-
-IF (WIN32 AND NOT UNIX)
-	set (PROGRAMFILESX86 $ENV{PROGRAMFILES})
-	string(REPLACE "\\" "/" PROGRAMFILESX86 ${PROGRAMFILESX86})
-ENDIF(WIN32 AND NOT UNIX)
-
-IF (WIN32 AND NOT UNIX)
-	set(RAKNET_LIBRARY_LIBS ws2_32.lib)
-ELSE(WIN32 AND NOT UNIX)
-	set(RAKNET_LIBRARY_LIBS pthread)
-ENDIF(WIN32 AND NOT UNIX)
-
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Options
-option( RAKNET_ENABLE_SAMPLES 	"Generate RakNet sample projects if true." 		TRUE  )
-option( RAKNET_ENABLE_DLL		"Generate the DLL project if true." 			TRUE )
-option( RAKNET_ENABLE_STATIC	"Generate the static library project if true." 	TRUE )
-option( RAKNET_GENERATE_INCLUDE_ONLY_DIR "Setup a include/RakNet/ directory in which all the headers are copied." FALSE )
+option(RAKNET_ENABLE_SAMPLES "Generate RakNet sample projects if true." ON)
+option(RAKNET_ENABLE_DLL "Generate the DLL project if true." ON)
+option(RAKNET_ENABLE_STATIC "Generate the static library project if true." ON)
+option(RAKNET_ENABLE_EXTENSIONS "Enable extension projects that might need specific dependencies." ON)
+option(RAKNET_GENERATE_INCLUDE_ONLY_DIR "Setup a include/RakNet/ directory in which all the headers are copied." OFF)
 
-set( RAKNETHEADERFILES ${RakNet_SOURCE_DIR}/Source ) #This name doesn't follow CMake conventions but for retro compatibility I'll let it there.
+# Module path for bundled Find*.cmake modules
+list(APPEND CMAKE_MODULE_PATH
+    "${CMAKE_CURRENT_SOURCE_DIR}/CmakeIncludes"
+    "${CMAKE_CURRENT_SOURCE_DIR}/CmakeIncludes/Ogre3D"
+)
 
-if( RAKNET_GENERATE_INCLUDE_ONLY_DIR )
-	set( RAKNET_INCLUDE_ONLY_DIR ${RakNet_SOURCE_DIR}/include ) # this will be visible by client code
-	set( RAKNET_NAMED_INCLUDE_ONLY_DIR ${RAKNET_INCLUDE_ONLY_DIR}/RakNet )
-	message( STATUS "Setting up the ${RAKNET_NAMED_INCLUDE_ONLY_DIR} directory..." )
-	# Now setup the include/RakNet/*.h files.
-	file( MAKE_DIRECTORY ${RAKNET_NAMED_INCLUDE_ONLY_DIR} )
-	file( COPY ${RAKNETHEADERFILES}/ DESTINATION ${RAKNET_NAMED_INCLUDE_ONLY_DIR} FILES_MATCHING PATTERN "*.h"  )
-	message( STATUS "DONE: Setting up the ${RAKNET_NAMED_INCLUDE_ONLY_DIR} directory." )
+# Include the raknet_add_sample() helper
+include(${CMAKE_CURRENT_SOURCE_DIR}/CmakeIncludes/CmakeMacros.txt)
+
+# Optional: copy headers to include/RakNet/
+if(RAKNET_GENERATE_INCLUDE_ONLY_DIR)
+    set(RAKNET_NAMED_INCLUDE_ONLY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/RakNet")
+    message(STATUS "Setting up the ${RAKNET_NAMED_INCLUDE_ONLY_DIR} directory...")
+    file(MAKE_DIRECTORY "${RAKNET_NAMED_INCLUDE_ONLY_DIR}")
+    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/Source/" DESTINATION "${RAKNET_NAMED_INCLUDE_ONLY_DIR}" FILES_MATCHING PATTERN "*.h")
+    message(STATUS "DONE: Setting up the ${RAKNET_NAMED_INCLUDE_ONLY_DIR} directory.")
 endif()
 
-set( RAKNET_INCLUDE_DIRS ${RAKNETHEADERFILES} ${RAKNET_INCLUDE_ONLY_DIR} PARENT_SCOPE ) # Visible from outside
-
-include(./CmakeIncludes/CmakeMacros.txt)
-FIXLINKOPTIONS()
-FIXCOMPILEOPTIONS()
-
-
+# Build targets
 add_subdirectory(Lib)
 
-
-set(RAKNET_COMMON_LIBS RakNetLibStatic)
-
-if( RAKNET_GENERATE_SAMPLES )
-	add_subdirectory(Samples)
+if(RAKNET_ENABLE_EXTENSIONS)
+    add_subdirectory(DependentExtensions)
 endif()
+
+if(RAKNET_ENABLE_SAMPLES)
+    add_subdirectory(Samples)
+endif()
+
+# Install & export infrastructure
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+install(DIRECTORY Source/
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/RakNet"
+    FILES_MATCHING PATTERN "*.h"
+)
+
+configure_package_config_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/RakNetConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/RakNetConfig.cmake"
+    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/RakNet"
+)
+
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/RakNetConfigVersion.cmake"
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
+
+install(
+    EXPORT RakNetTargets
+    FILE RakNetTargets.cmake
+    NAMESPACE RakNet::
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/RakNet"
+)
+
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/RakNetConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/RakNetConfigVersion.cmake"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/RakNet"
+)

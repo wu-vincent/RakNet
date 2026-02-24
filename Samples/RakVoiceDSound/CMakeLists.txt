@@ -1,30 +1,36 @@
-cmake_minimum_required(VERSION 3.5)
+if(NOT WIN32)
+    return()
+endif()
 
+# DirectSound requires the DirectX SDK
+if(NOT DEFINED ENV{DXSDK_DIR} OR "$ENV{DXSDK_DIR}" STREQUAL "")
+    message(STATUS "DXSDK_DIR not set -- RakVoiceDSound sample will not be built")
+    return()
+endif()
 
-IF(WIN32 AND NOT UNIX)
-	GETCURRENTFOLDER()
-	FINDPORTAUDIO()
-	FINDDSOUND()
-	project(${current_folder})
-	FILE(GLOB ALL_CPP_SRCS *.cpp ${RakNet_SOURCE_DIR}/DependentExtensions/RakVoice.cpp)
-	FILE(GLOB ALL_HEADER_SRCS *.h ${RakNet_SOURCE_DIR}/DependentExtensions/RakVoice.h)
-	FILE(GLOB SPEEXFILES ${speex_SOURCE_DIR}/win32/*.h ${speex_SOURCE_DIR}/include/*.h ${speex_SOURCE_DIR}/libspeex/*.h ${speex_SOURCE_DIR}/include/speex/*.h ${speex_SOURCE_DIR}/libspeex/*.c)
-	FINDREADMES()
-	LIST(REMOVE_ITEM SPEEXFILES 
-	  ${speex_SOURCE_DIR}/libspeex/pcm_wrapper.h)
-	LIST(REMOVE_ITEM SPEEXFILES 
-	  ${speex_SOURCE_DIR}/libspeex/pcm_wrapper.c)
-	SOURCE_GROUP(Speex FILES ${SPEEXFILES})
-	ADDCPPDEF(HAVE_CONFIG_H)
-	ADDCPPDEF(_UNICODE)
-	ADDCPPDEF(UNICODE)
-	include_directories(${RAKNETHEADERFILES} ./ ${PORTAUDIO_INCLUDE_DIR} ${RakNet_SOURCE_DIR}/DependentExtensions ${speex_SOURCE_DIR}/include ${portaudio_SOURCE_DIR} ${speex_SOURCE_DIR}/win32 ${DSOUND_INCLUDE_DIR}) 
-	add_executable(${current_folder} ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS} ${SPEEXFILES} ${READMES})
-	target_link_libraries(${current_folder} ${RAKNET_COMMON_LIBS} winmm.lib ${DSOUND_LIBRARIES})
-	VSUBFOLDER(${current_folder} Samples/Voice)
-ENDIF(WIN32 AND NOT UNIX)
+set(DXSDK_DIR "$ENV{DXSDK_DIR}")
 
+file(GLOB ALL_CPP_SRCS CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+    "${CMAKE_SOURCE_DIR}/DependentExtensions/RakVoice.cpp"
+)
+file(GLOB ALL_HEADER_SRCS CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+    "${CMAKE_SOURCE_DIR}/DependentExtensions/RakVoice.h"
+)
 
-
-
-
+add_executable(RakVoiceDSound ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})
+target_link_libraries(RakVoiceDSound PRIVATE RakNetLibStatic LibSpeex winmm
+    "${DXSDK_DIR}lib/x86/Dsound.lib"
+    "${DXSDK_DIR}lib/x86/Dxguid.lib"
+    "${DXSDK_DIR}lib/x86/Dxerr.lib"
+)
+target_include_directories(RakVoiceDSound PRIVATE
+    "${CMAKE_SOURCE_DIR}/DependentExtensions"
+    "${CMAKE_SOURCE_DIR}/DependentExtensions/speex-1.1.12/include"
+    "${CMAKE_SOURCE_DIR}/DependentExtensions/speex-1.1.12/win32"
+    "${DXSDK_DIR}include"
+)
+target_compile_definitions(RakVoiceDSound PRIVATE HAVE_CONFIG_H _UNICODE UNICODE _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE)
+target_compile_options(RakVoiceDSound PRIVATE /W0)
+set_target_properties(RakVoiceDSound PROPERTIES FOLDER "Samples/Voice")

@@ -1,1 +1,1 @@
-cmake_minimum_required(VERSION 3.5)
+# Sources consumed by Lib/CMakeLists.txt

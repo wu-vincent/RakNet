@@ -1,7 +1,1 @@
-cmake_minimum_required(VERSION 3.5)
-project(speex)
-
-
-
-
-
+# Speex is built as LibSpeex in the parent DependentExtensions/CMakeLists.txt

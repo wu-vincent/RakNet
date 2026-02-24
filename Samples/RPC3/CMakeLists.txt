@@ -1,25 +1,24 @@
-cmake_minimum_required(VERSION 3.5)
-GETCURRENTFOLDER()
-FINDBOOST()
+find_package(Boost QUIET)
+if(NOT Boost_FOUND)
+    message(STATUS "Boost not found -- RPC3 sample will not be built")
+    return()
+endif()
 
-set(LibRPC3_SOURCE_DIR ${RakNet_SOURCE_DIR}/DependentExtensions/RPC3/)
+set(RPC3_DIR "${CMAKE_SOURCE_DIR}/DependentExtensions/RPC3")
 
-project(RPC3)
-IF (WIN32 AND NOT UNIX)
-	SET(PLUGINFILES ${LibRPC3_SOURCE_DIR}/RPC3.cpp ${LibRPC3_SOURCE_DIR}/RPC3.h ${LibRPC3_SOURCE_DIR}/RPC3_Boost.h)
-	SOURCE_GROUP(Plugin FILES ${PLUGINFILES})
-	SOURCE_GROUP(Sample FILES RPC3Sample.cpp)
-	SET(EXTRALIBS "")
-	SET(EXTRASOURCES ${PLUGINFILES})
-ELSE(WIN32 AND NOT UNIX)
-	SET(EXTRALIBS LibRPC3)
-	SET(EXTRASOURCES "")
-ENDIF(WIN32 AND NOT UNIX)
-SET(EXTRAINCLUDES ${LibRPC3_SOURCE_DIR} ${Boost_INCLUDE_DIRS})
-STANDARDSUBPROJECTWITHOPTIONSSET(${current_folder})
-
-
-
-
-
-
+if(WIN32)
+    set(RPC3_PLUGIN_FILES
+        "${RPC3_DIR}/RPC3.cpp"
+        "${RPC3_DIR}/RPC3.h"
+        "${RPC3_DIR}/RPC3_Boost.h"
+    )
+    raknet_add_sample(${CMAKE_CURRENT_SOURCE_DIR}
+        EXTRA_SOURCES ${RPC3_PLUGIN_FILES}
+        EXTRA_INCLUDES "${RPC3_DIR}" ${Boost_INCLUDE_DIRS}
+    )
+else()
+    raknet_add_sample(${CMAKE_CURRENT_SOURCE_DIR}
+        EXTRA_INCLUDES "${RPC3_DIR}" ${Boost_INCLUDE_DIRS}
+        EXTRA_LIBS LibRPC3
+    )
+endif()

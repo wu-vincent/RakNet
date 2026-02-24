@@ -1,23 +1,26 @@
-cmake_minimum_required(VERSION 3.5)
-project(AutopatcherClient)
+set(AUTOPATCHER_DIR "${CMAKE_SOURCE_DIR}/DependentExtensions/Autopatcher")
+set(BZIP2_DIR "${CMAKE_SOURCE_DIR}/DependentExtensions/bzip2-1.0.6")
 
-set(Autopatcher_SOURCE_DIR ${RakNet_SOURCE_DIR}/DependentExtensions/Autopatcher)
-set(BZip2_SOURCE_DIR ${RakNet_SOURCE_DIR}/DependentExtensions/bzip2-1.0.6)
+file(GLOB AUTOSRC CONFIGURE_DEPENDS "${AUTOPATCHER_DIR}/*.cpp" "${AUTOPATCHER_DIR}/*.h")
+list(FILTER AUTOSRC EXCLUDE REGEX "AutopatcherServer\\.(cpp|h)$")
 
-include_directories(${RAKNETHEADERFILES} ./ ${Autopatcher_SOURCE_DIR} ${BZip2_SOURCE_DIR} )
-FILE(GLOB AUTOSRC "${Autopatcher_SOURCE_DIR}/*.cpp" "${Autopatcher_SOURCE_DIR}/*.h")
-LIST(REMOVE_ITEM AUTOSRC "${Autopatcher_SOURCE_DIR}/AutopatcherServer.cpp" "${Autopatcher_SOURCE_DIR}/AutopatcherServer.h" )
-FILE(GLOB BZSRC "${BZip2_SOURCE_DIR}/*.c" "${BZip2_SOURCE_DIR}/*.h")
-LIST(REMOVE_ITEM BZSRC "${BZip2_SOURCE_DIR}/dlltest.c" "${BZip2_SOURCE_DIR}/mk251.c" "${BZip2_SOURCE_DIR}/bzip2recover.c")
-SOURCE_GROUP(BZip2 FILES ${BZSRC})
-SET(WRAPFILES "${Autopatcher_SOURCE_DIR}/MemoryCompressor.cpp" "${Autopatcher_SOURCE_DIR}/MemoryCompressor.h")
-LIST(REMOVE_ITEM AUTOSRC ${WRAPFILES})
-SOURCE_GROUP(Client_Files FILES ${AUTOSRC})
-SOURCE_GROUP(MAIN FILES "AutopatcherClientTest.cpp")
-SOURCE_GROUP(BZip2Wrapper FILES ${WRAPFILES})
-add_executable(AutopatcherClient "AutopatcherClientTest.cpp" ${AUTOSRC} ${BZSRC} ${WRAPFILES} "readme.txt")
-target_link_libraries(AutopatcherClient ${RAKNET_COMMON_LIBS})
+file(GLOB BZSRC CONFIGURE_DEPENDS "${BZIP2_DIR}/*.c" "${BZIP2_DIR}/*.h")
+list(FILTER BZSRC EXCLUDE REGEX "(dlltest|mk251|bzip2recover|bzip2)\\.c$")
 
-##VSUBFOLDER(AutopatcherClient "Samples/AutoPatcher/Client")
-
-
+add_executable(AutopatcherClient
+    AutopatcherClientTest.cpp
+    ${AUTOSRC}
+    ${BZSRC}
+)
+target_include_directories(AutopatcherClient PRIVATE
+    "${AUTOPATCHER_DIR}"
+    "${BZIP2_DIR}"
+)
+target_link_libraries(AutopatcherClient PRIVATE RakNetLibStatic)
+set_target_properties(AutopatcherClient PROPERTIES FOLDER "Samples/AutoPatcher")
+if(MSVC)
+    target_compile_definitions(AutopatcherClient PRIVATE _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE)
+    target_compile_options(AutopatcherClient PRIVATE /W0)
+else()
+    target_compile_options(AutopatcherClient PRIVATE -w)
+endif()

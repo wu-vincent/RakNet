@@ -1,16 +1,16 @@
-project(AutopatcherPostgreRepository)
-FINDPOSTGRE()
-IF(WIN32 AND NOT UNIX)
-	FILE(GLOB ALL_HEADER_SRCS *.h ${PostgreSQLInterface_SOURCE_DIR}/PostgreSQLInterface.h ${Autopatcher_SOURCE_DIR}/ApplyPatch.h ${Autopatcher_SOURCE_DIR}/CreatePatch.h)
-	FILE(GLOB ALL_CPP_SRCS *.cpp ${PostgreSQLInterface_SOURCE_DIR}/PostgreSQLInterface.cpp ${Autopatcher_SOURCE_DIR}/ApplyPatch.cpp ${Autopatcher_SOURCE_DIR}/CreatePatch.cpp)
-	include_directories(${RAKNETHEADERFILES} ./ ${PostgreSQLInterface_SOURCE_DIR} ${Autopatcher_SOURCE_DIR} ${POSTGRESQL_INCLUDE_DIR} ${BZip2_SOURCE_DIR}) 
-	add_library(AutopatcherPostgreRepository STATIC ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS} readme.txt)
-	target_link_libraries (AutopatcherPostgreRepository ${RAKNET_COMMON_LIBS} ${POSTGRESQL_LIBRARIES})
-	VSUBFOLDER(AutopatcherPostgreRepository "Samples/AutoPatcher/Server/PostgreSQL")
-ELSE(WIN32 AND NOT UNIX)
-	FILE(GLOB ALL_HEADER_SRCS *.h)
-	FILE(GLOB ALL_CPP_SRCS *.cpp)
-	include_directories(${RAKNETHEADERFILES} ./ ${PostgreSQLInterface_SOURCE_DIR} ${Autopatcher_SOURCE_DIR} ${POSTGRESQL_INCLUDE_DIR}) 
-	add_library(AutopatcherPostgreRepository STATIC ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})
-	target_link_libraries (AutopatcherPostgreRepository ${RAKNET_COMMON_LIBS} LibAutopatcher LibPostgreSQLInterface ${POSTGRESQL_LIBRARIES})
-ENDIF(WIN32 AND NOT UNIX)
+file(GLOB ALL_CPP_SRCS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
+file(GLOB ALL_HEADER_SRCS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+
+add_library(AutopatcherPostgreRepository STATIC ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})
+target_include_directories(AutopatcherPostgreRepository
+    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
+)
+target_link_libraries(AutopatcherPostgreRepository
+    PUBLIC RakNetLibStatic LibAutopatcher LibPostgreSQLInterface
+)
+set_target_properties(AutopatcherPostgreRepository PROPERTIES FOLDER "DependentExtensions")
+if(MSVC)
+    target_compile_options(AutopatcherPostgreRepository PRIVATE /W0)
+else()
+    target_compile_options(AutopatcherPostgreRepository PRIVATE -w)
+endif()

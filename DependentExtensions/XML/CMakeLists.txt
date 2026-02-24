@@ -1,3 +1,1 @@
-FILE(GLOB ALL_HEADER_SRCS *.h)
-FILE(GLOB ALL_CPP_SRCS *.cpp)
-
+# XML library is built as RakNetXML in the parent DependentExtensions/CMakeLists.txt

@@ -1,17 +1,19 @@
-cmake_minimum_required(VERSION 3.5)
-project("Chat Example")
-include_directories(${RAKNETHEADERFILES} ./) 
-add_executable(ChatServer "Chat Example Server.cpp" readme.txt)
-add_executable(ChatClient "Chat Example Client.cpp" readme.txt)
+add_executable(ChatServer "Chat Example Server.cpp")
+target_link_libraries(ChatServer PRIVATE RakNetLibStatic)
+set_target_properties(ChatServer PROPERTIES FOLDER "Samples")
+if(MSVC)
+    target_compile_definitions(ChatServer PRIVATE _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE)
+    target_compile_options(ChatServer PRIVATE /W0)
+else()
+    target_compile_options(ChatServer PRIVATE -w)
+endif()
 
-target_link_libraries(ChatServer ${RAKNET_COMMON_LIBS})
-VSUBFOLDER(ChatServer "Samples")
-
-target_link_libraries(ChatClient ${RAKNET_COMMON_LIBS})
-VSUBFOLDER(ChatClient "Samples")
-
-
-
-
-
-
+add_executable(ChatClient "Chat Example Client.cpp")
+target_link_libraries(ChatClient PRIVATE RakNetLibStatic)
+set_target_properties(ChatClient PROPERTIES FOLDER "Samples")
+if(MSVC)
+    target_compile_definitions(ChatClient PRIVATE _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE)
+    target_compile_options(ChatClient PRIVATE /W0)
+else()
+    target_compile_options(ChatClient PRIVATE -w)
+endif()

@@ -1,33 +1,43 @@
-cmake_minimum_required(VERSION 3.5)
-GETCURRENTFOLDER()
-FINDPORTAUDIO()
-project(${current_folder})
+if(WIN32)
+    file(GLOB ALL_CPP_SRCS CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+        "${CMAKE_SOURCE_DIR}/DependentExtensions/RakVoice.cpp"
+    )
+    file(GLOB ALL_HEADER_SRCS CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+        "${CMAKE_SOURCE_DIR}/DependentExtensions/RakVoice.h"
+    )
 
-IF(WIN32 AND NOT UNIX)
-	FILE(GLOB ALL_CPP_SRCS *.cpp ${RakNet_SOURCE_DIR}/DependentExtensions/RakVoice.cpp)
-	FILE(GLOB ALL_HEADER_SRCS *.h ${RakNet_SOURCE_DIR}/DependentExtensions/RakVoice.h)
-	FILE(GLOB PORTAUDIOFILES ${portaudio_SOURCE_DIR}/pa_common/*.c ${portaudio_SOURCE_DIR}/pa_win_wmme/pa_win_wmme.c ${portaudio_SOURCE_DIR}/pa_common/*.h)
-	FILE(GLOB SPEEXFILES ${speex_SOURCE_DIR}/win32/*.h ${speex_SOURCE_DIR}/include/*.h ${speex_SOURCE_DIR}/libspeex/*.h ${speex_SOURCE_DIR}/include/speex/*.h ${speex_SOURCE_DIR}/libspeex/*.c)
-	LIST(REMOVE_ITEM SPEEXFILES 
-	  ${speex_SOURCE_DIR}/libspeex/pcm_wrapper.h)
-	LIST(REMOVE_ITEM SPEEXFILES 
-	  ${speex_SOURCE_DIR}/libspeex/pcm_wrapper.c)
-	SOURCE_GROUP(Speex FILES ${SPEEXFILES})
-	SOURCE_GROUP(PortAudio FILES ${PORTAUDIOFILES})
-	ADDCPPDEF(HAVE_CONFIG_H)
-	include_directories(${RAKNETHEADERFILES} ./ ${PORTAUDIO_INCLUDE_DIR} ${RakNet_SOURCE_DIR}/DependentExtensions ${speex_SOURCE_DIR}/include ${portaudio_SOURCE_DIR} ${speex_SOURCE_DIR}/win32) 
-	add_executable(${current_folder} ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS} ${PORTAUDIOFILES} ${SPEEXFILES} readme.txt)
-	target_link_libraries(${current_folder} ${RAKNET_COMMON_LIBS})
-	VSUBFOLDER(${current_folder} Samples/Voice)
-ELSE(WIN32 AND NOT UNIX)
-	FILE(GLOB ALL_CPP_SRCS *.cpp)
-	FILE(GLOB ALL_HEADER_SRCS *.h)
-	include_directories(${RAKNETHEADERFILES} ./ ${PORTAUDIO_INCLUDE_DIR} ${RakNet_SOURCE_DIR}/DependentExtensions) 
-	add_executable(${current_folder} ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})
-	target_link_libraries(${current_folder} ${RAKNET_COMMON_LIBS} ${PORTAUDIO_LIBRARIES} LibRakVoice)
-ENDIF(WIN32 AND NOT UNIX)
+    add_executable(RakVoice ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})
+    target_link_libraries(RakVoice PRIVATE RakNetLibStatic LibPortAudioV18_1 LibSpeex)
+    target_include_directories(RakVoice PRIVATE
+        "${CMAKE_SOURCE_DIR}/DependentExtensions"
+        "${CMAKE_SOURCE_DIR}/DependentExtensions/portaudio_v18_1/pa_common"
+        "${CMAKE_SOURCE_DIR}/DependentExtensions/speex-1.1.12/include"
+        "${CMAKE_SOURCE_DIR}/DependentExtensions/speex-1.1.12/win32"
+    )
+    target_compile_definitions(RakVoice PRIVATE HAVE_CONFIG_H _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE)
+    target_compile_options(RakVoice PRIVATE /W0)
+    set_target_properties(RakVoice PROPERTIES FOLDER "Samples/Voice")
+else()
+    find_package(PortAudio QUIET)
+    if(NOT PORTAUDIO_FOUND)
+        message(STATUS "PortAudio not found -- RakVoice sample will not be built")
+        return()
+    endif()
 
+    file(GLOB ALL_CPP_SRCS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
+    file(GLOB ALL_HEADER_SRCS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 
-
-
-
+    add_executable(RakVoice ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})
+    target_include_directories(RakVoice PRIVATE
+        "${CMAKE_SOURCE_DIR}/DependentExtensions"
+        ${PORTAUDIO_INCLUDE_DIR}
+    )
+    target_link_libraries(RakVoice PRIVATE RakNetLibStatic ${PORTAUDIO_LIBRARIES})
+    if(TARGET LibRakVoice)
+        target_link_libraries(RakVoice PRIVATE LibRakVoice)
+    endif()
+    target_compile_options(RakVoice PRIVATE -w)
+    set_target_properties(RakVoice PROPERTIES FOLDER "Samples/Voice")
+endif()

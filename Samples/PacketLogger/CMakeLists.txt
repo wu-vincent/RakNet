@@ -1,9 +1,1 @@
-cmake_minimum_required(VERSION 3.5)
-GETCURRENTFOLDER()
-STANDARDSUBPROJECT(${current_folder})
-
-
-
-
-
-
+raknet_add_sample(${CMAKE_CURRENT_SOURCE_DIR})

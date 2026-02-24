@@ -1,14 +1,1 @@
-cmake_minimum_required(VERSION 3.5)
-GETCURRENTFOLDER()
-
-project(${current_folder})
-include_directories(${RAKNETHEADERFILES} ./) 
-add_executable(${current_folder} DirectoryDeltaTransferTest.cpp readme.txt)
-target_link_libraries(${current_folder} ${RAKNET_COMMON_LIBS})
-set_target_properties(${current_folder} PROPERTIES PROJECT_GROUP Samples)
-
-
-
-
-
-
+raknet_add_sample(${CMAKE_CURRENT_SOURCE_DIR})

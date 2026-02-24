@@ -1,12 +1,5 @@
-cmake_minimum_required(VERSION 3.5)
-
-IF (WIN32 AND NOT UNIX)
-	GETCURRENTFOLDER()
-	STANDARDSUBPROJECTWITHOPTIONS(${current_folder} "" "" "Dbghelp.lib")
-ENDIF(WIN32 AND NOT UNIX)
-
-
-
-
-
-
+if(WIN32)
+    raknet_add_sample(${CMAKE_CURRENT_SOURCE_DIR}
+        EXTRA_LIBS Dbghelp
+    )
+endif()

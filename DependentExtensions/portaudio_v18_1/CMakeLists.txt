@@ -1,5 +1,1 @@
-cmake_minimum_required(VERSION 3.5)
-project(portaudio)
-
-
-
+# PortAudio is built as LibPortAudioV18_1 in the parent DependentExtensions/CMakeLists.txt

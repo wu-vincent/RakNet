@@ -1,32 +1,50 @@
-cmake_minimum_required(VERSION 3.5)
-GETCURRENTFOLDER()
-FINDPORTAUDIO()
-FINDFMODEX()
-project(${current_folder})
+find_package(FMODEx QUIET)
+if(NOT FMODEX_FOUND)
+    message(STATUS "FMODEx not found -- RakVoiceFMOD sample will not be built")
+    return()
+endif()
 
-IF(WIN32 AND NOT UNIX)
-	FILE(GLOB ALL_CPP_SRCS *.cpp ${RakNet_SOURCE_DIR}/DependentExtensions/RakVoice.cpp)
-	FILE(GLOB ALL_HEADER_SRCS *.h ${RakNet_SOURCE_DIR}/DependentExtensions/RakVoice.h)
-	FILE(GLOB SPEEXFILES ${speex_SOURCE_DIR}/win32/*.h ${speex_SOURCE_DIR}/include/*.h ${speex_SOURCE_DIR}/libspeex/*.h ${speex_SOURCE_DIR}/include/speex/*.h ${speex_SOURCE_DIR}/libspeex/*.c)
-	LIST(REMOVE_ITEM SPEEXFILES 
-	  ${speex_SOURCE_DIR}/libspeex/pcm_wrapper.h)
-	LIST(REMOVE_ITEM SPEEXFILES 
-	  ${speex_SOURCE_DIR}/libspeex/pcm_wrapper.c)
-	SOURCE_GROUP(Speex FILES ${SPEEXFILES})
-	ADDCPPDEF(HAVE_CONFIG_H)
-	include_directories(${FMODEX_INCLUDE_DIR} ${RAKNETHEADERFILES} ./ ${PORTAUDIO_INCLUDE_DIR} ${RakNet_SOURCE_DIR}/DependentExtensions ${speex_SOURCE_DIR}/include ${portaudio_SOURCE_DIR} ${speex_SOURCE_DIR}/win32) 
-	add_executable(${current_folder} ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS} ${SPEEXFILES} readme.txt)
-	target_link_libraries(${current_folder} ${RAKNET_COMMON_LIBS} ${FMODEX_LIBRARY})
-	VSUBFOLDER(${current_folder} Samples/Voice)
-ELSE(WIN32 AND NOT UNIX)
-	FILE(GLOB ALL_CPP_SRCS *.cpp)
-	FILE(GLOB ALL_HEADER_SRCS *.h)
-	include_directories(${RAKNETHEADERFILES} ./ ${PORTAUDIO_INCLUDE_DIR} ${RakNet_SOURCE_DIR}/DependentExtensions ${FMODEX_INCLUDE_DIR}) 
-	add_executable(${current_folder} ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})
-	target_link_libraries(${current_folder} ${RAKNET_COMMON_LIBS} ${PORTAUDIO_LIBRARIES} ${FMODEX_LIBRARY} LibRakVoice)
-ENDIF(WIN32 AND NOT UNIX)
+if(WIN32)
+    file(GLOB ALL_CPP_SRCS CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+        "${CMAKE_SOURCE_DIR}/DependentExtensions/RakVoice.cpp"
+    )
+    file(GLOB ALL_HEADER_SRCS CONFIGURE_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+        "${CMAKE_SOURCE_DIR}/DependentExtensions/RakVoice.h"
+    )
 
+    add_executable(RakVoiceFMOD ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})
+    target_link_libraries(RakVoiceFMOD PRIVATE RakNetLibStatic LibSpeex ${FMODEX_LIBRARY})
+    target_include_directories(RakVoiceFMOD PRIVATE
+        "${CMAKE_SOURCE_DIR}/DependentExtensions"
+        "${CMAKE_SOURCE_DIR}/DependentExtensions/speex-1.1.12/include"
+        "${CMAKE_SOURCE_DIR}/DependentExtensions/speex-1.1.12/win32"
+        ${FMODEX_INCLUDE_DIR}
+    )
+    target_compile_definitions(RakVoiceFMOD PRIVATE HAVE_CONFIG_H _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE)
+    target_compile_options(RakVoiceFMOD PRIVATE /W0)
+    set_target_properties(RakVoiceFMOD PROPERTIES FOLDER "Samples/Voice")
+else()
+    find_package(PortAudio QUIET)
+    if(NOT PORTAUDIO_FOUND)
+        message(STATUS "PortAudio not found -- RakVoiceFMOD sample will not be built")
+        return()
+    endif()
 
+    file(GLOB ALL_CPP_SRCS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
+    file(GLOB ALL_HEADER_SRCS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 
-
-
+    add_executable(RakVoiceFMOD ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})
+    target_include_directories(RakVoiceFMOD PRIVATE
+        "${CMAKE_SOURCE_DIR}/DependentExtensions"
+        ${PORTAUDIO_INCLUDE_DIR}
+        ${FMODEX_INCLUDE_DIR}
+    )
+    target_link_libraries(RakVoiceFMOD PRIVATE RakNetLibStatic ${PORTAUDIO_LIBRARIES} ${FMODEX_LIBRARY})
+    if(TARGET LibRakVoice)
+        target_link_libraries(RakVoiceFMOD PRIVATE LibRakVoice)
+    endif()
+    target_compile_options(RakVoiceFMOD PRIVATE -w)
+    set_target_properties(RakVoiceFMOD PROPERTIES FOLDER "Samples/Voice")
+endif()

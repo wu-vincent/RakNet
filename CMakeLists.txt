@@ -6,9 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Options
+option(BUILD_SHARED_LIBS "Build shared libraries instead of static" OFF)
 option(RAKNET_ENABLE_SAMPLES "Generate RakNet sample projects if true." ON)
-option(RAKNET_ENABLE_DLL "Generate the DLL project if true." ON)
-option(RAKNET_ENABLE_STATIC "Generate the static library project if true." ON)
 option(RAKNET_ENABLE_EXTENSIONS "Enable extension projects that might need specific dependencies." ON)
 option(RAKNET_GENERATE_INCLUDE_ONLY_DIR "Setup a include/RakNet/ directory in which all the headers are copied." OFF)
 

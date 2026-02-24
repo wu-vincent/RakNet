@@ -12,7 +12,7 @@ target_include_directories(LibPostgreSQLInterface
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
     PRIVATE ${POSTGRESQL_INCLUDE_DIR}
 )
-target_link_libraries(LibPostgreSQLInterface PUBLIC RakNetLibStatic PRIVATE ${POSTGRESQL_LIBRARIES})
+target_link_libraries(LibPostgreSQLInterface PUBLIC RakNet PRIVATE ${POSTGRESQL_LIBRARIES})
 set_target_properties(LibPostgreSQLInterface PROPERTIES FOLDER "DependentExtensions")
 if(MSVC)
     target_compile_options(LibPostgreSQLInterface PRIVATE /W0)

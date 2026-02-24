@@ -9,7 +9,7 @@ if(WIN32)
     )
 
     add_executable(RakVoice ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})
-    target_link_libraries(RakVoice PRIVATE RakNetLibStatic LibPortAudioV18_1 LibSpeex)
+    target_link_libraries(RakVoice PRIVATE RakNet LibPortAudioV18_1 LibSpeex)
     target_include_directories(RakVoice PRIVATE
         "${CMAKE_SOURCE_DIR}/DependentExtensions"
         "${CMAKE_SOURCE_DIR}/DependentExtensions/portaudio_v18_1/pa_common"
@@ -34,7 +34,7 @@ else()
         "${CMAKE_SOURCE_DIR}/DependentExtensions"
         ${PORTAUDIO_INCLUDE_DIR}
     )
-    target_link_libraries(RakVoice PRIVATE RakNetLibStatic ${PORTAUDIO_LIBRARIES})
+    target_link_libraries(RakVoice PRIVATE RakNet ${PORTAUDIO_LIBRARIES})
     if(TARGET LibRakVoice)
         target_link_libraries(RakVoice PRIVATE LibRakVoice)
     endif()

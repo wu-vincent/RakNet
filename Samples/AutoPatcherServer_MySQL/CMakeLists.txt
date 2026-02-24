@@ -28,7 +28,7 @@ target_include_directories(AutoPatcherServer_MySQL PRIVATE
     "${BZIP2_DIR}"
 )
 target_link_libraries(AutoPatcherServer_MySQL PRIVATE
-    RakNetLibStatic
+    RakNet
     AutoPatcherMySQLRepository
 )
 if(NOT WIN32)

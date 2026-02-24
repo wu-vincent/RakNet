@@ -28,7 +28,7 @@ target_include_directories(AutopatcherServer_PostgreSQL PRIVATE
     "${BZIP2_DIR}"
 )
 target_link_libraries(AutopatcherServer_PostgreSQL PRIVATE
-    RakNetLibStatic
+    RakNet
     AutopatcherPostgreRepository
 )
 if(NOT WIN32)

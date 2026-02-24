@@ -10,7 +10,7 @@ target_include_directories(Lobby2Client PRIVATE
     "${LOBBY2_DIR}"
     "${LOBBY2_DIR}/Rooms"
 )
-target_link_libraries(Lobby2Client PRIVATE RakNetLibStatic)
+target_link_libraries(Lobby2Client PRIVATE RakNet)
 set_target_properties(Lobby2Client PROPERTIES FOLDER "Samples/Lobby2")
 if(MSVC)
     target_compile_definitions(Lobby2Client PRIVATE _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE)

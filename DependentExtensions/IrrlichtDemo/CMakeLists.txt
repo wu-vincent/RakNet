@@ -23,7 +23,7 @@ file(GLOB ALL_HEADER_SRCS CONFIGURE_DEPENDS
 
 add_executable(IrrlichtDemo WIN32 ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})
 target_include_directories(IrrlichtDemo PRIVATE ${IRRLICHT_INCLUDE_DIR})
-target_link_libraries(IrrlichtDemo PRIVATE RakNetLibStatic)
+target_link_libraries(IrrlichtDemo PRIVATE RakNet)
 set_target_properties(IrrlichtDemo PROPERTIES FOLDER "Samples/3D Demos")
 
 if(MSVC)

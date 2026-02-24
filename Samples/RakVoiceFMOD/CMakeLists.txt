@@ -15,7 +15,7 @@ if(WIN32)
     )
 
     add_executable(RakVoiceFMOD ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})
-    target_link_libraries(RakVoiceFMOD PRIVATE RakNetLibStatic LibSpeex ${FMODEX_LIBRARY})
+    target_link_libraries(RakVoiceFMOD PRIVATE RakNet LibSpeex ${FMODEX_LIBRARY})
     target_include_directories(RakVoiceFMOD PRIVATE
         "${CMAKE_SOURCE_DIR}/DependentExtensions"
         "${CMAKE_SOURCE_DIR}/DependentExtensions/speex-1.1.12/include"
@@ -41,7 +41,7 @@ else()
         ${PORTAUDIO_INCLUDE_DIR}
         ${FMODEX_INCLUDE_DIR}
     )
-    target_link_libraries(RakVoiceFMOD PRIVATE RakNetLibStatic ${PORTAUDIO_LIBRARIES} ${FMODEX_LIBRARY})
+    target_link_libraries(RakVoiceFMOD PRIVATE RakNet ${PORTAUDIO_LIBRARIES} ${FMODEX_LIBRARY})
     if(TARGET LibRakVoice)
         target_link_libraries(RakVoiceFMOD PRIVATE LibRakVoice)
     endif()

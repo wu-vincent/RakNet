@@ -12,7 +12,7 @@ target_include_directories(LibMySQLInterface
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
     PRIVATE ${MYSQL_INCLUDE_DIR}
 )
-target_link_libraries(LibMySQLInterface PUBLIC RakNetLibStatic PRIVATE ${MYSQL_LIBRARIES})
+target_link_libraries(LibMySQLInterface PUBLIC RakNet PRIVATE ${MYSQL_LIBRARIES})
 set_target_properties(LibMySQLInterface PROPERTIES FOLDER "DependentExtensions")
 if(MSVC)
     target_compile_options(LibMySQLInterface PRIVATE /W0)

@@ -6,7 +6,7 @@ target_include_directories(AutopatcherPostgreRepository
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 target_link_libraries(AutopatcherPostgreRepository
-    PUBLIC RakNetLibStatic LibAutopatcher LibPostgreSQLInterface
+    PUBLIC RakNet LibAutopatcher LibPostgreSQLInterface
 )
 set_target_properties(AutopatcherPostgreRepository PROPERTIES FOLDER "DependentExtensions")
 if(MSVC)

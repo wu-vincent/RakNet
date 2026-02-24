@@ -19,6 +19,6 @@ file(GLOB ALL_HEADER_SRCS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 
 add_executable(Ogre3DInterpDemo ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})
 target_include_directories(Ogre3DInterpDemo PRIVATE ${OGRE_INCLUDE_DIR} ${OIS_INCLUDE_DIR})
-target_link_libraries(Ogre3DInterpDemo PRIVATE RakNetLibStatic ${OGRE_LIBRARIES} ${OIS_LIBRARIES})
+target_link_libraries(Ogre3DInterpDemo PRIVATE RakNet ${OGRE_LIBRARIES} ${OIS_LIBRARIES})
 set_target_properties(Ogre3DInterpDemo PROPERTIES FOLDER "Samples/3D Demos")
 target_compile_options(Ogre3DInterpDemo PRIVATE -w)

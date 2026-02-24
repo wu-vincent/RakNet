@@ -11,7 +11,7 @@ add_library(LibRPC3 STATIC ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})
 target_include_directories(LibRPC3
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}" ${Boost_INCLUDE_DIRS}
 )
-target_link_libraries(LibRPC3 PUBLIC RakNetLibStatic ${Boost_LIBRARIES})
+target_link_libraries(LibRPC3 PUBLIC RakNet ${Boost_LIBRARIES})
 set_target_properties(LibRPC3 PROPERTIES FOLDER "DependentExtensions")
 if(MSVC)
     target_compile_options(LibRPC3 PRIVATE /W0)

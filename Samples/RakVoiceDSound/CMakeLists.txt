@@ -20,7 +20,7 @@ file(GLOB ALL_HEADER_SRCS CONFIGURE_DEPENDS
 )
 
 add_executable(RakVoiceDSound ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})
-target_link_libraries(RakVoiceDSound PRIVATE RakNetLibStatic LibSpeex winmm
+target_link_libraries(RakVoiceDSound PRIVATE RakNet LibSpeex winmm
     "${DXSDK_DIR}lib/x86/Dsound.lib"
     "${DXSDK_DIR}lib/x86/Dxguid.lib"
     "${DXSDK_DIR}lib/x86/Dxerr.lib"

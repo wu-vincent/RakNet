@@ -6,7 +6,7 @@ target_include_directories(AutoPatcherMySQLRepository
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 target_link_libraries(AutoPatcherMySQLRepository
-    PUBLIC RakNetLibStatic LibAutopatcher LibMySQLInterface
+    PUBLIC RakNet LibAutopatcher LibMySQLInterface
 )
 set_target_properties(AutoPatcherMySQLRepository PROPERTIES FOLDER "DependentExtensions")
 if(MSVC)

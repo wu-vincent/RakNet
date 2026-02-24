@@ -21,15 +21,15 @@ This is a modernized fork of the original [RakNet 4.081](https://github.com/face
 - Voice chat (RakVoice)
 - Replica Manager for object replication and serialization
 - Secure connections with SLNet encryption
-- 80+ included sample programs
+- ~60 included sample programs and a comprehensive test suite
 
 ## Project structure
 
 ```
 include/RakNet/          Public headers
 src/                     Library source files
-samples/                 Sample programs (~80)
-tests/                   Test suite
+samples/                 Sample programs (~60)
+tests/                   Test suite (stress tests, benchmarks, verification programs)
 DependentExtensions/     Optional extensions (SQLite, Autopatcher, etc.)
 cmake/                   CMake packaging support
 ```
@@ -81,7 +81,11 @@ target_link_libraries(your_target PRIVATE RakNet::RakNet)
 
 ## Samples
 
-The `samples/` directory contains over 80 programs demonstrating individual RakNet features such as chat, file transfer, NAT traversal, lobby systems, and more. Enable them with `-DRAKNET_ENABLE_SAMPLES=ON` (on by default).
+The `samples/` directory contains ~60 programs demonstrating individual RakNet features such as chat, file transfer, NAT traversal, lobby systems, and more. Enable them with `-DRAKNET_ENABLE_SAMPLES=ON` (on by default).
+
+## Tests
+
+The `tests/` directory contains stress tests, benchmarks, and verification programs covering packet splitting, flow control, reliability, multi-threaded access, and more. Enable them with `-DRAKNET_ENABLE_TESTS=ON` (on by default).
 
 ## License
 

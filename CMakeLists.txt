@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(RakNet LANGUAGES C CXX)
+project(RakNet VERSION 4.081 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -9,7 +9,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 option(BUILD_SHARED_LIBS "Build shared libraries instead of static" OFF)
 option(RAKNET_ENABLE_SAMPLES "Generate RakNet sample projects if true." OFF)
 option(RAKNET_ENABLE_EXTENSIONS "Enable extension projects that might need specific dependencies." OFF)
-option(RAKNET_ENABLE_TESTS "Build RakNet test suite" ON)
+option(RAKNET_ENABLE_TESTS "Build RakNet test suite" OFF)
 
 # Build targets
 add_subdirectory(src)

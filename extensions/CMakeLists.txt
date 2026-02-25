@@ -8,10 +8,6 @@ option(RAKNET_EXTENSION_USEOGRE3D "Enable extensions using Ogre3D" ON)
 option(RAKNET_EXTENSION_Autopatcher "Enable Autopatcher extension" ON)
 
 find_package(BZip2 REQUIRED)
-# Alias so existing targets (LibAutopatcher) can keep linking LibBZip2
-if(NOT TARGET LibBZip2)
-    add_library(LibBZip2 ALIAS BZip2::BZip2)
-endif()
 
 # Bundled XML library
 file(GLOB XML_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/XML/*.cpp")
@@ -24,16 +20,6 @@ if(MSVC)
     target_compile_options(RakNetXML PRIVATE /W0)
 else()
     target_compile_options(RakNetXML PRIVATE -w)
-endif()
-
-find_package(portaudio REQUIRED)
-if(NOT TARGET LibPortAudioV18_1)
-    add_library(LibPortAudioV18_1 ALIAS portaudio::portaudio)
-endif()
-
-find_package(Speex REQUIRED)
-if(NOT TARGET LibSpeex)
-    add_library(LibSpeex ALIAS Speex::speex)
 endif()
 
 # MySQL Interface

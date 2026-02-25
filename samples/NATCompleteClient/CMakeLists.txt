@@ -1,6 +1,6 @@
 find_package(miniupnpc REQUIRED)
 
-set(XML_DIR "${CMAKE_SOURCE_DIR}/DependentExtensions/XML")
+set(XML_DIR "${CMAKE_SOURCE_DIR}/extensions/XML")
 
 file(GLOB XML_FILES CONFIGURE_DEPENDS "${XML_DIR}/*.cpp" "${XML_DIR}/*.h")
 

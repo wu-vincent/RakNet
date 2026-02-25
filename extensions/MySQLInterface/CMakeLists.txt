@@ -13,7 +13,7 @@ target_include_directories(LibMySQLInterface
     PRIVATE ${MYSQL_INCLUDE_DIR}
 )
 target_link_libraries(LibMySQLInterface PUBLIC RakNet PRIVATE ${MYSQL_LIBRARIES})
-set_target_properties(LibMySQLInterface PROPERTIES FOLDER "DependentExtensions")
+set_target_properties(LibMySQLInterface PROPERTIES FOLDER "extensions")
 if(MSVC)
     target_compile_options(LibMySQLInterface PRIVATE /W0)
 else()

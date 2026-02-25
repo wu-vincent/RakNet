@@ -14,7 +14,4 @@ add_executable(RakVoiceFMOD
     main.cpp
 )
 target_link_libraries(RakVoiceFMOD PRIVATE RakNet LibRakVoice Speex::speex ${FMODEX_LIBRARY})
-target_include_directories(RakVoiceFMOD PRIVATE
-    "${CMAKE_SOURCE_DIR}/DependentExtensions"
-    ${FMODEX_INCLUDE_DIR}
-)
+target_include_directories(RakVoiceFMOD PRIVATE ${FMODEX_INCLUDE_DIR})

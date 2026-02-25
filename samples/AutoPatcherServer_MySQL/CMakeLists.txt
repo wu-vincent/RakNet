@@ -3,7 +3,7 @@ if(NOT TARGET AutoPatcherMySQLRepository)
     return()
 endif()
 
-set(AUTOPATCHER_DIR "${CMAKE_SOURCE_DIR}/DependentExtensions/Autopatcher")
+set(AUTOPATCHER_DIR "${CMAKE_SOURCE_DIR}/extensions/Autopatcher")
 
 set(AUTOSRC
     "${AUTOPATCHER_DIR}/AutopatcherServer.cpp"

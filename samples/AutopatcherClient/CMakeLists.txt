@@ -1,4 +1,4 @@
-set(AUTOPATCHER_DIR "${CMAKE_SOURCE_DIR}/DependentExtensions/Autopatcher")
+set(AUTOPATCHER_DIR "${CMAKE_SOURCE_DIR}/extensions/Autopatcher")
 
 file(GLOB AUTOSRC CONFIGURE_DEPENDS "${AUTOPATCHER_DIR}/*.cpp" "${AUTOPATCHER_DIR}/*.h")
 list(FILTER AUTOSRC EXCLUDE REGEX "AutopatcherServer\\.(cpp|h)$")

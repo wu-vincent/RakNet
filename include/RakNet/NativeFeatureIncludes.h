@@ -17,7 +17,7 @@
 
 // Uncomment below defines, and paste to NativeFeatureIncludesOverrides.h, to exclude plugins that you do not want to build into the static library, or DLL
 // These are not all the plugins, only those that are in the core library
-// Other plugins are located in DependentExtensions
+// Other plugins are located in extensions
 // #define _RAKNET_SUPPORT_ConnectionGraph2 0
 // #define _RAKNET_SUPPORT_DirectoryDeltaTransfer 0
 // #define _RAKNET_SUPPORT_FileListTransfer 0

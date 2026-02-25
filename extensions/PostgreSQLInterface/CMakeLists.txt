@@ -13,7 +13,7 @@ target_include_directories(LibPostgreSQLInterface
     PRIVATE ${POSTGRESQL_INCLUDE_DIR}
 )
 target_link_libraries(LibPostgreSQLInterface PUBLIC RakNet PRIVATE ${POSTGRESQL_LIBRARIES})
-set_target_properties(LibPostgreSQLInterface PROPERTIES FOLDER "DependentExtensions")
+set_target_properties(LibPostgreSQLInterface PROPERTIES FOLDER "extensions")
 if(MSVC)
     target_compile_options(LibPostgreSQLInterface PRIVATE /W0)
 else()

@@ -27,7 +27,7 @@
 
 
 #if defined(WINDOWS_PHONE_8) || defined(WINDOWS_STORE_RT)
-#include "../DependentExtensions/WinPhone8/ThreadEmulation.h"
+#include "../extensions/WinPhone8/ThreadEmulation.h"
 using namespace ThreadEmulation;
 #endif
 

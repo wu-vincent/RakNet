@@ -132,7 +132,7 @@
     </Xml>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\DependentExtensions\WinPhone8\ThreadEmulation.h" />
+    <ClInclude Include="..\..\extensions\WinPhone8\ThreadEmulation.h" />
     <ClInclude Include="..\..\Source\AutopatcherPatchContext.h" />
     <ClInclude Include="..\..\Source\AutopatcherRepositoryInterface.h" />
     <ClInclude Include="..\..\Source\Base64Encoder.h" />
@@ -291,7 +291,7 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\DependentExtensions\WinPhone8\ThreadEmulation.cpp" />
+    <ClCompile Include="..\..\extensions\WinPhone8\ThreadEmulation.cpp" />
     <ClCompile Include="..\..\Source\Base64Encoder.cpp" />
     <ClCompile Include="..\..\Source\BitStream.cpp" />
     <ClCompile Include="..\..\Source\CCRakNetSlidingWindow.cpp" />

@@ -39,7 +39,7 @@ int main(int argc, char **argv)
 {
 	// Avoids the Error: Got a packet bigger than 'max_allowed_packet' bytes
 	printf("Important: Requires that you first set the DB schema and the max packet size on the server.\n");
-	printf("See DependentExtensions/AutopatcherMySQLRepository/readme.txt\n");
+	printf("See extensions/AutopatcherMySQLRepository/readme.txt\n");
 	// // MySQL is extremely slow in AutopatcherMySQLRepository::GetFilePart
 	printf("WARNING: MySQL is an order of magnitude slower than PostgreSQL.\nRecommended you use AutopatcherServer_PostgreSQL instead.");
 

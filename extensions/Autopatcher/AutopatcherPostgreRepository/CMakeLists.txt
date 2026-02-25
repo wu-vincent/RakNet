@@ -8,7 +8,7 @@ target_include_directories(AutopatcherPostgreRepository
 target_link_libraries(AutopatcherPostgreRepository
     PUBLIC RakNet LibAutopatcher LibPostgreSQLInterface
 )
-set_target_properties(AutopatcherPostgreRepository PROPERTIES FOLDER "DependentExtensions")
+set_target_properties(AutopatcherPostgreRepository PROPERTIES FOLDER "extensions")
 if(MSVC)
     target_compile_options(AutopatcherPostgreRepository PRIVATE /W0)
 else()

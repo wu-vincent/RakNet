@@ -30,7 +30,7 @@ include/RakNet/          Public headers
 src/                     Library source files
 samples/                 Sample programs (~60)
 tests/                   Test suite (stress tests, benchmarks, verification programs)
-DependentExtensions/     Optional extensions (SQLite, Autopatcher, etc.)
+extensions/              Optional extensions (SQLite, Autopatcher, etc.)
 cmake/                   CMake packaging support
 ```
 

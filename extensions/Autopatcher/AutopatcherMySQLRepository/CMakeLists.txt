@@ -8,7 +8,7 @@ target_include_directories(AutoPatcherMySQLRepository
 target_link_libraries(AutoPatcherMySQLRepository
     PUBLIC RakNet LibAutopatcher LibMySQLInterface
 )
-set_target_properties(AutoPatcherMySQLRepository PROPERTIES FOLDER "DependentExtensions")
+set_target_properties(AutoPatcherMySQLRepository PROPERTIES FOLDER "extensions")
 if(MSVC)
     target_compile_options(AutoPatcherMySQLRepository PRIVATE /W0)
 else()

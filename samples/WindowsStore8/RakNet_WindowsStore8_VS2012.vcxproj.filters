@@ -354,10 +354,10 @@
     <ClCompile Include="..\..\Source\WSAStartupSingleton.cpp">
       <Filter>RakNet_Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\DependentExtensions\WinRT\WinRTSocketAdapter.cpp">
+    <ClCompile Include="..\..\extensions\WinRT\WinRTSocketAdapter.cpp">
       <Filter>RakNet_Additional</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\DependentExtensions\WinPhone8\ThreadEmulation.cpp">
+    <ClCompile Include="..\..\extensions\WinPhone8\ThreadEmulation.cpp">
       <Filter>RakNet_Additional</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\RakNetSocket2_WindowsStore8.cpp">
@@ -821,13 +821,13 @@
     <ClInclude Include="..\..\Source\XBox360Includes.h">
       <Filter>RakNet_Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\DependentExtensions\WinRT\WinRTSockAddr.h">
+    <ClInclude Include="..\..\extensions\WinRT\WinRTSockAddr.h">
       <Filter>RakNet_Additional</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\DependentExtensions\WinRT\WinRTSocketAdapter.h">
+    <ClInclude Include="..\..\extensions\WinRT\WinRTSocketAdapter.h">
       <Filter>RakNet_Additional</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\DependentExtensions\WinPhone8\ThreadEmulation.h">
+    <ClInclude Include="..\..\extensions\WinPhone8\ThreadEmulation.h">
       <Filter>RakNet_Additional</Filter>
     </ClInclude>
   </ItemGroup>

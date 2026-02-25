@@ -18,7 +18,7 @@ target_include_directories(RakNet
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include/RakNet>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/RakNet>
     PRIVATE
-        "${CMAKE_SOURCE_DIR}/DependentExtensions"
+        "${CMAKE_SOURCE_DIR}/extensions"
 )
 
 if(BUILD_SHARED_LIBS)

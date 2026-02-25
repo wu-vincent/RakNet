@@ -271,7 +271,7 @@ namespace SwigTestApp
             TimeSpan startTimeSpan;
             // Avoids the Error: Got a packet bigger than 'max_allowed_packet' bytes
             Console.Write("Important: Requires that you first set the DB schema and the max packet size on the server.\n");
-            Console.Write("See DependentExtensions/AutopatcherMySQLRepository/readme.txt\n");
+            Console.Write("See extensions/AutopatcherMySQLRepository/readme.txt\n");
 
             Console.Write("Server starting... ");
             AutopatcherServer autopatcherServer = new AutopatcherServer();

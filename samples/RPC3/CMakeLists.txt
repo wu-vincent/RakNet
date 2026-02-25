@@ -4,7 +4,7 @@ if(NOT Boost_FOUND)
     return()
 endif()
 
-set(RPC3_DIR "${CMAKE_SOURCE_DIR}/DependentExtensions/RPC3")
+set(RPC3_DIR "${CMAKE_SOURCE_DIR}/extensions/RPC3")
 
 if(WIN32)
     add_executable(RPC3 RPC3Sample.cpp

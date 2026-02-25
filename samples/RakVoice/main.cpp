@@ -89,7 +89,7 @@ int main(void)
 
 	printf("A sample on how to use RakVoice. You need a microphone for this sample.\n");
 	printf("RakVoice relies on Speex for voice encoding and decoding.\n");
-	printf("See DependentExtensions/RakVoice/speex-1.1.12 for speex projects.\n");
+	printf("See extensions/RakVoice/speex-1.1.12 for speex projects.\n");
 	printf("For windows, I had to define HAVE_CONFIG_H, include win32/config.h,\n");
 	printf("and include the files under libspeex, except those that start with test.\n");
 	printf("PortAudio is also included and is used to read and write audio data.  You\n");

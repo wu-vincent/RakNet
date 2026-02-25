@@ -1,6 +1,6 @@
 ------------------ NONTECHNICAL NOTES ------------------
 
-This is a game demo based on modified Irrlicht demo code to add multiplayer capabilities with RakNet. WADS to move, click to shoot, escape to quit. Get the source from RakNet at DependentExtensions\IrrlichtDemo.
+This is a game demo based on modified Irrlicht demo code to add multiplayer capabilities with RakNet. WADS to move, click to shoot, escape to quit. Get the source from RakNet at extensions\IrrlichtDemo.
 
 For help and support with the demo, email rakkar@jenkinssoftware.com
 
@@ -20,7 +20,7 @@ Description: Demonstrates Irrlicht modified with RakNet for peer to peer multipl
 Dependencies: For windows Irrlicht version 1.7.2 is assumed to be installed at C:\irrlicht-1.7.2 . If you don't have it installed here, change the project paths. IrrKlang included by default with permission of the author. The website for Irrlicht is http://irrlicht.sourceforge.net/
 For linux version 1.7.2 or higher may be used, irrKlang headers and .so file is also required for the linux version.
 
-Related projects: NatPunchthroughServer, DependentExtensions\miniupnpc-1.5
+Related projects: NatPunchthroughServer, extensions\miniupnpc-1.5
 
 For help and support, please visit http://www.jenkinssoftware.com
 

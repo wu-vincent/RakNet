@@ -7,8 +7,8 @@ Description: Project demonstrating integration of UPNP, HTTPConnection2, NATPunc
 Dependencies: Listed plugins, MiniUPnP Project. NATCompleteServer can be used as-is for the server
 
 To build MiniUPNP
-1. Include DependentExtensions\miniupnpc-1.6.20120410 in the include paths
-2. Define STATICLIB in the preprocessor if necessary (See DependentExtensions\miniupnpc-1.5\declspec.h)
+1. Include extensions\miniupnpc-1.6.20120410 in the include paths
+2. Define STATICLIB in the preprocessor if necessary (See extensions\miniupnpc-1.5\declspec.h)
 3. Link ws2_32.lib IPHlpApi.Lib
 
 Related projects: Each of the plugins has its own sample project.

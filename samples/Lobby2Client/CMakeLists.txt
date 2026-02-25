@@ -1,4 +1,4 @@
-set(LOBBY2_DIR "${CMAKE_SOURCE_DIR}/DependentExtensions/Lobby2")
+set(LOBBY2_DIR "${CMAKE_SOURCE_DIR}/extensions/Lobby2")
 
 file(GLOB LOBBYFILES CONFIGURE_DEPENDS "${LOBBY2_DIR}/*.cpp" "${LOBBY2_DIR}/*.h")
 

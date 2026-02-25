@@ -44,7 +44,7 @@
     <ClCompile Include="CubeRenderer.cpp" />
     <ClCompile Include="Direct3DBase.cpp" />
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="..\..\DependentExtensions\WinPhone8\ThreadEmulation.cpp">
+    <ClCompile Include="..\..\extensions\WinPhone8\ThreadEmulation.cpp">
       <Filter>RakNetExtra</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\_FindFirst.cpp">
@@ -370,7 +370,7 @@
     <ClInclude Include="Direct3DBase.h" />
     <ClInclude Include="BasicTimer.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="..\..\DependentExtensions\WinPhone8\ThreadEmulation.h">
+    <ClInclude Include="..\..\extensions\WinPhone8\ThreadEmulation.h">
       <Filter>RakNetExtra</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\_FindFirst.h">

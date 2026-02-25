@@ -12,6 +12,6 @@ includepath .
 
 includepath ../../Source
 
-option module_path="../../DependentExtensions/Marmalade"
+option module_path="../../extensions/Marmalade"
 
 subproject RakNet

@@ -23,8 +23,5 @@ target_link_libraries(RakVoiceDSound PRIVATE RakNet LibRakVoice Speex::speex win
     "${DXSDK_DIR}lib/x86/Dxguid.lib"
     "${DXSDK_DIR}lib/x86/Dxerr.lib"
 )
-target_include_directories(RakVoiceDSound PRIVATE
-    "${CMAKE_SOURCE_DIR}/DependentExtensions"
-    "${DXSDK_DIR}include"
-)
+target_include_directories(RakVoiceDSound PRIVATE "${DXSDK_DIR}include")
 target_compile_definitions(RakVoiceDSound PRIVATE _UNICODE UNICODE)

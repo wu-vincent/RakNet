@@ -11,7 +11,7 @@ export async function GET(_req: Request, { params }: RouteContext<'/og/[...slug]
   if (!page) notFound();
 
   return new ImageResponse(
-    <DefaultImage title={page.data.title} description={page.data.description} site="RakNet Documentation" />,
+    <DefaultImage title={page.data.title} description={page.data.description} site="RakNet" />,
     {
       width: 1200,
       height: 630,

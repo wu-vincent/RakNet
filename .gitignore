@@ -29,3 +29,10 @@ Debug/
 Release/
 .DS_Store
 .Trashes
+
+# Conan
+CMakeUserPresets.json
+conan_provider.cmake
+conanbuildinfo.*
+conaninfo.txt
+graph_info.json

@@ -5,16 +5,12 @@ if(NOT FMODEX_FOUND)
 endif()
 
 if(WIN32)
-    file(GLOB ALL_CPP_SRCS CONFIGURE_DEPENDS
-        "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+    add_executable(RakVoiceFMOD
+        FMODVoiceAdapter.cpp FMODVoiceAdapter.h
+        main.cpp
         "${CMAKE_SOURCE_DIR}/DependentExtensions/RakVoice.cpp"
-    )
-    file(GLOB ALL_HEADER_SRCS CONFIGURE_DEPENDS
-        "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
         "${CMAKE_SOURCE_DIR}/DependentExtensions/RakVoice.h"
     )
-
-    add_executable(RakVoiceFMOD ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})
     target_link_libraries(RakVoiceFMOD PRIVATE RakNet LibSpeex ${FMODEX_LIBRARY})
     target_include_directories(RakVoiceFMOD PRIVATE
         "${CMAKE_SOURCE_DIR}/DependentExtensions"
@@ -30,10 +26,10 @@ else()
         return()
     endif()
 
-    file(GLOB ALL_CPP_SRCS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
-    file(GLOB ALL_HEADER_SRCS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-
-    add_executable(RakVoiceFMOD ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})
+    add_executable(RakVoiceFMOD
+        FMODVoiceAdapter.cpp FMODVoiceAdapter.h
+        main.cpp
+    )
     target_include_directories(RakVoiceFMOD PRIVATE
         "${CMAKE_SOURCE_DIR}/DependentExtensions"
         ${PORTAUDIO_INCLUDE_DIR}

@@ -1,3 +1,2 @@
-file(GLOB SOURCES CONFIGURE_DEPENDS *.cpp *.c *.h)
-add_executable(ReplicaManager3 ${SOURCES})
+add_executable(ReplicaManager3 main.cpp)
 target_link_libraries(ReplicaManager3 PRIVATE RakNet)

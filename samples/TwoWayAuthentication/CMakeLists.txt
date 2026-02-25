@@ -1,3 +1,2 @@
-file(GLOB SOURCES CONFIGURE_DEPENDS *.cpp *.c *.h)
-add_executable(TwoWayAuthentication ${SOURCES})
+add_executable(TwoWayAuthentication TwoWayAuthenticationTest.cpp)
 target_link_libraries(TwoWayAuthentication PRIVATE RakNet)

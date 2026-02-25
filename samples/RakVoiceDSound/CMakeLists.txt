@@ -2,7 +2,6 @@ if(NOT WIN32)
     return()
 endif()
 
-# DirectSound requires the DirectX SDK
 if(NOT DEFINED ENV{DXSDK_DIR} OR "$ENV{DXSDK_DIR}" STREQUAL "")
     message(STATUS "DXSDK_DIR not set -- RakVoiceDSound sample will not be built")
     return()
@@ -10,16 +9,12 @@ endif()
 
 set(DXSDK_DIR "$ENV{DXSDK_DIR}")
 
-file(GLOB ALL_CPP_SRCS CONFIGURE_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+add_executable(RakVoiceDSound
+    DSoundVoiceAdapter.cpp DSoundVoiceAdapter.h
+    main.cpp
     "${CMAKE_SOURCE_DIR}/DependentExtensions/RakVoice.cpp"
-)
-file(GLOB ALL_HEADER_SRCS CONFIGURE_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
     "${CMAKE_SOURCE_DIR}/DependentExtensions/RakVoice.h"
 )
-
-add_executable(RakVoiceDSound ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})
 target_link_libraries(RakVoiceDSound PRIVATE RakNet LibSpeex winmm
     "${DXSDK_DIR}lib/x86/Dsound.lib"
     "${DXSDK_DIR}lib/x86/Dxguid.lib"

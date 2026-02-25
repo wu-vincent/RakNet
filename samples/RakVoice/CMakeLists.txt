@@ -1,14 +1,9 @@
 if(WIN32)
-    file(GLOB ALL_CPP_SRCS CONFIGURE_DEPENDS
-        "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+    add_executable(RakVoice
+        main.cpp
         "${CMAKE_SOURCE_DIR}/DependentExtensions/RakVoice.cpp"
-    )
-    file(GLOB ALL_HEADER_SRCS CONFIGURE_DEPENDS
-        "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
         "${CMAKE_SOURCE_DIR}/DependentExtensions/RakVoice.h"
     )
-
-    add_executable(RakVoice ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})
     target_link_libraries(RakVoice PRIVATE RakNet LibPortAudioV18_1 LibSpeex)
     target_include_directories(RakVoice PRIVATE
         "${CMAKE_SOURCE_DIR}/DependentExtensions"
@@ -24,10 +19,7 @@ else()
         return()
     endif()
 
-    file(GLOB ALL_CPP_SRCS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
-    file(GLOB ALL_HEADER_SRCS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-
-    add_executable(RakVoice ${ALL_CPP_SRCS} ${ALL_HEADER_SRCS})
+    add_executable(RakVoice main.cpp)
     target_include_directories(RakVoice PRIVATE
         "${CMAKE_SOURCE_DIR}/DependentExtensions"
         ${PORTAUDIO_INCLUDE_DIR}

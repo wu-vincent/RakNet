@@ -1,3 +1,2 @@
-file(GLOB SOURCES CONFIGURE_DEPENDS *.cpp *.c *.h)
-add_executable(TeamManager ${SOURCES})
+add_executable(TeamManager TeamManagerTest.cpp)
 target_link_libraries(TeamManager PRIVATE RakNet)

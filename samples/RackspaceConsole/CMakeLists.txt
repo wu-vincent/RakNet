@@ -1,3 +1,2 @@
-file(GLOB SOURCES CONFIGURE_DEPENDS *.cpp *.c *.h)
-add_executable(RackspaceConsole ${SOURCES})
+add_executable(RackspaceConsole main.cpp)
 target_link_libraries(RackspaceConsole PRIVATE RakNet)

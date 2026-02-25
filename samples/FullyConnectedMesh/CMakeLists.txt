@@ -1,0 +1,2 @@
+add_executable(FullyConnectedMesh FCMTest.cpp)
+target_link_libraries(FullyConnectedMesh PRIVATE RakNet)

@@ -1,3 +1,2 @@
-file(GLOB SOURCES CONFIGURE_DEPENDS *.cpp *.c *.h)
-add_executable(CommandConsoleServer ${SOURCES})
+add_executable(CommandConsoleServer main.cpp)
 target_link_libraries(CommandConsoleServer PRIVATE RakNet)

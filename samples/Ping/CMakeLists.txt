@@ -1,3 +1,2 @@
-file(GLOB SOURCES CONFIGURE_DEPENDS *.cpp *.c *.h)
-add_executable(Ping ${SOURCES})
+add_executable(Ping Ping.cpp)
 target_link_libraries(Ping PRIVATE RakNet)

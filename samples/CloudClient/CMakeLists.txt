@@ -1,3 +1,2 @@
-file(GLOB SOURCES CONFIGURE_DEPENDS *.cpp *.c *.h)
-add_executable(CloudClient ${SOURCES})
+add_executable(CloudClient CloudClientSample.cpp)
 target_link_libraries(CloudClient PRIVATE RakNet)

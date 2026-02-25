@@ -1,3 +1,2 @@
-file(GLOB SOURCES CONFIGURE_DEPENDS *.cpp *.c *.h)
-add_executable(FCMHost ${SOURCES})
+add_executable(FCMHost FCM2HostTest.cpp)
 target_link_libraries(FCMHost PRIVATE RakNet)

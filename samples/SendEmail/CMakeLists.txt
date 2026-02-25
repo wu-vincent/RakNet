@@ -1,3 +1,2 @@
-file(GLOB SOURCES CONFIGURE_DEPENDS *.cpp *.c *.h)
-add_executable(SendEmail ${SOURCES})
+add_executable(SendEmail main.cpp)
 target_link_libraries(SendEmail PRIVATE RakNet)

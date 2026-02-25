@@ -1,3 +1,2 @@
-file(GLOB SOURCES CONFIGURE_DEPENDS *.cpp *.c *.h)
-add_executable(CloudServer ${SOURCES})
+add_executable(CloudServer CloudServerHelper.cpp CloudServerHelper.h CloudServerSample.cpp)
 target_link_libraries(CloudServer PRIVATE RakNet)

@@ -1,3 +1,2 @@
-file(GLOB SOURCES CONFIGURE_DEPENDS *.cpp *.c *.h)
-add_executable(LANServerDiscovery ${SOURCES})
+add_executable(LANServerDiscovery LANServerDiscovery.cpp)
 target_link_libraries(LANServerDiscovery PRIVATE RakNet)

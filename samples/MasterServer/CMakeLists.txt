@@ -1,3 +1,8 @@
-file(GLOB SOURCES CONFIGURE_DEPENDS *.cpp *.c *.h)
-add_executable(MasterServer ${SOURCES})
+add_executable(MasterServer
+    MasterClient.cpp MasterClient.h
+    MasterClientMain.cpp
+    MasterCommon.h mastercommon.cpp
+    MasterServer.cpp MasterServer.h
+    MasterServerMain.cpp
+)
 target_link_libraries(MasterServer PRIVATE RakNet)

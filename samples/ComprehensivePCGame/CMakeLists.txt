@@ -1,3 +1,2 @@
-file(GLOB SOURCES CONFIGURE_DEPENDS *.cpp *.c *.h)
-add_executable(ComprehensivePCGame ${SOURCES})
+add_executable(ComprehensivePCGame ComprehensivePCGame.cpp)
 target_link_libraries(ComprehensivePCGame PRIVATE RakNet)

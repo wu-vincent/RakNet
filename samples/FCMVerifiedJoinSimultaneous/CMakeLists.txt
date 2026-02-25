@@ -1,3 +1,2 @@
-file(GLOB SOURCES CONFIGURE_DEPENDS *.cpp *.c *.h)
-add_executable(FCMVerifiedJoinSimultaneous ${SOURCES})
+add_executable(FCMVerifiedJoinSimultaneous FCM2VerifiedJoinSimultaneousTest.cpp)
 target_link_libraries(FCMVerifiedJoinSimultaneous PRIVATE RakNet)

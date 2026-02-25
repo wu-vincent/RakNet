@@ -11,6 +11,7 @@
 #include <gtest/gtest.h>
 
 #include "RakPeerInterface.h"
+#include "BitStream.h"
 #include "GetTime.h"
 #include "MessageIdentifiers.h"
 #include "RakSleep.h"
@@ -110,4 +111,92 @@ TEST_F(CrossConnectionTest, SimultaneousConnect) {
         << totalAccepted << " accepted + " << totalIncoming << " incoming";
     EXPECT_GE(totalAccepted, 1)
         << "At least one peer should get CONNECTION_REQUEST_ACCEPTED";
+}
+
+TEST_F(CrossConnectionTest, PingTimedConnectDisconnectCycle) {
+    SocketDescriptor sd1(0, nullptr), sd2(0, nullptr);
+    ASSERT_EQ(peer1->Startup(1, &sd1, 1), RAKNET_STARTED);
+    ASSERT_EQ(peer2->Startup(1, &sd2, 1), RAKNET_STARTED);
+
+    unsigned short port1 = peer1->GetMyBoundAddress().GetPort();
+    unsigned short port2 = peer2->GetMyBoundAddress().GetPort();
+
+    // Run 3 connect/disconnect cycles (old test ran for 10s, cycling repeatedly)
+    for (int cycle = 0; cycle < 3; cycle++) {
+        SCOPED_TRACE("cycle=" + std::to_string(cycle));
+
+        // Phase 1: peer2 pings peer1 to discover RTT
+        peer2->Ping("127.0.0.1", port1, false);
+
+        TimeMS connectionAttemptTime = 0;
+        bool gotPong = false;
+
+        TimeMS pingDeadline = GetTimeMS() + 2000;
+        while (GetTimeMS() < pingDeadline) {
+            for (Packet *p = peer1->Receive(); p;
+                 peer1->DeallocatePacket(p), p = peer1->Receive()) {
+            }
+            for (Packet *p = peer2->Receive(); p;
+                 peer2->DeallocatePacket(p), p = peer2->Receive()) {
+                if (p->data[0] == ID_UNCONNECTED_PONG) {
+                    TimeMS sendPingTime;
+                    BitStream bs(p->data, p->length, false);
+                    bs.IgnoreBytes(1);
+                    bs.Read(sendPingTime);
+                    TimeMS rtt = GetTimeMS() - sendPingTime;
+                    if (rtt / 2 <= 500)
+                        connectionAttemptTime = GetTimeMS() + 1000 - rtt / 2;
+                    else
+                        connectionAttemptTime = GetTimeMS();
+                    gotPong = true;
+                }
+            }
+            if (gotPong) break;
+            RakSleep(10);
+        }
+        ASSERT_TRUE(gotPong) << "Did not receive pong in cycle " << cycle;
+
+        // Phase 2: wait for timed connect moment, then both sides connect
+        while (GetTimeMS() < connectionAttemptTime) {
+            RakSleep(1);
+        }
+        peer1->Connect("127.0.0.1", port2, nullptr, 0);
+        peer2->Connect("127.0.0.1", port1, nullptr, 0);
+
+        // Phase 3: wait for connection notification
+        bool gotNotification = false;
+        TimeMS connDeadline = GetTimeMS() + 2000;
+        while (GetTimeMS() < connDeadline) {
+            for (Packet *p = peer1->Receive(); p;
+                 peer1->DeallocatePacket(p), p = peer1->Receive()) {
+                if (p->data[0] == ID_NEW_INCOMING_CONNECTION ||
+                    p->data[0] == ID_CONNECTION_REQUEST_ACCEPTED)
+                    gotNotification = true;
+            }
+            for (Packet *p = peer2->Receive(); p;
+                 peer2->DeallocatePacket(p), p = peer2->Receive()) {
+                if (p->data[0] == ID_NEW_INCOMING_CONNECTION ||
+                    p->data[0] == ID_CONNECTION_REQUEST_ACCEPTED)
+                    gotNotification = true;
+            }
+            if (gotNotification) break;
+            RakSleep(10);
+        }
+        EXPECT_TRUE(gotNotification)
+            << "No connection notification in cycle " << cycle;
+
+        // Phase 4: disconnect and cancel pending attempts
+        SystemAddress sa1, sa2;
+        sa1.SetBinaryAddress("127.0.0.1");
+        sa1.SetPortHostOrder(port1);
+        sa2.SetBinaryAddress("127.0.0.1");
+        sa2.SetPortHostOrder(port2);
+
+        peer2->CancelConnectionAttempt(sa1);
+        peer1->CancelConnectionAttempt(sa2);
+        peer1->CloseConnection(peer1->GetSystemAddressFromIndex(0), true, 0);
+        peer2->CloseConnection(peer2->GetSystemAddressFromIndex(0), true, 0);
+
+        RakSleep(1000);
+    }
 }

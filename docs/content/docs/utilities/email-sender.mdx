@@ -1,14 +1,12 @@
 ---
-title: "EmailSender manual"
+title: "Email Sender"
+description: Simple C++ class to send emails through a mail server, including Gmail POP support.
 ---
 
-## Email Sender Overview
+The EmailSender class, found at `EmailSender.h`, is a simple class with only one function, `Send(...)`, to send an email using a provided mail server. It is used internally by the [CrashReporter](/utilities/crash-reporter) class to send emails for unmonitored servers. See `EmailSender.h` for a full description of each parameter.
 
-### Simple class to send emails via C++
+See the project `Samples/SendEmail` for a sample of this.
 
-
-The EmailSender class, found at EmailSender.h, is a simple class with only one function, Send(...), to send an email using a provided mail server. It is used internally by the [CrashReporter](/utilities/crash-reporter) class to send emails for unmonitored servers. See EmailSender.h for a full description of each parameter.
-
-See the project Samples/SendEmail for a sample of this
-
-The class has also been tested to work with Gmail POP servers, so if you have a Gmail account you can send emails without using your own mail server. The sample has the settings you need by default. You will also need to uncomment OPEN_SSL_CLIENT_SUPPORT in RakNetDefines.h, as Gmail requires the TCP connection to be made with SSL.
+<Callout type="info">
+The class has also been tested to work with Gmail POP servers, so if you have a Gmail account you can send emails without using your own mail server. The sample has the settings you need by default. You will also need to uncomment `OPEN_SSL_CLIENT_SUPPORT` in `RakNetDefines.h`, as Gmail requires the TCP connection to be made with SSL.
+</Callout>

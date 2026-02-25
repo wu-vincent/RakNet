@@ -1,8 +1,7 @@
 ---
 title: "Startup"
+description: "How to initialize RakNet by calling RakPeer::Startup() with socket descriptors, connection slots, and thread priority settings."
 ---
-
-## Starting RakNet
 
 `StartupResult RakPeer::Startup( unsigned short maxConnections, SocketDescriptor *socketDescriptors, unsigned socketDescriptorCount, int threadPriority );`
 
@@ -26,7 +25,11 @@ In 95% of the cases, you can pass something like:
 SocketDescriptor(MY_LOCAL_PORT, 0);
 ```
 
-For MY_LOCAL_PORT, if running a server or peer, you must set this to whatever port you want the server or peer to run on. This is the remotePort parameter you will pass to Connect(). If running a client, you can set it if you want to, or use 0 to automatically pick a free port. Note that on Linux you need admin rights to use a value lower than or equal to 1000. Some ports are also reserved, although there is nothing stopping you from using them. See [http://www.iana.org/assignments/port-numbers](http://www.iana.org/assignments/port-numbers)
+For MY_LOCAL_PORT, if running a server or peer, you must set this to whatever port you want the server or peer to run on. This is the remotePort parameter you will pass to Connect(). If running a client, you can set it if you want to, or use 0 to automatically pick a free port.
+
+<Callout type="info">
+On Linux you need admin rights to use a port value lower than or equal to 1000. Some ports are also reserved, although there is nothing stopping you from using them. See the [IANA port assignments](http://www.iana.org/assignments/port-numbers) for details.
+</Callout>
 
 If desired, you can also create an array of socket descriptors:
 
@@ -53,7 +56,9 @@ IPV6 is the newer internet protocol. Instead of addresses such as 127.0.0.1, you
 IPV6 is disabled by default. To enable IPV6 support, set the socket family to AF_INET6. For example:
 `socketDescriptor.socketFamily=AF_INET6;`
 
-IPV6 sockets can only connect to other IPV6 sockets. Similarly, IPV4 (The default) can only connect to other IPV4 sockets.
+<Callout type="warn">
+IPV6 sockets can only connect to other IPV6 sockets. Similarly, IPV4 (the default) can only connect to other IPV4 sockets.
+</Callout>
 
 ### threadPriority
 

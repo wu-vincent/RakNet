@@ -1,15 +1,17 @@
 ---
 title: "Debugging Disconnections"
+description: "Step-by-step guide for tracing and debugging disconnections or missing packets in RakNet's datagram processing pipeline."
 ---
-
-## Debugging disconnections or missing packets
 
 ### How to trace and debug received datagrams in RakNet
 
+If your systems seem to get disconnected, or get no data, and all the usual debugging attempts have failed, here is an overview of how RakNet handles incoming messages.
 
-If your systems seem to get disconnected, or get no data, and all the usual debugging attempts have failed, here is an overview of how the RakNet handles incoming messages.
+<Steps>
 
-**1. SocketLayer::RecvFromBlocking() in SocketLayer.cpp**
+<Step>
+
+### SocketLayer::RecvFromBlocking() in SocketLayer.cpp
 
 RecvFromBlocking() is called from a thread RecvFromLoop that is created in RakPeer.cpp. Every datagram that arrives goes through this function - therefore, if you get no data, this is the first place to put a breakpoint.
 
@@ -26,9 +28,15 @@ systemAddressOut->binaryAddress=sa.sin_addr.s_addr;
 
 The datagram ends up in the rakPeer->bufferedPackets queue. The function SetEvent() is called on the rakPeer->quitAndDataEvents SignaledEvent class, which tells the UpdateNetworkLoop() thread to stop waiting and process the message.
 
-_If you do not even hit this breakpoint, then there is a bug in your network._
+<Callout type="info">
+If you do not even hit this breakpoint, then there is a bug in your network.
+</Callout>
 
-**2. RakPeer::RunUpdateCycle() in RakPeer.cpp**
+</Step>
+
+<Step>
+
+### RakPeer::RunUpdateCycle() in RakPeer.cpp
 
 RunUpdateCycle() is an update function that the UpdateNetworkLoop calls, many times per second. It's triggered by either time or by the rakPeer->quitAndDataEvents SignaledEvent class. For debugging message flows, you want a breakpoint towards the top of the function here:
 
@@ -39,9 +47,15 @@ ProcessNetworkPacket(recvFromStruct->systemAddress, recvFromStruct->data, recvFr
 
 When a datagram is put in the rakPeer->bufferedPackets queue from step 1, it is processed here.
 
-_If you do not hit this breakpoint, then either the thread is not running (unlikely) or there is a bug with the SignaledEvent class, or else the thread has locked up somewhere._
+<Callout type="info">
+If you do not hit this breakpoint, then either the thread is not running (unlikely) or there is a bug with the SignaledEvent class, or else the thread has locked up somewhere.
+</Callout>
 
-**3. ProcessNetworkPacket(...) in RakPeer.cpp**
+</Step>
+
+<Step>
+
+### ProcessNetworkPacket(...) in RakPeer.cpp
 
 ProcessNetworkPacket is called for each incoming datagram. At the very top of the function a call is made to ProcessOfflineNetworkPacket(). ProcessOfflineNetworkPacket() checks if the sender is banned and if the message is prefixed with an array of bytes corresponding to OFFLINE_MESSAGE_DATA_ID. If the user is banned, the function returns and no further processing occurs. If the message is prefixed with OFFLINE_MESSAGE_DATA_ID, then this is generally a handshaking message, and the caller ProcessNetworkPacket() does not process further. For systems that are already connected, ProcessOfflineNetworkPacket() should return false. For debugging loss of messages for systems I already know are connected, I would step over the call to ProcessOfflineNetworkPacket, and only trace into it if it returns true.
 
@@ -55,9 +69,15 @@ remoteSystem->reliabilityLayer.HandleSocketReceiveFromConnectedPlayer(
     rakNetSocket->s, &rnr, rakNetSocket->remotePortRakNetWasStartedOn_PS3, timeRead);
 ```
 
-_If HandleSocketReceiveFromConnectedPlayer() does not get called, then either the sender is not connected, the sender is banned, the sender was recently disconnected, there is a bug with GetRemoteSystemFromSystemAddress(), or the connected datagram encoding happened to match OFFLINE_MESSAGE_DATA_ID which shouldn't happen except due to bugs._
+<Callout type="info">
+If HandleSocketReceiveFromConnectedPlayer() does not get called, then either the sender is not connected, the sender is banned, the sender was recently disconnected, there is a bug with GetRemoteSystemFromSystemAddress(), or the connected datagram encoding happened to match OFFLINE_MESSAGE_DATA_ID which shouldn't happen except due to bugs.
+</Callout>
 
-**4. ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(...)**
+</Step>
+
+<Step>
+
+### ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(...)
 
 This function handles processing a datagram from a connected player. Each datagram roughly follows the DatagramHeaderFormat structure at the top of the file. A datagram is either an acknowledgement of datagrams this system had previously sent, a negative acknowledgement of datagrams that didn't arrive, or one or more messages that the user had generated from the RakPeer::Send() call.
 
@@ -114,7 +134,7 @@ RakAssert("Hole count too high. See ReliabilityLayer.h" && 0);
 
 To avoid memory attacks, the queue size is limited to that number. In practice a message should never be out of order by that much, even on a LAN.
 
-If the message was split by the sender, ReliabiltyLayer::InsertIntoSplitPacketList(...) is called. When all parts of a message has arrived, then ReliabiltyLayer::BuildPacketFromSplitPacketList() will return the reassembled message.
+If the message was split by the sender, ReliabilityLayer::InsertIntoSplitPacketList(...) is called. When all parts of a message has arrived, then ReliabilityLayer::BuildPacketFromSplitPacketList() will return the reassembled message.
 
 From HandleSocketReceiveFromConnectedPlayer zero or more messages may be returned to the user. They are pushed to the outputQueue queue, for example:
 
@@ -122,13 +142,23 @@ From HandleSocketReceiveFromConnectedPlayer zero or more messages may be returne
 outputQueue.Push( internalPacket, _FILE_AND_LINE_ );
 ```
 
-_The most likely failure point here should you not get data is a bug with the packet format in CreateInternalPacketFromBitStream()._
+<Callout type="info">
+The most likely failure point here should you not get data is a bug with the packet format in CreateInternalPacketFromBitStream().
+</Callout>
 
-**5. ReliabilityLayer::Receive(unsigned char \*\*data)**
+</Step>
+
+<Step>
+
+### ReliabilityLayer::Receive(unsigned char \*\*data)
 
 This function returns messages pushed to the outputQueue queue. It is called from RakPeer::RunUpdateCycle() and should be called on a regular interval, once for each connected system.
 
-**6. RakPeer::RunUpdateCycle(RakNet::TimeUS timeNS, RakNet::Time timeMS)**
+</Step>
+
+<Step>
+
+### RakPeer::RunUpdateCycle(RakNet::TimeUS timeNS, RakNet::Time timeMS)
 
 ```cpp
 // Does the reliability layer have any packets waiting for us?
@@ -157,6 +187,14 @@ AddPacketToProducer(packet);
 
 This adds the message to the packetReturnQueue queue found in RakPeer.
 
-**7. Packet\* RakPeer::Receive(void)**
+</Step>
+
+<Step>
+
+### Packet\* RakPeer::Receive(void)
 
 Receive() is called by the user. The Update() function is called for all plugins. Then the packetReturnQueue is checked to see if a message should be returned to the user.
+
+</Step>
+
+</Steps>

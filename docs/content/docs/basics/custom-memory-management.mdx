@@ -1,8 +1,8 @@
 ---
 title: "Custom Memory Management"
+description: "How to override RakNet's default malloc, realloc, and free functions with your own custom memory allocators."
 ---
 
-## Custom Memory Management
 ### Override new, delete, malloc, free, and realloc
 
 Users wishing to provide custom memory management functions can do so via RakMemoryOverride.cpp.
@@ -16,6 +16,10 @@ void (*rakFree) (void *p) = RakFree;
 ```
 
 To override, simply set the values of these variables to something else.
+
+<Callout type="info">
+Make sure to set the custom allocator function pointers **before** any RakNet calls are made, typically at the very beginning of `main()`.
+</Callout>
 
 For example, to override malloc, you may write:
 

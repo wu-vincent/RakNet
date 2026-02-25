@@ -1,11 +1,11 @@
 ---
 title: "IPV6 Support"
+description: "How to enable IPV6 in RakNet, differences from IPV4, and how to support dual-stack sockets."
 ---
 
-## IPV6 support
 ### IPV6 addresses and the difference between IPV4
 
-IPV6 is the next-generation of IP address. IPV6 was developed because of all available IPV4 addresses have been allocated. Over time the industry will transition to use IPV6 so it is necessary to support this for future-generation appplications.
+IPV6 is the next-generation of IP address. IPV6 was developed because all available IPV4 addresses have been allocated. Over time the industry will transition to use IPV6 so it is necessary to support this for future-generation applications.
 
 IPV4 represents IP addresses with 4 bytes, in the notation 127.0.0.1. IPV6 uses 16 bytes, with a notation such as fe80::7c:31f7:fec4:27de. When RAKNET_SUPPORT_IPV6 is set to 1 in RakNetDefines.h, which it is by default, support for IPV6 will be built into RakNet.
 
@@ -13,7 +13,9 @@ The loopback address with IPV4 is 127.0.0.1. The loopback address with IPV6 is :
 
 NAT Punchthrough is not necessary when using IPV6 exclusively. Provided that you know the IP address of the system, you can connect to that system directly even if that system is behind a router.
 
+<Callout type="warn">
 IPV4 sockets / IP addresses cannot connect to IPV6 sockets / IP addresses and vice-versa.
+</Callout>
 
 It is valid to start two sockets on the same port if one socket is used for IPV4 and the other IPV6, as you can see in the code fragment below.
 
@@ -44,4 +46,6 @@ exit(1);
 
 As you can see, the process to enable IPV6 is to set the socketFamily member in the SocketDescriptor structure to AF_INET6. The default is AF_INET, which is to say IPV4.
 
+<Callout>
 RakNet's console platforms do not support IPV6 at the time of this writing.
+</Callout>

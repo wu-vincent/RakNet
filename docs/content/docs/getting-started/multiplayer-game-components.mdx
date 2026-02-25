@@ -1,15 +1,16 @@
 ---
 title: "Components of a multiplayer game"
+description: "Major systems and architectural decisions involved in building a multiplayer game."
 ---
 
-## Components of a multiplayer game
+<Callout type="info">
+This page covers the major systems involved in building any multiplayer game, not just those using RakNet. RakNet-specific solutions are listed at the end of each section.
+</Callout>
 
-### Major systems that go into the making of a multiplayer game
-
-
-In the early days of gaming all you had was an IP address and a download. These days you have integration into 3rd party systems such as Steam, patching, voice chat, multiple game modes, cross-platform play, and more. I list some major systems by category below, along with the options available for solving these problems and pros and cons of each system. This page applies to any multiplayer game, not just those using RakNet, although RakNet specific solutions are listed at the end of each section.
+In the early days of gaming all you had was an IP address and a download. These days you have integration into 3rd party systems such as Steam, patching, voice chat, multiple game modes, cross-platform play, and more. I list some major systems by category below, along with the options available for solving these problems and pros and cons of each system.
 
 ## Discovering other systems
+
 ### Direct IP entry
 
 The oldest and simplest method, this involves typing in the IP address of the user you want to connect to. The remote user can go to a page such as [http://www.whatismyip.com/](http://www.whatismyip.com/) to get their IP. They can then communicate this IP to you through other communication channels such as email or instant messenger. If the remote user is behind a router, they will have to open the appropriate ports on the firewall to accept incoming connections. If they are behind a firewall, they will have to configure the firewall as well.
@@ -28,17 +29,15 @@ Consoles such as the XBOX 360 and the PS3, and services such as Steam on the PC 
 
 ### Master server
 
-Similar to the rooms server, a server maintains a list of running games. Typically, when an end-user starts a game, they upload statistics about the game to a master server, which allows queries on uploaded games. We offer this service for free with our [hosted master server](http://masterserver2.raknet.com/).
+Similar to the rooms server, a server maintains a list of running games. Typically, when an end-user starts a game, they upload statistics about the game to a master server, which allows queries on uploaded games. RakNet previously offered a hosted master server (masterserver2.raknet.com), but this service is now defunct. You would need to self-host a master server instead.
 
 ## Network topology
 
 ### Client/Server where you host the servers
 
-
 Usually used for massively multiplayer games, you will host one or more servers that contain the game world(s) provided to the players. This is also the most expensive solution since you have to have dedicated servers with guaranteed uptime and pay for bandwidth yourself.
 
 ### Client/Server where users host the servers
-
 
 This is used for games where if the server drops, so does the entire game session. It is nonetheless common because it has the following advantages:
 
@@ -50,7 +49,6 @@ This is used for games where if the server drops, so does the entire game sessio
 It is also possible to program client/server using an end-user as a host, but then you get all of the disadvantages of client/server without none of the advantages except ease of programming.
 
 ### Peer to peer
-
 
 This is used for more informal game sessions without dedicated servers. It is the most common topology for console games since consoles do not allow dedicated servers. The only advantage is a dedicated host is not necessary. The disadvantages are:
 
@@ -64,7 +62,6 @@ RakNet provides plugins to make peer to peer programming easier: [NATPunchthroug
 ## Game and game design changes for networking
 
 ### Level loading
-
 
 Rather than loading all objects in the level as done in single player, objects now need to be categorized according to how they influence networking
 
@@ -82,8 +79,9 @@ Midgame joins are the same, except that you skip the intermission screen. Howeve
 
 ### Game Objects
 
-
-Objects that are networkable need to implement an interface to support [ReplicaManager3](/plugins/replica-manager3):
+<Callout type="info">
+Objects that are networkable need to implement an interface to support [ReplicaManager3](/plugins/replica-manager3). The key requirements are listed below.
+</Callout>
 
 1.  Objects must be able to return an identifier for what type of class the object is, for example ENUM_BULLET or "CBullet" for a bullet.
 2.  Object must be instantiable given that identifier and initialization data. Sometimes this is done through a class factory.
@@ -95,7 +93,7 @@ Game objects owned by the host or other users may need to support a partial-inte
 1.  Partial-interactive ghost objects may still cause sounds, such as footsteps on glass
 2.  Partial-interactive ghost objects may still cause visual effect triggers
 
-Whether an object is in an fully interactive state depends on whether a unique host is needed to resolve conflicts. Objects in the game world need to be categorized correspondingly based on bandwidth and gameplay considerations:
+Whether an object is in a fully interactive state depends on whether a unique host is needed to resolve conflicts. Objects in the game world need to be categorized correspondingly based on bandwidth and gameplay considerations:
 
 1.  Object is only fully interactive on the host, for example triggers that affect gameplay in some way.
 2.  Object is fully interactive on all systems, for example a trigger that plays a particle effect
@@ -103,41 +101,33 @@ Whether an object is in an fully interactive state depends on whether a unique h
 
 ### Host Migration
 
-
 Host migration is needed for peer to peer games, where one system is host. While some platforms offer a system for host migration, we have a cross-platform solution [FullyConnectedMesh2](/plugins/fully-connected-mesh2)
 
 ### Users
-
 
 In-game, a user class needs to be implemented, containing information such as score, name, user id, achievements, etc. Some games may support multiple users on the same system, for example split-screen play
 
 ### Remote Systems
 
-
 A Remote system class may need to be implemented, containing information such as level load state or a trust metric for cheat detection. If the game only supports one user per system, this is sometimes rolled into the User class.
 
 ### Teams
-
 
 If the game supports teams, this needs to be serialized including players, team score, etc. Team management is supported with the [TeamManager](/plugins/team-manager) plugin. It supports any network topology, offline teams, and advanced features such as switching requested teams.
 
 ### World / Game State
 
-
 Not all game information is necessarily held by game objects, for example the match countdown. It can be represented using Replica3 as usual, or can be updated directly through network messages.
 
 ### Level End
 
-
-When the host determines level end, the game needs to support the ability to pause gameplay, despawn all players, and show some kind of end-game score screen. During this phase score updates should be paused and other game events should halt. If sesssion statistics are transmitted to a server, it can be done at this time.
+When the host determines level end, the game needs to support the ability to pause gameplay, despawn all players, and show some kind of end-game score screen. During this phase score updates should be paused and other game events should halt. If session statistics are transmitted to a server, it can be done at this time.
 
 ### Spectating / Replay
-
 
 Some games allow you to watch gameplay from the point of view of fixed cameras, other players, or a replay cam after death.
 
 ### Post-Game statistics and UI
-
 
 After a game session, sometimes a series of UI screens are shown after the level has unloaded. After that, the game state may either go back to the game browser screen, or stay in a room with the users you just played with.
 
@@ -145,48 +135,39 @@ After a game session, sometimes a series of UI screens are shown after the level
 
 ### Per-file difference based patching
 
-
 The most advanced but time consuming way to patch users is to find the difference between a file the user has and the current version of that file. Under those circumstances the smallest delta can be sent and applied to the file. If the patch fails (for example, an unknown version of the file) the entire file will need to be transmitted. A database of patches will need to be maintained for this solution, as generating the patch at runtime is too time consuming.
 
 RakNet provides the [AutopatcherServer and AutopatcherClient plugins](/plugins/autopatcher) as a diff based patching system.
 
 ### Per-file patching
 
-
 A simpler way to patch is to find a list of changed or missing files for a client and to send only those files. One advantage of this system is that it can be used by end-user hosted game servers. For example, if a game server has a map or skins that a connecting client does not, those files can be downloaded before the game starts.
 
 RakNet provides the [FileListTransfer](/plugins/file-list-transfer) plugin to transfer lists of files, and the [DirectoryDeltaTransfer](/plugins/directory-delta-transfer) plugin to transfer lists of changed or missing files.
-
 
 ## Debugging
 
 ### Logging
 
-
 Multiplayer games are hard to debug because a bug can be spread between two systems. For example, system A performs an action but system B does not see it, or sees it differently. The bug may be caused by latency, showing up only at certain loads. Performance or other issues may come up as the application scales with more users. While logging can help with all these problems, they are hard to correlate because the system times are different.
 
-RakNet provides two logging solutions. The first is called [SQLite3LoggerPlugin](/plugins/sqlite3-logger-plugin), and is based on SQLite3 on a hosted server. All logs go to the same server, and are automatically correlated. The logs can be viewed in viewer that supports SQLite although RakNet also provides a free and open source custom viewer called [EchoChamber](http://www.raknet.net/echochamber). Individual game and connectivity messages can be logged per system using the [PacketLogger](/plugins/packet-logger) plugin.
+RakNet provides two logging solutions. The first is called [SQLite3LoggerPlugin](/plugins/sqlite3-logger-plugin), and is based on SQLite3 on a hosted server. All logs go to the same server, and are automatically correlated. The logs can be viewed in a viewer that supports SQLite although RakNet also provides a free and open source custom viewer called EchoChamber. Individual game and connectivity messages can be logged per system using the [PacketLogger](/plugins/packet-logger) plugin.
 
 ### Minidump
 
-
-Because crashes can be hard to reproduce, Windows applications can produce [minidump](http://msdn.microsoft.com/en-us/library/ms680369%28v=vs.85%29.aspx) files. If you know what version of the code produced the crash, you can debug the crash as if you had a debugger connected at the time.
+Because crashes can be hard to reproduce, Windows applications can produce minidump files. If you know what version of the code produced the crash, you can debug the crash as if you had a debugger connected at the time.
 
 RakNet provides the [CrashReporter](/utilities/crash-reporter) system to make this easier. It provides additional functionality such as sending emails to the developer in the case of unattended servers.
-
 
 ## Persistent data
 
 ### Persistent user data
 
-
-Games that persist data beyond a single session require a system to create user accounts. User accounts can store data such as game statistics, name, and logo. Users can also have friends, form clans, and perform other social tasks. In order to write such a system, a database backend is needed with a persistent sever to store this data. The users should not be able to send arbitrary queries to the database, so the server will need code to form queries based on user inputs.
+Games that persist data beyond a single session require a system to create user accounts. User accounts can store data such as game statistics, name, and logo. Users can also have friends, form clans, and perform other social tasks. In order to write such a system, a database backend is needed with a persistent server to store this data. The users should not be able to send arbitrary queries to the database, so the server will need code to form queries based on user inputs.
 
 RakNet provides a system called [LobbyServer and LobbyClient](/plugins/lobby) to provide this kind of functionality for the PC. Steam, the PS3, and the XBOX already store this on their own backend. For those cases, RakNet uses the same [LobbyClient](/plugins/lobby) interface so as to provide a unified interface to all systems.
 
-
 ## Security
-
 
 Popular competitive games will draw cheaters. Cheaters can attack the application by
 

@@ -1,14 +1,15 @@
 ---
-title: "How to setup cloud hosting with RakNet"
+title: "Cloud Hosting"
+description: "How to set up, configure, and scale RakNet servers using Rackspace cloud hosting."
 ---
-
-## How to setup cloud hosting with RakNet
 
 ### Cloud hosting through Rackspace
 
-Services such as the [autopatcher](/plugins/autopatcher) require a server running RakNet. Technically, [NATPunchthroughServer](/plugins/nat-punchthrough) does as well, although we do provide a free server. While it is possible to run your server using a traditional host, such as [Hypernia](http://www.hypernia.com/) these services will cost you about $150 USD a month. Scaling up the services also requires time-consuming installation of the codebase and it is not possible to do so programmatically.
+<Callout type="info">
+Services such as the [autopatcher](/plugins/autopatcher) require a server running RakNet. Technically, [NATPunchthroughServer](/plugins/nat-punchthrough) does as well, although a free server was previously provided. While it is possible to run your server using a traditional host, such as Hypernia, these services will cost you about $150 USD a month. Scaling up the services also requires time-consuming installation of the codebase and it is not possible to do so programmatically.
+</Callout>
 
-RakNet was tested with two cloud hosting providers: [Amazon AWS](http://aws.amazon.com/) and [Rackspace Cloud](http://www.rackspace.com/cloud/). I could not get Amazon AWS to work with incoming UDP connections. Furthermore, peformance on loopback using the BigPacketTest project was very bad. Rackspace did not have these problems and the cost for their lowest-end Linux servers is low. I also provide a [C++ interface to Rackspace](/basics/rackspace-interface) allowing you to programatically control your servers, so it's a good starting point.
+RakNet was tested with two cloud hosting providers: Amazon AWS and Rackspace Cloud. I could not get Amazon AWS to work with incoming UDP connections. Furthermore, performance on loopback using the BigPacketTest project was very bad. Rackspace did not have these problems and the cost for their lowest-end Linux servers is low. I also provide a [C++ interface to Rackspace](/basics/rackspace-interface) allowing you to programmatically control your servers, so it's a good starting point.
 
 **Signing up**
 
@@ -30,11 +31,33 @@ For Windows 7, enter the username, password, and login IP using Remote Desktop, 
 
 **Setting up the server**
 
-Once logged in, server setup is the same as any computer.
+<Steps>
 
-1.  The default installation contains Internet Explorer, which you can use to download [Firefox](http://www.mozilla.com/en-US/firefox/) or [Chrome](http://www.google.com/chrome).
-2.  Use that webbrowser to download RakNet.
-3.  On Windows, you can download Visual C++ 2010 Express for free. Installation will require a reboot.
+<Step>
+
+### Install a web browser
+
+The default installation contains Internet Explorer, which you can use to download Firefox or Chrome.
+
+</Step>
+
+<Step>
+
+### Download RakNet
+
+Use that web browser to download RakNet.
+
+</Step>
+
+<Step>
+
+### Install a compiler
+
+On Windows, you can download Visual C++ 2010 Express for free. Installation will require a reboot.
+
+</Step>
+
+</Steps>
 
 ![](/images/cloudhosting5.jpg)
 
@@ -42,10 +65,14 @@ Once your server is setup, open the RakNet solution and compile normally. You no
 
 **Backing up and scaling the server**
 
-Once you have the server setup the way you want it, you can create an image of the server, which is essentially a harddrive backup. This is important for scalability, because you can create a new instance of the server with the same configuration as your image.
+Once you have the server setup the way you want it, you can create an image of the server, which is essentially a hard drive backup. This is important for scalability, because you can create a new instance of the server with the same configuration as your image.
 
 ![](/images/cloudhosting6.jpg)
 
-When you are not running your server, be sure to delete the instance and leave the much cheaper image. Unlike Amazon AWS which only charges for usage, Rackspace charges as long as your server exists at all. To start your server again, or to start multiple instances of the same server, use the Cloud Servers menu under My Server Images.
+<Callout type="warn">
+When you are not running your server, be sure to delete the instance and leave the much cheaper image. Unlike Amazon AWS which only charges for usage, Rackspace charges as long as your server exists at all.
+</Callout>
+
+To start your server again, or to start multiple instances of the same server, use the Cloud Servers menu under My Server Images.
 
 ![](/images/cloudhosting7.jpg)

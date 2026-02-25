@@ -1,8 +1,7 @@
 ---
 title: "Cloud Computing"
+description: "Share client memory and events through a distributed server cloud for use cases like server browsers, in-game statistics, and cloud computing."
 ---
-
-## Cloud Computing Overview
 
 ### Client memory / events accessible through a server cloud
 
@@ -14,7 +13,9 @@ Sometimes you want a large number of clients that are not connected and do not n
 
 The "Cloud" in CloudServer means that the system supports distributed servers. Any client can `Post()` to or `Get()` from any server. `Post()` operations can be subscribed to or `Get()` by other clients, regardless of what server that client is subscribed to. Servers can be added or removed at runtime, and the system will continue to work as expected. This allows the system to be scaled according to your player load, using your own servers or virtual servers such as [Rackspace](/basics/rackspace-interface).
 
+<Callout type="info">
 The design of the system assumes that all servers are connected in a fully connected mesh. You should authenticate other servers before adding them with `CloudServer::AddServer()`. The [TwoWayAuthentication](/plugins/two-way-authentication) and [ConnectionGraph2](/plugins/connection-graph) plugins can help with this. Or just run/modify the CloudServer sample, which does this already.
+</Callout>
 
 The servers should be accessible by the internet through a static IP address, either without a router, or with the ports opened.
 
@@ -85,7 +86,6 @@ See `CloudServer.h` and `CloudClient.h` for a complete list of all documented fu
 
 ## See Also
 
-- [Index](/)
 - [Cloud Hosting](/basics/cloud-hosting)
 - [ConnectionGraph2](/plugins/connection-graph)
 - [TwoWayAuthentication](/plugins/two-way-authentication)

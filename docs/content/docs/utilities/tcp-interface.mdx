@@ -1,19 +1,17 @@
 ---
-title: "TCPInterface manual"
+title: "TCPInterface"
+description: Utility class for TCP connections to Telnet, HTTP servers, mail servers, and more.
 ---
 
-## TCP Interface Overview
+TCPInterface, found at `TCPInterface.h`, is a utility class designed to connect using the TCP protocol in cases where this is necessary. The connection process is similar to `RakPeerInterface.h`, with the exception that `Receive()` returns the actual data received -- the first byte does not contain any specific identifiers.
 
-### Connect to Telnet, HTTP servers, mail servers, or other
+To get connection status updates, use `HasNewConnection()` and `HasLostConnection()`.
 
+<Callout type="info">
+There is no sample that uses the TCPInterface class specifically, but `TelnetTransport.cpp` is a good place to look for a reference.
+</Callout>
 
-TCPInterface, found at TCPInterface.h, is a utility class designed to connect using the TCP protocol in cases where this is necessary. The connection process is similar to RakPeerInterface.h, with the exception that Receive() returns the actual data received, the first byte does not contain any specific identifiers.
-
-To get connection status updates, use HasNewConnection() and HasLostConnection()
-
-There is no sample that uses the TCPInterface class specifically, but TelnetTransport.cpp is a good place to look for a reference.
-
-**Functions:**
+## Functions
 
 ```cpp
 // Starts the TCP server on the indicated port

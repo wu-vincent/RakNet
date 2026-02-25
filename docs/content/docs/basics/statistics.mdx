@@ -1,8 +1,7 @@
 ---
 title: "Statistics"
+description: "How to retrieve and interpret RakNet's network traffic statistics using RakNetStatistics and the StatisticsHistory plugin."
 ---
-
-## Statistics
 
 ### How to read and interpret RakNet's statistical data
 
@@ -10,7 +9,9 @@ Statistical data is important for an online game because it lets you see where y
 
 RakPeerInterface provides the structure RakNetStatistics which is returned by the GetStatistics() function present in RakPeerInterface. This structure is defined in _Source/RakNetStatistics.h_. The function StatisticsToString is also provided which will convert these statistics to a formatted buffer.
 
-A running total is kept for the following enumerations
+<Callout type="info">
+A running total is kept for the following enumerations. Use `StatisticsToString()` for a human-readable formatted output of all statistics.
+</Callout>
 
 ```cpp
 /// How many bytes per pushed via a call to RakPeerInterface::Send()
@@ -44,7 +45,7 @@ ACTUAL_BYTES_SENT,
 ```
 
 ```cpp
-/// How many actual bytes were received, including overead and acks.
+/// How many actual bytes were received, including overhead and acks.
 ACTUAL_BYTES_RECEIVED,
 ```
 

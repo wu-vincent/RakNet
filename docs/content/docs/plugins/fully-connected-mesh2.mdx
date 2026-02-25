@@ -1,8 +1,7 @@
 ---
 title: "Fully Connected Mesh 2"
+description: "Consistently join a fully connected mesh topology with automatic host determination and migration using FullyConnectedMesh2."
 ---
-
-## Fully Connected 2 Mesh Plugin
 
 ### Consistently join a fully connected mesh. Automatically determine who is host.
 
@@ -10,30 +9,119 @@ FullyConnectedMesh2 solves two problems with peer to peer games. First, how to c
 
 **Properly joining a fully connected mesh:**
 
-1.  All systems: Call SetConnectOnNewRemoteConnection(false, "");
-2.  All systems: Call SetAutoparticipateConnections(false);
-3.  Host: When a new system connects and is allowed to join, call StartVerifiedJoin() to send ID_FCM2_VERIFIED_JOIN_START to that system.
-4.  Client: On ID_FCM2_VERIFIED_JOIN_START, call fullyConnectedMesh2->GetVerifiedJoinRequiredProcessingList() to get a list of systems to connect to.
-5.  Client: Attempt to connect to each of the system returned from GetVerifiedJoinRequiredProcessingList(). Use NATPunchthroughClient and/or UPNP as necessary. Once all connections have failed or succeeded, the host is informed automatically.
-6.  Client: On ID_FCM2_VERIFIED_JOIN_FAILED, either you lost connection to the host, or the host required you to connect to a participant you were not able to. Inform the player via the UI.
-7.  Host: On ID_FCM2_VERIFIED_JOIN_CAPABLE, call RespondOnVerifiedJoinCapable() to accept or reject the join based on game logic.
-8.  Client: On ID_FCM2_VERIFIED_JOIN_REJECTED, the host rejected the join for gameplay reasons. Disconnect from the host if the connection is no longer needed. Use GetVerifiedJoinRejectedAdditionalData() to determine why the join was rejected, and inform the player via the UI.
-9.  Client: On ID_FCM2_VERIFIED_JOIN_ACCEPTED, the host accepted the join. AddParticipant() has automatically been called on all systems, and you have joined the mesh. Call GetVerifiedJoinAcceptedAdditionalData() if desired.
+<Steps>
+<Step>
 
-StartVerifiedJoin() is of significant benefit when using NatPunchthroughClient because if a connection fails, previously successful connections are closed automatically. Also, because NatPunchthroughClient takes a significant amount of time, a valid game session may no longer valid by the time it completes. However, even when not using NatPunchthroughClient this system is useful because you may still not fully connect due to firewalls or because sessions are full. Ignoring this means you may only connect partially to the mesh, resulting in some players not able to see other players.
+### Disable auto-connect and auto-participate
+
+All systems: Call SetConnectOnNewRemoteConnection(false, ""); and SetAutoparticipateConnections(false);
+
+</Step>
+
+<Step>
+
+### Start verified join (host)
+
+Host: When a new system connects and is allowed to join, call StartVerifiedJoin() to send ID_FCM2_VERIFIED_JOIN_START to that system.
+
+</Step>
+
+<Step>
+
+### Get required connections (client)
+
+Client: On ID_FCM2_VERIFIED_JOIN_START, call fullyConnectedMesh2->GetVerifiedJoinRequiredProcessingList() to get a list of systems to connect to.
+
+</Step>
+
+<Step>
+
+### Connect to all required systems (client)
+
+Client: Attempt to connect to each of the systems returned from GetVerifiedJoinRequiredProcessingList(). Use NATPunchthroughClient and/or UPNP as necessary. Once all connections have failed or succeeded, the host is informed automatically.
+
+</Step>
+
+<Step>
+
+### Handle join failure (client)
+
+Client: On ID_FCM2_VERIFIED_JOIN_FAILED, either you lost connection to the host, or the host required you to connect to a participant you were not able to. Inform the player via the UI.
+
+</Step>
+
+<Step>
+
+### Respond to join capability (host)
+
+Host: On ID_FCM2_VERIFIED_JOIN_CAPABLE, call RespondOnVerifiedJoinCapable() to accept or reject the join based on game logic.
+
+</Step>
+
+<Step>
+
+### Handle rejection (client)
+
+Client: On ID_FCM2_VERIFIED_JOIN_REJECTED, the host rejected the join for gameplay reasons. Disconnect from the host if the connection is no longer needed. Use GetVerifiedJoinRejectedAdditionalData() to determine why the join was rejected, and inform the player via the UI.
+
+</Step>
+
+<Step>
+
+### Join accepted (client)
+
+Client: On ID_FCM2_VERIFIED_JOIN_ACCEPTED, the host accepted the join. AddParticipant() has automatically been called on all systems, and you have joined the mesh. Call GetVerifiedJoinAcceptedAdditionalData() if desired.
+
+</Step>
+</Steps>
+
+<Callout type="info">
+StartVerifiedJoin() is of significant benefit when using NatPunchthroughClient because if a connection fails, previously successful connections are closed automatically. Also, because NatPunchthroughClient takes a significant amount of time, a valid game session may no longer be valid by the time it completes. Even when not using NatPunchthroughClient this system is useful because you may still not fully connect due to firewalls or because sessions are full.
+</Callout>
 
 **Determining who is host of the fully connected mesh**
 
-1.  If NOT using StartVerifiedJoin(), call AddParticipant() on every system, for every new connection. Note: this is done automatically by default, and is controlled by SetAutoparticipateConnections(true).
-2.  Use GetHostSystem() and IsHostSystem() to query who is the host
-3.  Do not start gameplay until the host has been calculated. This is known once you get ID_FCM2_NEW_HOST at least once.
-4.  Do host migration if necessary when you get ID_FCM2_NEW_HOST during gameplay
+<Steps>
+<Step>
+
+### Add participants
+
+If NOT using StartVerifiedJoin(), call AddParticipant() on every system, for every new connection. Note: this is done automatically by default, and is controlled by SetAutoparticipateConnections(true).
+
+</Step>
+
+<Step>
+
+### Query the host
+
+Use GetHostSystem() and IsHostSystem() to query who is the host.
+
+</Step>
+
+<Step>
+
+### Wait for host calculation
+
+Do not start gameplay until the host has been calculated. This is known once you get ID_FCM2_NEW_HOST at least once.
+
+</Step>
+
+<Step>
+
+### Handle host migration
+
+Do host migration if necessary when you get ID_FCM2_NEW_HOST during gameplay.
+
+</Step>
+</Steps>
 
 Host calculation starts automatically once one or more remote connections have been added with AddParticipant(). Until host calculation has completed, GetHostSystem() will return your own guid and GetConnectedHost() will return UNASSIGNED_RAKNET_GUID. You will get ID_FCM2_NEW_HOST as soon as the host is known. The host will generally be whichever system has been running the longest of all systems added with AddParticipant().
 
 GetParticipantList() and GetHostOrder() can be used to find out which systems were added with AddParticipant().
 
+<Callout type="info">
 If the game does not immediately start networked, you should call ResetHostCalculation() to reinitialize the host timer when network play is now relevant. Otherwise, a user could play a game in single player, connect to a network session, and then be considered the host because his system was running the longest, although he was the last to join the network session. A good time to call ResetHostCalculation() is just before attempting to join a network room or lobby.
+</Callout>
 
 **Reading ID_FCM2_NEW_HOST:**
 
@@ -60,4 +148,4 @@ case ID_FCM2_NEW_HOST:
     break;
 ```
 
-See _Samples/FCMHost_ for a demonstration of this plugin
+See _Samples/FCMHost_ for a demonstration of this plugin.

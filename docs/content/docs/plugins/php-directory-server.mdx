@@ -1,35 +1,65 @@
 ---
 title: "PHP Directory Server"
+description: "List game servers using a shared PHP webhost as a lightweight alternative to running a dedicated master server."
 ---
 
-> **Deprecated:** This system has been supplanted by PHPDirectoryServer2. See the updated implementation in the samples.
-
-## PHP Directory Server Overview
+<Callout type="warn">
+**Deprecated:** This system has been supplanted by PHPDirectoryServer2. See the updated implementation in the samples.
+</Callout>
 
 ### Use a shared webhost to list games
 
 The [Lightweight Database](/plugins/lightweight-database) plugin is powerful, but requires an instance of RakNet running on a dedicated server. In some cases this is more than is needed and the burden of running a dedicated server is undesirable. For these instances, RakNet provides `DirectoryServer.php`, found under `Samples\PHPDirectoryServer`.
 
-To setup the web server, simply upload `Samples\PHPDirectoryServer\DirectoryServer.php` to your PHP capable webhost (which is any standard shared webhost). Go to your newly uploaded webpage, click the reveal button, and enter a password and other settings if desired.
+<Steps>
+<Step>
 
-The C++ code is more involved. First, you need an instance of `TCPInterface` that is started. This is used for general TCP communication:
+### Upload the PHP script
+
+Upload `Samples\PHPDirectoryServer\DirectoryServer.php` to your PHP capable webhost (which is any standard shared webhost). Go to your newly uploaded webpage, click the reveal button, and enter a password and other settings if desired.
+
+</Step>
+
+<Step>
+
+### Set up TCPInterface
+
+Create an instance of `TCPInterface` that is started. This is used for general TCP communication:
 
 ```cpp
 TCPInterface tcp;
 tcp.Start(0, 64);
 ```
 
-Second, you need an instance of `HTTPConnection`. This is used to communicate with webpages through `TCPInterface`:
+</Step>
+
+<Step>
+
+### Set up HTTPConnection
+
+Create an instance of `HTTPConnection`. This is used to communicate with webpages through `TCPInterface`:
 
 ```cpp
-HTTPConnection httpConnection(tcp, "jenkinssoftware.com");
+HTTPConnection httpConnection(tcp, "yourdomain.com");
 ```
 
-Third, you need an instance of `PHPDirectoryServer`. This does parsing and communications that are specific to `DirectoryServer.php`:
+</Step>
+
+<Step>
+
+### Set up PHPDirectoryServer
+
+Create an instance of `PHPDirectoryServer`. This does parsing and communications that are specific to `DirectoryServer.php`:
 
 ```cpp
 PHPDirectoryServer phpDirectoryServer(httpConnection, "/raknet/DirectoryServer.php");
 ```
+
+</Step>
+
+<Step>
+
+### Set fields and upload/download
 
 You can then set columns, upload your table, or download the existing tables:
 
@@ -44,6 +74,9 @@ phpDirectoryServer.UploadTable(50, "Game name", 1234, "");
 // Download uploaded servers
 phpDirectoryServer.DownloadTable("");
 ```
+
+</Step>
+</Steps>
 
 To update the system, you should pass packets from `TCPInterface` to both interfaces and also call `Update()`. This is complicated by the fact that TCP packets may not contain an entire webpage response, the webpage may contain error codes, and not all messages from the webpage are necessarily relevant to our directory server. The sample demonstrates how to do this. The following is an abbreviated excerpt:
 
@@ -101,9 +134,10 @@ Certain columns are reserved and returned to you in a query. These column names 
 
 `__SYSTEM_ADDRESS` will also be returned indicating the external IP that was used to upload to the webpage.
 
-Note that due to technical limitations only one upload can be processed at a time. This is not a problem if your server is only hosting one game. Calling `PHPDirectoryServer::UploadTable()` while an upload is pending will overwrite the prior upload. You can perform another upload when `HTTPConnectionIsBusy()` returns false.
+<Callout type="info">
+Due to technical limitations only one upload can be processed at a time. This is not a problem if your server is only hosting one game. Calling `PHPDirectoryServer::UploadTable()` while an upload is pending will overwrite the prior upload. You can perform another upload when `HTTPConnectionIsBusy()` returns false.
+</Callout>
 
 ## See Also
 
-- [Index](/)
 - [TCP Interface](/utilities/tcp-interface)

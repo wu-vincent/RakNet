@@ -1,33 +1,36 @@
 ---
 title: "NAT Traversal Architecture"
+description: "Architecture guide for combining UPNP, NAT type detection, NAT punchthrough, and FullyConnectedMesh2 for peer-to-peer connectivity."
 ---
 
-## NAT Traversal Architecture
-
-### How to use combine MasterServer2, UPNP, NAT type detection, FullyConnectedMesh2, and NAT punchthrough for P2P games
+### How to combine MasterServer2, UPNP, NAT type detection, FullyConnectedMesh2, and NAT punchthrough for P2P games
 
 Systems involved for peer to peer game listing and connectivity on the PC, Mac, Linux, or mobiles.
 
-[MasterServer2](http://masterserver2.raknet.com/): A free server we host that can hold lists of games, and data describing those games
-[UPNP](http://miniupnp.free.fr/): Tells the router to create a port mapping, in order to allow incoming connections. This a programmatic way of the user manually editing the router configuration
-[NAT type detection](/plugins/nat-type-detection): (Optional) Find out if we have a router, and how restrictive that router is
-[FullyConnectedMesh2](/plugins/fully-connected-mesh2): Manages the complexity of joining a group of systems at the same time
-[NAT punchthrough](/plugins/nat-punchthrough): Attempt to connect systems for cases where UPNP fails
-[Router2](/plugins/router2) (Optional) - Use other player's bandwidth for routers that cannot connect
-[UDPProxyClient](/plugins/nat-punchthrough) (Optional) - Route failed connections through your own servers
+<Callout type="info">
+The MasterServer2 service previously hosted at `masterserver2.raknet.com` is now defunct. The architecture steps below that reference it may need to be adapted to use your own server infrastructure.
+</Callout>
 
-**Step 1: Attempt to connect to the free NAT punchthrough server**
+- MasterServer2: A server that can hold lists of games, and data describing those games
+- [UPNP](http://miniupnp.free.fr/): Tells the router to create a port mapping, in order to allow incoming connections. This is a programmatic way of the user manually editing the router configuration
+- [NAT type detection](/plugins/nat-type-detection): (Optional) Find out if we have a router, and how restrictive that router is
+- [FullyConnectedMesh2](/plugins/fully-connected-mesh2): Manages the complexity of joining a group of systems at the same time
+- [NAT punchthrough](/plugins/nat-punchthrough): Attempt to connect systems for cases where UPNP fails
+- [Router2](/plugins/router2) (Optional) - Use other player's bandwidth for routers that cannot connect
+- [UDPProxyClient](/plugins/nat-punchthrough) (Optional) - Route failed connections through your own servers
+
+**Step 1: Attempt to connect to the NAT punchthrough server**
 
 ```cpp
-rakPeer->Connect("natpunch.jenkinssoftware.com", 61111, 0, 0);
+rakPeer->Connect("natpunch.example.com", 61111, 0, 0);
 ```
 
 Upon ID_CONNECTION_REQUEST_ACCEPTED, you have connected.
 Upon ID_NO_FREE_INCOMING_CONNECTIONS, ID_CONNECTION_ATTEMPT_FAILED, ID_INCOMPATIBLE_PROTOCOL_VERSION you have failed to connect. You may wish to abort online play at this stage, although this is not technically an absolute failure case.
 
-**Step 3 (Optional): Detect NAT type**
+**Step 2 (Optional): Detect NAT type**
 
-Provided you connected to the NAT punchthrouhg server, you may wish to detect what type of router you have, or if you have any at all. This can improve the experience for your players by speeding up later steps.
+Provided you connected to the NAT punchthrough server, you may wish to detect what type of router you have, or if you have any at all. This can improve the experience for your players by speeding up later steps.
 `natTypeDetectionClient->DetectNATType(natPunchServerAddress);`
 
 Upon ID_NAT_TYPE_DETECTION_RESULT, your NAT type is held in `packet->data[1]`:
@@ -36,13 +39,15 @@ Upon ID_NAT_TYPE_DETECTION_RESULT, your NAT type is held in `packet->data[1]`:
 printf("NAT Type is %s (%s)\n", NATTypeDetectionResultToString(packet->data[1]), NATTypeDetectionResultToStringFriendly(packet->data[1]));
 ```
 
-The list of results can be see in NATTypeDetectionResult in NatTypeDetectionCommon.cpp
+The list of results can be seen in NATTypeDetectionResult in NatTypeDetectionCommon.cpp
 
 The NAT type will not generally change during play, so this step only needs to be done once per executable session.
 
 **Step 3: Execute UPNP if necessary**
 
+<Callout>
 UPNP is the best way to resolve NAT issues, because it means many other steps are unnecessary, or will always succeed. If NAT type detection returned NAT_TYPE_NONE, you can skip this step.
+</Callout>
 
 ```cpp
 DataStructures::List<RakNetSocket2* > sockets;
@@ -61,11 +66,11 @@ If UPNP succeeds, the forwarding entry will stay open for a large period of time
 
 **Step 4 (Optional): FullyConnectedMesh2::ResetHostCalculation()**
 
-FullyConnectedMesh2 will attempt to determine the host of the peer to peer session based on who has been running the longest. ResetHostCalculation() updates the timer of how long the multiplayer session has been active. If you do not call this, then time spent in single player, menus, loading screens, etc. will be counted which is should normally not be. If you do care if the host is kept in order of players joining the session, you can skip this step.
+FullyConnectedMesh2 will attempt to determine the host of the peer to peer session based on who has been running the longest. ResetHostCalculation() updates the timer of how long the multiplayer session has been active. If you do not call this, then time spent in single player, menus, loading screens, etc. will be counted which should normally not be. If you do care if the host is kept in order of players joining the session, you can skip this step.
 
 **Step 5A: Joining - Download from Master Server 2**
 
-To join a game in progress, you can download from the [Master Server 2](http://masterserver2.raknet.com) what game sessions have been posted
+To join a game in progress, you can download from the Master Server 2 what game sessions have been posted.
 
 ```cpp
 #define MASTER_SERVER_ADDRESS "masterserver2.raknet.com"
@@ -102,13 +107,13 @@ if (httpConnection2->GetResponse(stringTransmitted, hostTransmitted, responseRec
 Example code:
 See Samples/ComprehensivePCGame/ComprehensivePCGame.cpp
 
-In ComprehensivePCGame.cpp, I use jansson included at DependentExtensions/jansson-2.4 to parse the json returned from the master server.
+In ComprehensivePCGame.cpp, jansson included at DependentExtensions/jansson-2.4 is used to parse the JSON returned from the master server.
 
 If tcp->HasFailedConnectionAttempt() returns something other than UNASSIGNED_SYSTEM_ADDRESS, then masterserver2.raknet.com is offline.
 
 **Step 5B: Joining - Connect to the session host**
 
-The results from the master server will include a field __addr (the ip address that uploaded the row) and if you follow what I do in step 6, the RakNetGuid of that system in __rowId. It may also include a field 'routerIsOpen' if you did that in step 6.
+The results from the master server will include a field __addr (the IP address that uploaded the row) and if you follow what I do in step 6, the RakNetGuid of that system in __rowId. It may also include a field 'routerIsOpen' if you did that in step 6.
 
 If 'routerIsOpen' is there and the value is non-zero, then you can just use rakPeer->Connect(...) to connect the host directly because either UPNP succeeded, they already have a forwarding entry for your game, or they do not have a router.
 
@@ -123,11 +128,11 @@ natPunchthroughClient->OpenNAT(clientGUID, game->natPunchServerAddress);
 
 NAT punchthrough, if it succeeds, will return ID_NAT_PUNCHTHROUGH_SUCCEEDED. In this case, call rakPeer->Connect(...) to actually connect to the host, and wait for ID_CONNECTION_REQUEST_ACCEPTED, or a failure message (ID_NO_FREE_INCOMING_CONNECTION, ID_CONNECTION_ATTEMPT_FAILED).
 
-NAT punchthrough, if it fails, wll return ID_NAT_TARGET_NOT_CONNECTED, ID_NAT_TARGET_UNRESPONSIVE, ID_NAT_CONNECTION_TO_TARGET_LOST, ID_NAT_ALREADY_IN_PROGRESS, or ID_NAT_PUNCHTHROUGH_FAILED. Upon failure, remove this server from the list of servers returned to the user and display an appropriate error message.
+NAT punchthrough, if it fails, will return ID_NAT_TARGET_NOT_CONNECTED, ID_NAT_TARGET_UNRESPONSIVE, ID_NAT_CONNECTION_TO_TARGET_LOST, ID_NAT_ALREADY_IN_PROGRESS, or ID_NAT_PUNCHTHROUGH_FAILED. Upon failure, remove this server from the list of servers returned to the user and display an appropriate error message.
 
 **Step 5C: Joining - Connect as a fully connected mesh**
 
-Provided that your game uses a fully connected mesh topology, then upon ID_CONNECTION_REQUEST_ACCEPTED, you should try to connect to the peers in the session. FullyConnectedMesh2 has a feature 'verified joins' to faciliate this. First, ask the host to join the game session using your own game logic. In ComprehensivePCGame I send ID_USER_PACKET_ENUM to do so. If the game is joinable at the time the HOST should execute StartVerifiedJoin()
+Provided that your game uses a fully connected mesh topology, then upon ID_CONNECTION_REQUEST_ACCEPTED, you should try to connect to the peers in the session. FullyConnectedMesh2 has a feature 'verified joins' to facilitate this. First, ask the host to join the game session using your own game logic. In ComprehensivePCGame I send ID_USER_PACKET_ENUM to do so. If the game is joinable at the time the HOST should execute StartVerifiedJoin()
 
 ```cpp
 case ID_USER_PACKET_ENUM:
@@ -187,7 +192,7 @@ If you do not need a fully-connected mesh, but can play with a partial mesh, you
 
 **Step 6: Creating - Post to Master Server 2**
 
-New game sessions should be posted to [Master Server 2](http://masterserver2.raknet.com). In the following code I post the name of the game, how long until the row times out, my RakPeer GUID, and whether or not my router is open to incoming connections (optional).
+New game sessions should be posted to Master Server 2. In the following code I post the name of the game, how long until the row times out, my RakPeer GUID, and whether or not my router is open to incoming connections (optional).
 
 ```cpp
 #define MASTER_SERVER_ADDRESS "masterserver2.raknet.com"
@@ -213,7 +218,9 @@ RakString("{'__gameId': myGameId, '__clientReqId': '0', '__timeoutSec': '30', '_
 game->whenToNextUpdateMasterServer = RakNet::GetTime() + 30000 - 1000;
 ```
 
-`httpConnection2->TransmitRequest(rsRequest, MASTER_SERVER_ADDRESS, MASTER_SERVER_PORT);`
+```cpp
+httpConnection2->TransmitRequest(rsRequest, MASTER_SERVER_ADDRESS, MASTER_SERVER_PORT);
+```
 
 **Step 7: Update Master Server 2 while the session is joinable**
 
@@ -233,7 +240,7 @@ PostRoomToMaster();
 ```
 
 ```cpp
-// Time has elasped while the game is joinable
+// Time has elapsed while the game is joinable
 RakNet::Time t = RakNet::GetTime();
 if (((fullyConnectedMesh2->IsConnectedHost() || game->users.Size()==1) &&
 t > game->whenToNextUpdateMasterServer) &&
@@ -249,7 +256,7 @@ Updating a room is identical to posting a new room (step 6).
 
 **Step 8: Delist the game if and when the session is no longer joinable**
 
-If at some point in your game new players are not accepted, you can delist the game from Master Server 2. This will also happen automaticaly if you just stop updating.
+If at some point in your game new players are not accepted, you can delist the game from Master Server 2. This will also happen automatically if you just stop updating.
 
 ```cpp
 RakString rsRequest = RakString::FormatForDELETE(
@@ -265,9 +272,11 @@ For players that failed NATPunchthrough, you can route their connections through
 
 Router2 will return ID_ROUTER_2_FORWARDING_NO_PATH if forwarding is not possible and ID_ROUTER_2_FORWARDING_ESTABLISHED on success.
 
-UDPPRoxyClient will return ID_UDP_PROXY_GENERAL. Byte 1 indicates the return value. Success is returned on ID_UDP_PROXY_FORWARDING_SUCCEEDED. The remote system will get ID_UDP_PROXY_FORWARDING_NOTIFICATION on success. Anything else means failure.
+UDPProxyClient will return ID_UDP_PROXY_GENERAL. Byte 1 indicates the return value. Success is returned on ID_UDP_PROXY_FORWARDING_SUCCEEDED. The remote system will get ID_UDP_PROXY_FORWARDING_NOTIFICATION on success. Anything else means failure.
 
+<Callout type="warn">
 If these solutions fail, or you do not use them, then it is not possible to complete a peer to peer gaming session. Leave the game session on the server. You should show a dialog box to the user that they need to manually open ports on their router before they can play. Or you can just try a different session.
+</Callout>
 
 See the sample _Samples/NATCompleteClient_ for Router2 and UDPProxyClient
 
@@ -277,11 +286,56 @@ See the sample _Samples/NATCompleteClient_ for Router2 and UDPProxyClient
 
 UPNP enabled routers are common these days. Therefore, this simpler solution will work in nearly all cases, and is recommended unless you are writing a back-end service with multiple fallbacks.
 
-1.  Connect to a hosting server running NATPunchthroughServer. For example, our free server.
-2.  Call the OpenUPNP() function in step 3 above. It doesn't matter if the function succeeds or not, because you do the next steps regardless.
-3.  When you find which game server you want to connect to, call `natPunchthroughClient->OpenNAT(gameServerGuid, masterServerAddress);`
-4.  If you get ID_NAT_PUNCHTHROUGH_SUCCEEDED, connect to that server. For a client/server game, you are done.
-5.  For a peer to peer game, you will also need to connect to the other peers after connecting to the server. Using the plugin FullyConnectedMesh2, call fullyConnectedMesh2->StartVerifiedJoin(gameServerGuid);
-6.  As described in the documentation for FullyConnectedMesh2::StartVerifiedJoin,() you will get ID_FCM2_VERIFIED_JOIN_START which contains a list of all peers in the session. Call NatPunchthroughClient::OpenNAT() on each of those peers, and connect on success, similar to step 3. FullyConnectedMesh2 internally tracks which systems failed or passed, and you will get ID_FCM2_VERIFIED_JOIN_ACCEPTED once negotation has completed.
+<Steps>
+
+<Step>
+
+### Connect to the NAT punchthrough server
+
+Connect to a hosting server running NATPunchthroughServer. For example, your own hosted server.
+
+</Step>
+
+<Step>
+
+### Open UPNP
+
+Call the OpenUPNP() function in step 3 above. It doesn't matter if the function succeeds or not, because you do the next steps regardless.
+
+</Step>
+
+<Step>
+
+### Start NAT punchthrough
+
+When you find which game server you want to connect to, call `natPunchthroughClient->OpenNAT(gameServerGuid, masterServerAddress);`
+
+</Step>
+
+<Step>
+
+### Connect on success
+
+If you get ID_NAT_PUNCHTHROUGH_SUCCEEDED, connect to that server. For a client/server game, you are done.
+
+</Step>
+
+<Step>
+
+### Peer to peer verified join
+
+For a peer to peer game, you will also need to connect to the other peers after connecting to the server. Using the plugin FullyConnectedMesh2, call `fullyConnectedMesh2->StartVerifiedJoin(gameServerGuid);`
+
+</Step>
+
+<Step>
+
+### Complete negotiation
+
+As described in the documentation for FullyConnectedMesh2::StartVerifiedJoin(), you will get ID_FCM2_VERIFIED_JOIN_START which contains a list of all peers in the session. Call NatPunchthroughClient::OpenNAT() on each of those peers, and connect on success, similar to step 3. FullyConnectedMesh2 internally tracks which systems failed or passed, and you will get ID_FCM2_VERIFIED_JOIN_ACCEPTED once negotiation has completed.
+
+</Step>
+
+</Steps>
 
 See the sample _Samples/ComprehensivePCGame_

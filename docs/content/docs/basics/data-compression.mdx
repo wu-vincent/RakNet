@@ -1,16 +1,37 @@
 ---
 title: "Data Compression"
+description: "How to use RakNet's automatic data compression and decompression based on frequency tables from sample game sessions."
 ---
-
-## Data Compression Overview
 
 RakNet can automatically compress all your outgoing data and decompress your incoming data. To do this, it needs a "sample" frequency table for your average game so it can pre-compute how to encode the data to get maximum savings. Here is the general process:
 
-1. Run a sample "average" game. Get the frequency table for the server and for one of the clients (or average all the clients if you want).
-2. Generate the decompression layer for the server from the client's frequency table.
-3. Generate the compression layer for the server from the server's frequency table.
-4. Generate the decompression layer for the client from the server's frequency table.
-5. Generate the compression layer for the client from the client's frequency table.
+<Steps>
+
+<Step>
+
+### Run a sample game
+
+Run a sample "average" game. Get the frequency table for the server and for one of the clients (or average all the clients if you want).
+
+</Step>
+
+<Step>
+
+### Generate server layers
+
+Generate the decompression layer for the server from the client's frequency table. Generate the compression layer for the server from the server's frequency table.
+
+</Step>
+
+<Step>
+
+### Generate client layers
+
+Generate the decompression layer for the client from the server's frequency table. Generate the compression layer for the client from the client's frequency table.
+
+</Step>
+
+</Steps>
 
 After that everything is handled automatically.
 
@@ -24,7 +45,7 @@ See `Samples\Compression` for a full example.
 SetCompileFrequencyTable(bool doCompile)
 ```
 
-Enables or disables frequency table tracking. This is required to get a frequency table, which is used in `GenerateCompressionLayer()`. This value persists between connect calls and defaults to false (no frequency tracking). You can call this at any time — however you should only call it when disconnected. Otherwise you will only track part of the values sent over the network.
+Enables or disables frequency table tracking. This is required to get a frequency table, which is used in `GenerateCompressionLayer()`. This value persists between connect calls and defaults to false (no frequency tracking). You can call this at any time -- however you should only call it when disconnected. Otherwise you will only track part of the values sent over the network.
 
 ### GenerateCompressionLayer
 
@@ -32,7 +53,7 @@ Enables or disables frequency table tracking. This is required to get a frequenc
 GenerateCompressionLayer(unsigned long inputFrequencyTable[256], bool inputLayer)
 ```
 
-This is an optional function to generate the compression layer based on the input frequency table, which you get with `GetOutgoingFrequencyTable`. You should call this twice — once with `inputLayer` as `true` and once as `false`. The frequency table passed here with `inputLayer=true` should match the frequency table on the recipient with `inputLayer=false`, and vice versa. Calling this function when there is an existing layer will overwrite the old layer.
+This is an optional function to generate the compression layer based on the input frequency table, which you get with `GetOutgoingFrequencyTable`. You should call this twice -- once with `inputLayer` as `true` and once as `false`. The frequency table passed here with `inputLayer=true` should match the frequency table on the recipient with `inputLayer=false`, and vice versa. Calling this function when there is an existing layer will overwrite the old layer.
 
 ### DeleteCompressionLayer
 
@@ -65,7 +86,3 @@ float GetDecompressionRatio()
 ```
 
 Returns a number `n > 0.0f` where higher numbers are better. `n == 1.0f` means the incoming data was decompressed to be just as large as it was when it came in. This shows how effective your compression rates are.
-
-## See Also
-
-- [Index](/)

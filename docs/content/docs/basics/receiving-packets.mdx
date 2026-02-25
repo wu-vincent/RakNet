@@ -1,10 +1,9 @@
 ---
-title: "Recieving Packets"
+title: "Receiving Packets"
+description: "How to receive and process incoming network packets by identifying their type and decoding data from structs or bitstreams."
 ---
 
-## Recieving Packets
 ### Receiving a packet
-
 
 When a packet comes in on the network, i.e. Receive returns non-zero, there are three steps involved in handling it:
 
@@ -24,7 +23,6 @@ unsigned char GetPacketIdentifier(Packet *p)
 
 ### Receiving a structure
 
-
 If you originally sent a structure, you can cast it back as follows:
 
 ```cpp
@@ -36,7 +34,7 @@ void DoMyPacketHandler(Packet *packet)
 {
 	// Cast the data to the appropriate type of struct
 	MyStruct *s = (MyStruct *) packet->data;
-	assert(p->length == sizeof(MyStruct)); // This is a good idea if youre transmitting structs.
+	assert(p->length == sizeof(MyStruct)); // This is a good idea if you're transmitting structs.
 	if (p->length != sizeof(MyStruct))
 		return;
 
@@ -44,18 +42,17 @@ void DoMyPacketHandler(Packet *packet)
 }
 ```
 
-_Usability Comments_
+<Callout type="info">
+**Usability notes:**
 
--   We cast the packet data to a pointer to the appropriate type of struct to avoid the copy overhead that would occur if were to actually create the struct. However, in this case if we change any of the data in the struct it will change the packet as well. This may or may not be what we want. Take care when relaying messages as a server, as this can cause inintended bugs.
+-   We cast the packet data to a pointer to the appropriate type of struct to avoid the copy overhead that would occur if we were to actually create the struct. However, in this case if we change any of the data in the struct it will change the packet as well. This may or may not be what we want. Take care when relaying messages as a server, as this can cause unintended bugs.
 -   The assert, while not necessary, is very useful for catching difficult to find bugs if we assign the wrong identifier or the wrong size when sending the packet.
 -   The if statement is useful just in case someone manages to send a packet of invalid size or type in order to try to crash the client or server. This has never happened in practice, but it can't hurt to be safe.
-
+</Callout>
 
 ### Receiving a bitstream
 
-
 If you originally sent a bitstream, we create a bitstream to unparse the data in the same order we wrote it. We create a bitstream, using the data and the length of the packet. We then use the Read functions where we formerly used the Write functions, the ReadCompressed functions where we formerly used WriteCompressed, and follow the same logical branching if we wrote any data conditionally. This is all shown in the following example which would read in the data for the mine we created in [creating packets](/basics/creating-packets).
-
 
 ```cpp
 void DoMyPacketHandler(Packet *packet)

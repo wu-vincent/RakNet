@@ -1,12 +1,13 @@
 ---
 title: "Network Messages"
+description: "Reference for all built-in RakNet message identifiers returned as the first byte of received packets."
 ---
 
-## Network Messages
+### Messages from the network engine
 
-Messages from the network engine
-
-Certain packets that you get will not be from your code, using your defined types, but are instead from the network engine. However, you have to know what they are to handle them properly. The first byte of each packet that originated from the API will map to one of the following enumerations. Possible recipient systems are in brackets. To convert these enumerations to a string, use PacketLogger::BaseIDTOString()
+<Callout type="info">
+Certain packets that you get will not be from your code, using your defined types, but are instead from the network engine. The first byte of each packet that originated from the API will map to one of the following enumerations. Possible recipient systems are in brackets. To convert these enumerations to a string, use `PacketLogger::BaseIDTOString()`.
+</Callout>
 
 ```cpp
 //
@@ -197,7 +198,7 @@ ID_NAT_ALREADY_IN_PROGRESS,
 /// NATPunchthrough plugin: This message is generated on the local system, and does not come from the network.
 /// packet::guid contains the destination field of NatPunchthroughClient::OpenNAT(). Byte 1 contains 1 if you are the sender, 0 if not
 ID_NAT_PUNCHTHROUGH_FAILED,
-/// NATPunchthrough plugin: Punchthrough suceeded. See packet::systemAddress and packet::guid. Byte 1 contains 1 if you are the sender,
+/// NATPunchthrough plugin: Punchthrough succeeded. See packet::systemAddress and packet::guid. Byte 1 contains 1 if you are the sender,
 /// 0 if not. You can now use RakPeer::Connect() or other calls to communicate with this system.
 ID_NAT_PUNCHTHROUGH_SUCCEEDED,
 
@@ -312,7 +313,7 @@ ID_TWO_WAY_AUTHENTICATION_INCOMING_CHALLENGE_FAILURE,
 /// You can read the identifier used to challenge as follows:
 /// RakNet::BitStream bs(packet->data, packet->length, false); bs.IgnoreBytes(sizeof(MessageID)); RakNet::RakString password; bs.Read(password);
 ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_FAILURE,
-/// The other system did not respond within a timeout threshhold. Either the other system is not running the plugin or the other system was blocking on some operation for a long time.
+/// The other system did not respond within a timeout threshold. Either the other system is not running the plugin or the other system was blocking on some operation for a long time.
 /// You can read the identifier used to challenge as follows:
 /// RakNet::BitStream bs(packet->data, packet->length, false); bs.IgnoreBytes(sizeof(MessageID)); RakNet::RakString password; bs.Read(password);
 ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_TIMEOUT,

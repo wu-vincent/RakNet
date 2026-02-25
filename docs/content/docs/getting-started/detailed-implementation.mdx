@@ -1,14 +1,17 @@
 ---
 title: "Detailed Implementation"
+description: "Step-by-step guide to implementing basic network communication with RakNet's RakPeerInterface."
 ---
-
-## Detailed Implementation
 
 For basic network communication, all you have to do is get an instance of RakPeer in your program.
 
 These are the most common headers you'll need:
 
-## Headers
+<Steps>
+
+<Step>
+
+### Headers
 
 ```cpp
 #include "MessageIdentifiers.h"
@@ -20,7 +23,11 @@ MessageIdentifiers.h contains a giant enumeration representing the native messag
 
 RakPeerInterface.h is an interface for the RakPeer class. RakNetTypes.h defines the structures used in RakNet, including _SystemAddress_ - a unique identifier for systems, and _Packet_ which the API returns to you when you get data or when it needs to send you a message.
 
-## Instancing
+</Step>
+
+<Step>
+
+### Instancing
 
 ```cpp
 RakNet::RakPeerInterface* peer = RakNet::RakPeerInterface::GetInstance();
@@ -32,7 +39,11 @@ The next step is to connect, either as client or as a server.
 
 For example:
 
-## Connection as Client
+</Step>
+
+<Step>
+
+### Connection as Client
 
 ```cpp
 peer->Startup(1, &SocketDescriptor(), 1)
@@ -40,8 +51,8 @@ peer->Connect(serverIP, serverPort, 0, 0);
 ```
 
 The call to Startup starts the network threads.
-The first parameter is the maximum mumber of connections. For a pure client, we use 1.
-The second parameter (SocketDescriptor()), specifies the ports/addresses to listen on . Since we want a client, we don't need to specify anything.
+The first parameter is the maximum number of connections. For a pure client, we use 1.
+The second parameter (SocketDescriptor()), specifies the ports/addresses to listen on. Since we want a client, we don't need to specify anything.
 
 The call to Connect connects to the server.
 The first parameter, serverIP, is the IP address or domain of the server. If you want to connect to your own system, such as when running two copies of the same program, use "127.0.0.1" or "localhost" which is accepted notation for your own system. For IPV6, this is "::1".
@@ -62,7 +73,11 @@ RakNet connects quickly so if you don't connect within a few seconds it's not go
 
 Starting as a server is similar.
 
-## Connection as Server
+</Step>
+
+<Step>
+
+### Connection as Server
 
 ```cpp
 peer->Startup(maxConnectionsAllowed, &SocketDescriptor(serverPort,0), 1);
@@ -73,7 +88,7 @@ The first parameter to Startup is how many simultaneous client connections to al
 The call to SetMaximumIncomingConnections sets how many incoming connections are allowed.
 Keep in mind that the actual number of players you could have playing is one more than the number of clients you support if you program your game to allow the server to act as a player. If your server is a dedicated server or if you program your game to have both a client and a server on the same system then obviously the number of people who could play would change accordingly.
 
-## Peer to peer connections
+**Peer to peer connections:**
 
 ```cpp
 RakNet::SocketDescriptor sd(serverPort,0);
@@ -84,7 +99,11 @@ peer->SetMaximumIncomingConnections(4);
 Startup sets 10 allowable connections. An allowable connection is either incoming or outgoing. It uses port 60000 to receive data.
 SetMaximumIncomingConnections is necessary if you want to allow other peers to connect to you, but is not necessary if you only plan to connect to others. In this case, it sets the value to 4. This is a maximum value rather than a reserved value, so it is still possible to say connect to 8 peers - you would then only be able to accept 2 incoming connections until you disconnected from one or more of those peers.
 
-## Reading Packets
+</Step>
+
+<Step>
+
+### Reading Packets
 
 `RakNet::Packet *packet = peer->Receive();`
 
@@ -95,7 +114,6 @@ RakNet::Packet *packet;
 for (packet=peer->Receive(); packet; peer->DeallocatePacket(packet), packet=peer->Receive()) {
 }
 ```
-
 
 You can get two kinds of data:
 
@@ -132,7 +150,6 @@ bitSize tells you how many bits long the data field of the struct is.
 
 Now that you got a packet you need to determine what the data means. Usually the first byte of the data is an enum that specifies type (see creating packets for more information). This is not always the case as you'll later learn, because with some packets, you might get a TimeStamp. To make things easy here it is a function to get the identifier when the packet has a TimeStamp:
 
-
 ```cpp
 unsigned char GetPacketIdentifier(Packet *p)
 {
@@ -143,21 +160,25 @@ return (unsigned char) p->data[0];
 }
 ```
 
-
 This will return an unsigned char, which corresponds to an enum specified in MessageIdentifiers.h.
 
 The network engine will return certain messages only for the client, certain messages only for the server, and certain messages for both. For a full explanation of the messages refer to MessageIdentifiers.h. The important ones to worry about are ID_NEW_INCOMING_CONNECTION and ID_CONNECTION_REQUEST_ACCEPTED. These mean that the server or a peer got a new incoming client, and the client or a peer has successfully connected respectively. At this point you can send your own messages.
 
 If the packet identifier is NOT one of the pre-defined identifiers then you got user data which was sent by another system. You can then decode the data and handle it in your game as appropriate. See [creating packets](/basics/creating-packets) for information on encoding and decoding data.
 
-_IMPORTANT!_
-When you are done with your data, don't forget to deallocate the packet! Just pass it to DeallocatePacket.
+<Callout type="warn">
+**IMPORTANT!** When you are done with your data, don't forget to deallocate the packet! Just pass it to DeallocatePacket.
 
 ```cpp
 peer->DeallocatePacket(p);
 ```
+</Callout>
 
-## Sending Data
+</Step>
+
+<Step>
+
+### Sending Data
 
 The best way to illustrate sending data is with an example:
 
@@ -202,7 +223,11 @@ The sixth parameter (UNASSIGNED_RAKNET_GUID), is the remote system to send to. U
 
 The seventh parameter (true in this example) is whether to broadcast to all connected systems or not. This parameter works with the sixth parameter. If broadcast is true, then the sixth parameter specifies who not to send to. If it is false, then it specifies who to send to. If we want to broadcast to everyone, then we just specify UNASSIGNED_RAKNET_GUID. This works out when relaying packets, because the Packet::systemAddress field in the packet you get will specify who the sender is. We can relay the packet to everyone BUT the sender, which makes sense since we usually don't want to send the same information back to the person who just sent it to us.
 
-## Shutting Down
+</Step>
+
+<Step>
+
+### Shutting Down
 
 Shutting down is easy and nearly instantaneous. Just call Shutdown() on your peer object, and then destroy it.
 
@@ -212,10 +237,18 @@ somePeer->Shutdown(300);
 
 Shutdown stops the network threads. If you specify a higher than 0 parameter to Shutdown(), Shutdown() will block for up to this amount of time to notify connected systems (if any) to inform them of the connection dropping. 0 will cause a silent Shutdown(), and remote systems will detect the disconnection within about 10 seconds, returning `ID_CONNECTION_LOST`.
 
-## Cleaning Up
+</Step>
+
+<Step>
+
+### Cleaning Up
 
 Just pass the instance that the factory gave you to DestroyInstance. You may want to do this mid-program to free memory but it is not required.
 
 ```cpp
 RakNet::RakPeerInterface::DestroyInstance(rakPeer);
 ```
+
+</Step>
+
+</Steps>

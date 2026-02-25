@@ -1,16 +1,13 @@
 ---
-title: "Sending packets"
+title: "Sending Packets"
+description: "How to send packets using RakNet, including choosing data authority, reliability types, and ordering streams."
 ---
 
-## Sending packets
-
 ### Step 1: Determine your data
-
 
 As covered in [Creating Packets](/basics/creating-packets) find out what data you need and if you need a bitstream or a struct.
 
 ### Step 2: Determine the authority
-
 
 You generally want to send the trigger for an action, rather than sending the result of the action continually. Generally speaking, the source of a packet falls under three categories:
 
@@ -48,13 +45,12 @@ From a data monitor:
 Everytime a player's health gets to 0, send a packet. However, I don't do this where health actually gets to 0. I add it to some function that runs every frame, perhaps in the code that updates the player. When this bit of code sees that health is 0 for the first time, it sends a packet. It then records that this packet was sent and doesn't send it again.
 
 **Advantage:**
-Very clean from a networking point of view. I don't have to worry about feedback and don't have to change the function that does the action. No maintenance unless someone else changes what I'm monitoring. Can implement network efficiency algorithms, such as 'Dont send this packet more than once every second"
+Very clean from a networking point of view. I don't have to worry about feedback and don't have to change the function that does the action. No maintenance unless someone else changes what I'm monitoring. Can implement network efficiency algorithms, such as 'Don't send this packet more than once every second'
 
 **Disadvantage:**
 Sloppy from a design point of view. Can only be used for certain types of data. Extra work to reset monitoring code when the object you are monitoring is reset. Requires that other programmers in the project know about it in case they decide to change how the data you are monitoring works.
 
 ### Step 3: Determine what type of reliability and which ordering stream you need.
-
 
 PacketPriority.h contains the enums for these. You have four priorities to choose from: _IMMEDIATE_PRIORITY, HIGH_PRIORITY, MEDIUM_PRIORITY, LOW_PRIORITY_
 
@@ -64,12 +60,15 @@ Reliability types are covered in the [Detailed Implementation](/getting-started/
 
 ### Step 4: Call the Send function in RakPeerInterface.h
 
-
 The send method will not change your data and will make a copy, so from a programmer's point of view you are done here.
 
 **Ordering streams**
 
-There are 32 ordering streams available for ordered packets and 32 ordering streams available for sequenced packets. You can think of the stream as a relative ordering stream, where all packets of the same ordering type are ordered relative to each other. The easiest way to illustrate this is with an example. Suppose you want to order all chat messages, order all player movement packets, order all player firing packets, and sequence all remaining ammunition packets. You'd want chat messages to arrive in order, but wouldn't want a chat message to be held up because you didn't get a player movement packet that was sent earlier. Player movement packets have no relation to chat messages, so you don't care in what order they arrive. So you'd use different ordering streams for them, perhaps 0 for chat messages and 1 for player movement packets. However, lets say player firing packets had to be ordered relative to player movement packets because you wouldn't want the shot to originate from the wrong position. So you'd put player firing packets on the same stream as movement packets (stream 1), so that if a movement packet arrived later than a firing packet but was actually sent earlier the firing packet would not be given to you until the movement packet arrived.
+<Callout type="info">
+There are 32 ordering streams available for ordered packets and 32 ordering streams available for sequenced packets. You can think of the stream as a relative ordering stream, where all packets of the same ordering type are ordered relative to each other. Packets in different ordering streams are independent and will not wait on each other.
+</Callout>
+
+The easiest way to illustrate this is with an example. Suppose you want to order all chat messages, order all player movement packets, order all player firing packets, and sequence all remaining ammunition packets. You'd want chat messages to arrive in order, but wouldn't want a chat message to be held up because you didn't get a player movement packet that was sent earlier. Player movement packets have no relation to chat messages, so you don't care in what order they arrive. So you'd use different ordering streams for them, perhaps 0 for chat messages and 1 for player movement packets. However, lets say player firing packets had to be ordered relative to player movement packets because you wouldn't want the shot to originate from the wrong position. So you'd put player firing packets on the same stream as movement packets (stream 1), so that if a movement packet arrived later than a firing packet but was actually sent earlier the firing packet would not be given to you until the movement packet arrived.
 
 Packets in sequence drop older packets, so if you were to get packet 2, then 1, then 3, the end result would be you'd receive 2, 1 would get dropped, and you'd receive 3. This is useful for ammunition because ammunition only goes down. If you get an older packet it would raise the amount of ammunition you have so is wrong. Since sequenced packets are on a different set of streams than ordered packets you can use any stream number you want, such as 0. Just to be clear it would have no relation to chat messages because chat messages use the ordered stream set rather than the sequenced stream set.
 

@@ -1,31 +1,70 @@
 ---
-title: "Ogre3D Interpolation Demo Manual"
+title: "Ogre 3D Interpolation Demo"
+description: Demonstrates 3D interpolation and ReplicaManager3 using Ogre 3D to render popcorn popping.
 ---
-
-## Ogre 3D Interpolation Demo
-
-### Demonstrates 3D interpolation
-
 
 The Ogre 3D interpolation demo uses the graphics engine Ogre 3D to render popcorn popping.
 
-The server has a bunch of popcorn kernels, which pops and flies around. After a short while all the popcorn is deleted and respawned.
+The server has a bunch of popcorn kernels, which pop and fly around. After a short while all the popcorn is deleted and respawned.
 
 The client is a dumb client in that the client does not do any physics or handle the details of spawning or popping the corn kernels.
 
-_Specific to Ogre:_
+## What It Demonstrates
+
+**Specific to Ogre:**
 
 How to interpolate between the real and the visual position using a helper class TransformationHistory. Given a time in the past, it will tell you where you were then, using interpolation. If you hold down space you can see the client run non-interpolated, which is very choppy indeed, as it only sends 4 times a second. Let go of space and it's smooth again.
 
-_Covered as part of RakNet:_
+**Covered as part of RakNet:**
 
 ReplicaManager3 class, which automatically handles the networking for creation, destruction, and serialization of the popcorn kernels.
 
-To run it, start two instances on the same computer. Press 's' for server on one instance, 'c' for client on the other. Hold down space to see the client run without interpolation.
+## Running the Demo
 
-If you want to run it over the internet. change the hardcoded SERVER_IP variable to the server's address.
+<Steps>
 
-_The code is located at DependentExtensions\\Ogre3DInterpDemo_
+<Step>
+
+### Start two instances
+
+Start two instances on the same computer.
+
+</Step>
+
+<Step>
+
+### Start the server
+
+Press 's' for server on one instance.
+
+</Step>
+
+<Step>
+
+### Start the client
+
+Press 'c' for client on the other.
+
+</Step>
+
+<Step>
+
+### Toggle interpolation
+
+Hold down space to see the client run without interpolation.
+
+</Step>
+
+</Steps>
+
+<Callout type="info">
+If you want to run it over the internet, change the hardcoded `SERVER_IP` variable to the server's address.
+</Callout>
+
+The code is located at `DependentExtensions\Ogre3DInterpDemo`.
 
 ## Dependencies
-Ogre 3D must be installed. It assumes you have OGRE_SDK as an environment variable. If not, change the project properties accordingly.
+
+<Callout type="warn">
+Ogre 3D must be installed. It assumes you have `OGRE_SDK` as an environment variable. If not, change the project properties accordingly.
+</Callout>

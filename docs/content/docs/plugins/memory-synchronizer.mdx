@@ -1,10 +1,11 @@
 ---
 title: "Memory Synchronizer"
+description: "Scan memory for changes and automatically serialize and send updates to specified systems using the MemorySynchronizer plugin."
 ---
 
-> **Deprecated:** This system has been superseded by [ReplicaManager3](/plugins/replica-manager3), which provides more flexible object replication.
-
-## Memory Synchronizer
+<Callout type="warn">
+**Deprecated:** This system has been superseded by [ReplicaManager3](/plugins/replica-manager3), which provides more flexible object replication.
+</Callout>
 
 The memory synchronizer is an implementation of the [plugin interface](/plugins/plugin-interface) that scans memory for changes, serializes the changes, and sends them to specified systems. This is a more advanced implementation than the [DistributedNetworkObject](/plugins/distributed-network-object) class.
 
@@ -68,7 +69,6 @@ For a usage example, see the sample `Samples\Code Samples\MemorySynchronization`
 
 ## See Also
 
-- [Index](/)
 - [Distributed Network Object](/plugins/distributed-network-object)
 - [PluginInterface](/plugins/plugin-interface)
 - [Fully Connected Mesh](/plugins/fully-connected-mesh)

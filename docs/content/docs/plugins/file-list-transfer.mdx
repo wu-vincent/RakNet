@@ -1,22 +1,41 @@
 ---
-title: "FileListTransfer manual"
+title: "FileListTransfer"
+description: "Send and receive lists of files over the network using the FileListTransfer plugin and FileList utility class."
 ---
-
-## FileListTransfer Overview
 
 ### Send and receive file(s) more easily
 
 The FileListTransfer plugin is designed to send a list of files that have been read into the **FileList** class. It is similar to the [DirectoryDeltaTransfer](/plugins/directory-delta-transfer) plugin, except that it doesn't send deltas based on pre-existing files or actually write the files to disk. It solely handles the networking part of sending files.
 
-Usage:
+<Steps>
+<Step>
 
-1.  Server: Call SetupReceive(...) with the address of a system to allow a file send, and a **FileListTransferCBInterface** derived callback handler to be called as the data arrives.
-2.  Client: Encode the files you want to send into the **FileList** class.
-3.  Client: Call Send(...) with your **FileList** class instance, a user-defined ID to identify this set of files, parameters to pass to RakPeerInterface::Send() or TCPInterface::Send(), and a boolean indicating if the files should be compressed or not. Compression is not very fast, so it's best to leave that off unless bandwidth is at a premium.
+### Setup receive (server)
+
+Server: Call SetupReceive(...) with the address of a system to allow a file send, and a **FileListTransferCBInterface** derived callback handler to be called as the data arrives.
+
+</Step>
+
+<Step>
+
+### Encode files (client)
+
+Client: Encode the files you want to send into the **FileList** class.
+
+</Step>
+
+<Step>
+
+### Send files (client)
+
+Client: Call Send(...) with your **FileList** class instance, a user-defined ID to identify this set of files, parameters to pass to RakPeerInterface::Send() or TCPInterface::Send(), and a boolean indicating if the files should be compressed or not. Compression is not very fast, so it's best to leave that off unless bandwidth is at a premium.
+
+</Step>
+</Steps>
 
 ## FileList Overview
 
-The FileList class stores a list of files and data, and also contains utility functions for dealing with the harddrive in general. It was originally written for the [Autopatcher](/plugins/autopatcher), but can be used for your own purposes as well.
+The FileList class stores a list of files and data, and also contains utility functions for dealing with the hard drive in general. It was originally written for the [Autopatcher](/plugins/autopatcher), but can be used for your own purposes as well.
 
 See FileList.h for a complete description of all functions and parameters.
 

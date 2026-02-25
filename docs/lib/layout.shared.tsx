@@ -1,7 +1,7 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared';
 
 export const gitConfig = {
-  user: 'vince-carpino',
+  user: 'facebookarchive',
   repo: 'RakNet',
   branch: 'master',
 };

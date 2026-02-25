@@ -1,12 +1,13 @@
 ---
-title: "LobbyServer and LobbyClient manual"
+title: "LobbyServer and LobbyClient"
+description: "Provide PostgreSQL-driven matchmaking with friends, rooms, emails, and ranking through the LobbyServer and LobbyClient plugins."
 ---
 
 ## Lobby Server
 
 ### Database support for friends, rooms, emails, ranking, and more
 
-The lobby server is a plugin that provides [PostgreSQL](http://www.postgresql.org/) database driven functionality for persistent game data and matchmaking. The lobby server itself does not require significant user interaction - instead, commands are carried out on via the LobbyClient_PC class.
+The lobby server is a plugin that provides [PostgreSQL](http://www.postgresql.org/) database driven functionality for persistent game data and matchmaking. The lobby server itself does not require significant user interaction - instead, commands are carried out via the LobbyClient_PC class.
 
 The Lobby Server is split into two classes. **LobbyServer** itself solely provides networking functionality, calling interfaces to a generic database via virtual functions. **LobbyServerPostgreSQL**, found at DependentExtensions\\Lobby\\LobbyServer_PostgreSQL\\LobbyServer_PostgreSQL.h is an implementation of **LobbyServer** that uses PostgreSQL to power the database.
 
@@ -14,7 +15,7 @@ The basic class has functions to connect to the database, and create and destroy
 
 One additional requirement is the use of the **Functor** class. A functor is a class in RakNet that implements a specific unit of functionality that is run asynchronously in a **FunctionThread**, another utility class that is part of RakNet. For the most part you don't have to care about this - however, there is one functor you do have to care about, which is the one to add new titles (games/applications) to the database.
 
-How to do this is illustrated in the sample
+How to do this is illustrated in the sample:
 
 ```cpp
 /// This functor asynchronously adds a title to the database. Full sample in LobbyDB_PostgreSQLTest
@@ -43,7 +44,7 @@ functor->defaultAllowClientsUploadActionHistory=true;
 lobbyServer.PushFunctor(functor);
 ```
 
-This adds a title to the database with various properties indicating what types of operations are allowed for this title. See the class declaration AddTitle_Data in DependentExtensions\\Lobby\\TitleValidationDBSpec.h for a complete explanation of each parameter. Many other functors are available to perform various database operations. The directories found at DependentExtensions/*_PostgreRepository contain these implementations, while DependentExtensions\\Lobby\\*DBSpec.h contain the data members and documentation for this functionality. Test applications and demos for the various functors can be found in the projects TitleValidationDB_PostgreSQLTest, RankingServerDB_PostgreSQLTest, and LobbyDB_PostgreSQLTest
+This adds a title to the database with various properties indicating what types of operations are allowed for this title. See the class declaration AddTitle_Data in DependentExtensions\\Lobby\\TitleValidationDBSpec.h for a complete explanation of each parameter. Many other functors are available to perform various database operations. The directories found at DependentExtensions/*_PostgreRepository contain these implementations, while DependentExtensions\\Lobby\\*DBSpec.h contain the data members and documentation for this functionality. Test applications and demos for the various functors can be found in the projects TitleValidationDB_PostgreSQLTest, RankingServerDB_PostgreSQLTest, and LobbyDB_PostgreSQLTest.
 
 See LobbyServerTest for a console application that will run the LobbyServer.
 
@@ -57,9 +58,9 @@ See LobbyServerTest for a console application that will run the LobbyServer.
 -   All source files in DependentExtensions\\PostgreSQLInterface
 -   All source files in Samples\\LobbyServerTest, should you want to use the default console application.
 
-**Dependencies (using [PostgreSQL](http://www.postgresql.org/)):**
-
-PostgreSQL 8.2 or newer, installed at C:\\Program Files\\PostgreSQL\\8.2. Change the project property paths should your installation directory be different. Do not forget to check development tools in the PostgreSQL installer or the headers and libs will not be installed.
+<Callout type="warn">
+**Dependencies:** PostgreSQL 8.2 or newer is required, installed at C:\\Program Files\\PostgreSQL\\8.2. Change the project property paths should your installation directory be different. Do not forget to check development tools in the PostgreSQL installer or the headers and libs will not be installed.
+</Callout>
 
 ## Lobby Client (PC)
 
@@ -67,13 +68,63 @@ PostgreSQL 8.2 or newer, installed at C:\\Program Files\\PostgreSQL\\8.2. Change
 
 **Quick start:**
 
-1.  Attach the plugin to an instance of RakPeerInterface, and connect to the server.
-2.  Call SetCallbackInterface() with a derived implementation of LobbyClientInterfaceCB. The general design of the system is that all calls are asynchronous, so each call will return its results (success or failure) to your registered callback.
-3.  If you do not already have an account, call RegisterAccount to create a user account on the lobby. Wait for LobbyClientInterfaceCB::RegisterAccount_Result() to see if the query was successful. One possible failure is that the name is already in use, or disallowed (swear word).
-4.  Call SetTitleLoginId() with information identifying what title you are playing (can be done later if multiple games are allowed per lobby). This should have been hardcoded into the application, returned when the title was added to the server (as documented above).
-5.  Call Login() with the account you just created (or previously had stored). Wait for LobbyClientInterfaceCB::Login_Result() to indicate success. If you have friends, they should get LobbyClientInterfaceCB::FriendStatus_Notify() calls that you are online.
-6.  Use DownloadRooms() to get a list of all rooms, based on search filters, followed by JoinRoom(), SetReadyToPlayStatus(), and StartGame(). Or use QuickMatch() to automatically start a game with a given number of players.
-7.  Once the game starts, you will get LobbyClientInterfaceCB::StartGame_Notify(). This will give you the IP addresses of all players, participants, who the moderator is, user handles, and other information relevant to playing the game. At this point you can disconnect from the lobby. If you do not, you are automatically sent back to the main lobby (outside of any room).
+<Steps>
+<Step>
+
+### Attach and connect
+
+Attach the plugin to an instance of RakPeerInterface, and connect to the server.
+
+</Step>
+
+<Step>
+
+### Set callback interface
+
+Call SetCallbackInterface() with a derived implementation of LobbyClientInterfaceCB. The general design of the system is that all calls are asynchronous, so each call will return its results (success or failure) to your registered callback.
+
+</Step>
+
+<Step>
+
+### Register an account
+
+If you do not already have an account, call RegisterAccount to create a user account on the lobby. Wait for LobbyClientInterfaceCB::RegisterAccount_Result() to see if the query was successful. One possible failure is that the name is already in use, or disallowed (swear word).
+
+</Step>
+
+<Step>
+
+### Set title login ID
+
+Call SetTitleLoginId() with information identifying what title you are playing (can be done later if multiple games are allowed per lobby). This should have been hardcoded into the application, returned when the title was added to the server (as documented above).
+
+</Step>
+
+<Step>
+
+### Log in
+
+Call Login() with the account you just created (or previously had stored). Wait for LobbyClientInterfaceCB::Login_Result() to indicate success. If you have friends, they should get LobbyClientInterfaceCB::FriendStatus_Notify() calls that you are online.
+
+</Step>
+
+<Step>
+
+### Find and join a room
+
+Use DownloadRooms() to get a list of all rooms, based on search filters, followed by JoinRoom(), SetReadyToPlayStatus(), and StartGame(). Or use QuickMatch() to automatically start a game with a given number of players.
+
+</Step>
+
+<Step>
+
+### Start the game
+
+Once the game starts, you will get LobbyClientInterfaceCB::StartGame_Notify(). This will give you the IP addresses of all players, participants, who the moderator is, user handles, and other information relevant to playing the game. At this point you can disconnect from the lobby. If you do not, you are automatically sent back to the main lobby (outside of any room).
+
+</Step>
+</Steps>
 
 For a complete list of functions, with documented parameters, see DependentExtensions\\Lobby\\LobbyClientPC.h.
 

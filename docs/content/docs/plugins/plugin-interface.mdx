@@ -1,17 +1,25 @@
 ---
 title: "Plugin Interface"
+description: "Learn how to use PluginInterface2 to create and attach plugins that intercept, modify, and create messages in RakNet."
 ---
 
-## Plugin Interface 2
+PluginInterface2.h is a class interface that works with RakNet to provide automatic functionality. It can intercept, modify, and create messages before they get to the user. Plugins can be attached to either RakPeerInterface or PacketizedTCP. Plugins update every time Receive() is called. To use it, derive from the base class and implement the virtual functions you want to handle. Then register your class by calling RakPeerInterface::AttachPlugin().
 
-### Plugin Interface 2 Overview
+<Callout type="info">
+To attach a plugin, create an instance and register it with your RakPeerInterface:
 
-_PluginInterface2.h_ is a class interface that works with RakNet to provide automatic functionality. It can intercept, modify, and create messages before they get to the user. Plugins can be attached to either RakPeerInterface or PacketizedTCP. Plugins update every time Receive() is called. To use it, derive from the base class and implement the virtual functions you want to handle. Then register your class by calling RakPeerInterface::AttachPlugin()
+```cpp
+MyPlugin myPlugin;
+rakPeer->AttachPlugin(&myPlugin);
+```
+
+Plugins update automatically every time `Receive()` is called. You can attach multiple plugins to the same peer.
+</Callout>
 
 These are the virtual functions you'll probably need to handle in most cases:
 
 ```cpp
-/// Update is called every time a packet is checked for .
+/// Update is called every time a packet is checked for.
 virtual void Update(void);
 
 /// OnReceive is called for every packet.

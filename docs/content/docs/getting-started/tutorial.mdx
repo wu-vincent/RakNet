@@ -1,42 +1,95 @@
 ---
 title: "RakNet Tutorial"
+description: "Hands-on tutorial for building a simple chat client and server with RakNet."
 ---
 
-## Tutorial Project setup
+## Project setup
 
 In this tutorial all images and interface references are for Visual Studio 2005, copyrighted by Microsoft. Use the equivalents for your own compiler.
 
-1.  Create a new Win32 Console Project and name it ChatServer
-    ![](/images/tutorial1.jpg)
+<Steps>
 
+<Step>
 
-2.  Make it a console application, and an empty project. Windows application is also acceptable.
-    ![](/images/tutorial2.jpg)
+### Create a new Win32 Console Project
 
+Name it ChatServer.
 
-3.  Add the RakNet source files to your project. You can do this by right clicking on the project name, selecting Add, and then Existing Item from the rollout. Navigate to where you downloaded RakNet, navigate to the Source directory, hold down left shift, select the first file in the list, then click the last file in the list. Then press OK.
-    ![](/images/tutorial3.jpg)
+![](/images/tutorial1.jpg)
 
+</Step>
 
-4.  Add a main file to your project. Do this by right clicking on the project name, selecting Add, and then new item. Under Visual C++ select code, then c++ file. Name the file main.cpp.
-    ![](/images/tutorial4.jpg)
+<Step>
 
+### Configure the project type
 
-5.  Since we put files in a directory other than the project, we need to include that directory in the include search path so we don't have to type out the entire path every time we #include something. Do this by right clicking the "Chat Server" project name in the project tab. Select properties. In the top pane, change the drop down menu to "All Configurations." Select C/C++ / General / Additional Include Directories. To that item, add the path to the Source directory of your RakNet download, and hit OK.
-    ![](/images/tutorial5.jpg)
+Make it a console application, and an empty project. Windows application is also acceptable.
 
+![](/images/tutorial2.jpg)
 
-6.  Next, link in ws2_32.lib, from the same dialog box.
-    ![](/images/tutorial6.jpg)
+</Step>
 
+<Step>
 
-7.  Also change the character set to not set. This is so regular array based strings are used, as opposed to unicode or wide character.
-    ![](/images/tutorial7.jpg)
+### Add RakNet source files
 
+Add the RakNet source files to your project. You can do this by right clicking on the project name, selecting Add, and then Existing Item from the rollout. Navigate to where you downloaded RakNet, navigate to the Source directory, hold down left shift, select the first file in the list, then click the last file in the list. Then press OK.
 
-8.  You are ready to begin adding code to main.cpp
+![](/images/tutorial3.jpg)
 
-## Tutorial Code implementation
+</Step>
+
+<Step>
+
+### Add a main file
+
+Add a main file to your project. Do this by right clicking on the project name, selecting Add, and then new item. Under Visual C++ select code, then c++ file. Name the file main.cpp.
+
+![](/images/tutorial4.jpg)
+
+</Step>
+
+<Step>
+
+### Set the include path
+
+Since we put files in a directory other than the project, we need to include that directory in the include search path so we don't have to type out the entire path every time we #include something. Do this by right clicking the "Chat Server" project name in the project tab. Select properties. In the top pane, change the drop down menu to "All Configurations." Select C/C++ / General / Additional Include Directories. To that item, add the path to the Source directory of your RakNet download, and hit OK.
+
+![](/images/tutorial5.jpg)
+
+</Step>
+
+<Step>
+
+### Link ws2_32.lib
+
+Next, link in ws2_32.lib, from the same dialog box.
+
+![](/images/tutorial6.jpg)
+
+</Step>
+
+<Step>
+
+### Change the character set
+
+Also change the character set to not set. This is so regular array based strings are used, as opposed to unicode or wide character.
+
+![](/images/tutorial7.jpg)
+
+</Step>
+
+<Step>
+
+### Begin coding
+
+You are ready to begin adding code to main.cpp.
+
+</Step>
+
+</Steps>
+
+## Code implementation
 
 ### 1. Design
 
@@ -48,7 +101,9 @@ Create your main function. Query the user as to whether they want to run a clien
 
 Try writing it on your own first. When you are done, see [code sample 1](#tutorial-sample-1) below.
 
-Hit F7 or the equivalent to build. It should build successfully at this point. If it doesn't, refer to the [FAQ](/reference/faq) which gives many reasons for why something won't build and how to fix it. If that doesn't answer your question, post a question in the forum.
+<Callout type="warn">
+Hit F7 or the equivalent to build. It should build successfully at this point. If it doesn't, refer to the [FAQ](/reference/faq) which gives many reasons for why something won't build and how to fix it.
+</Callout>
 
 ### 3. Adding functionality
 
@@ -72,13 +127,13 @@ You'll see there are quite a few pre-defined enumerations. You should quickly re
 
 Try writing it on your own first. When you are done, see [code sample 2](#tutorial-sample-2) below.
 
-At this point you should be able to run two instances (In Visual Studio, hit ctrl-F5 twice) and connect to each other. If you cannot connect, then refer to the [FAQ](/reference/faq) or post in the forum.
+At this point you should be able to run two instances (In Visual Studio, hit ctrl-F5 twice) and connect to each other. If you cannot connect, then refer to the [FAQ](/reference/faq).
 
 This is the output from my version of the sample:
 
 **Server output**
 
-```
+```text
 (C)lient or (S)erver?
 s
 Starting the server.
@@ -87,7 +142,7 @@ A connection is incoming.
 
 **Client output**
 
-```
+```text
 (C)lient or (S)erver?
 c
 Enter server IP or hit enter for 127.0.0.1
@@ -106,7 +161,7 @@ When you are done, see [code sample 3](#tutorial-sample-3) below.
 
 The client output should be similar to before. The server output should also print "Hello World"
 
-```
+```text
 (C)lient or (S)erver?
 s
 Starting the server.
@@ -114,7 +169,9 @@ A connection is incoming.
 Hello World
 ```
 
-See the index for a list of major systems not covered here. For further information on setting up your project, see the next page: [Compiler setup](/getting-started/compiler-setup)
+See the index for a list of major systems not covered here. For further information on setting up your project, see the [Compiler setup](/getting-started/compiler-setup) page.
+
+## Code samples
 
 ### Tutorial Sample 1
 
@@ -152,8 +209,6 @@ int main(void)
 	return 0;
 }
 ```
-
-
 ### Tutorial Sample 2
 
 ```cpp
@@ -172,7 +227,7 @@ int main(void)
 	RakNet::RakPeerInterface *peer = RakNet::RakPeerInterface::GetInstance();
 	bool isServer;
 	RakNet::Packet *packet;
-	
+
 	printf("(C) or (S)erver?\n");
 	gets(str);
 
@@ -187,7 +242,7 @@ int main(void)
 		isServer = true;
 	}
 
-	
+
 	if (isServer)
 	{
 		printf("Starting the server.\n");
@@ -221,7 +276,7 @@ int main(void)
 					break;
 				case ID_CONNECTION_REQUEST_ACCEPTED:
 					printf("Our connection request has been accepted.\n");
-					break;					
+					break;
 				case ID_NEW_INCOMING_CONNECTION:
 					printf("A connection is incoming.\n");
 					break;
@@ -248,15 +303,13 @@ int main(void)
 				}
 		}
 	}
-	
-	
+
+
 	RakNet::RakPeerInterface::DestroyInstance(peer);
 
 	return 0;
 }
 ```
-
-
 ### Tutorial Sample 3
 
 ```cpp
@@ -360,7 +413,7 @@ int main(void)
 					printf("Connection lost.\n");
 				}
 				break;
-				
+
 			case ID_GAME_MESSAGE_1:
 				{
 					RakNet::RakString rs;
@@ -370,7 +423,7 @@ int main(void)
 					printf("%s\n", rs.C_String());
 				}
 				break;
-			
+
 			default:
 				printf("Message with identifier %i has arrived.\n", packet->data[0]);
 				break;
@@ -384,4 +437,3 @@ int main(void)
 	return 0;
 }
 ```
-

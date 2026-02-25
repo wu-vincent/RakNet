@@ -1,22 +1,20 @@
 ---
 title: "Creating Packets"
+description: "How to encode game data into network packets using either C structs or the BitStream class."
 ---
 
-## Creating Packets
 ### How to encode your game data into packets
-
 
 Systems that run RakNet, and in fact all systems on the internet, communicate through what is commonly known as packets. Or more accurately in the case of UDP, datagrams. Each datagram is created by RakNet and contains one or more messages. Messages could be created by you, such as position or health, or sometimes are created by RakNet internally, such as pings. By convention, the first byte of messages contain a numerical identifier from 0 to 255 which is used to indicate what type of message it is. RakNet already has a large set of messages it uses internally, or for plugins. These can be viewed in the file MessageIdentifiers.h.
 
 For this example, lets set the position of a timed mine in the gameworld. We'll need the following data:
 
--   The position of the mine, which is 3 floats. float x, float y, float z. You may have your own vector type which you can use intead.
+-   The position of the mine, which is 3 floats. float x, float y, float z. You may have your own vector type which you can use instead.
 -   Some way to refer to the mine that all systems agree on. The [NetworkIDObject](/basics/network-id-object) class is perfect for that. Lets assume class Mine inherits from NetworkIDObject. Then all we have to store is get the NetworkID of the mine (for more information see [Receiving Packets](/basics/receiving-packets), [Sending Packets](/basics/sending-packets).
--   Who owns the mine. That way if someone steps on it we know who to give credit to. The built in reference to players, SystemAddress, is perfect.. You can use GetExternalID() to get the SystemAddress.
--   When the mine was placed. Lets say after 10 seconds the mine is automatically disintegrated, so it's important that we get the time correct so the mine doesn't disintegrate at different times on different computers. Fortunately the RakNet has the built-in ability to handle this using [Timestamping](/basics/timestamping).
+-   Who owns the mine. That way if someone steps on it we know who to give credit to. The built in reference to players, SystemAddress, is perfect. You can use GetExternalID() to get the SystemAddress.
+-   When the mine was placed. Lets say after 10 seconds the mine is automatically disintegrated, so it's important that we get the time correct so the mine doesn't disintegrate at different times on different computers. Fortunately RakNet has the built-in ability to handle this using [Timestamping](/basics/timestamping).
 
 ### Use a structure or a bitstream?
-
 
 Ultimately, anytime you send data you will send a stream of characters. There are two easy ways to encode your data into this. One is to create a structure and cast it to a `(char*)` the other is to use the built-in [BitStream](/basics/bitstreams) class.
 
@@ -25,10 +23,13 @@ The advantage of creating a structure and casting is that it is very easy to cha
 The advantage of using a bitstream is that you don't have to change any external files to use it. Simply create the bitstream, write the data you want in whatever order you want, and send it. You can use the 'compressed' version of the read and write methods to write using fewer bits and it will write bools using only one bit. You can write data out dynamically, writing certain values if certain conditions are true or false. BitStream will automatically endian-swap members written with Serialize(), Write(), or Read(). The disadvantage of a bitstream is you are now susceptible to make mistakes. You can read data in a way that does not complement how you wrote it - the wrong order, a wrong data type, or other mistakes.
 
 We will cover both ways of creating packets here.
+
+<Tabs items={["Struct", "BitStream"]}>
+<Tab value="Struct">
+
 ## Creating Packets with structs
 
-
-As I’ve probably mentioned earlier, RakNet uses a convention on how packets (Packet) types are identified. The first byte of the data field is a single byte enumeration that specifies type, followed by the transmitted data. In packets that include a time stamp, the first byte contains ID_TIMESTAMP, the following 4 bytes the actual time stamp value, then the byte that identifies the packet, and only then the actual data transmitted.
+As mentioned earlier, RakNet uses a convention on how packet (Packet) types are identified. The first byte of the data field is a single byte enumeration that specifies type, followed by the transmitted data. In packets that include a time stamp, the first byte contains ID_TIMESTAMP, the following 4 bytes the actual time stamp value, then the byte that identifies the packet, and only then the actual data transmitted.
 
 ### Without Timestamping
 
@@ -42,7 +43,7 @@ unsigned char typeId; // Your type here
 #pragma pack(pop)
 ```
 
-Noticed the #pragma pack(push,1) and #pragma pack(pop) ? These force your compiler (in this case VC++), to pack the structure as byte-aligned. Check your compiler documentation to learn more.
+Notice the #pragma pack(push,1) and #pragma pack(pop)? These force your compiler (in this case VC++), to pack the structure as byte-aligned. Check your compiler documentation to learn more.
 
 ### With Timestamping
 
@@ -71,12 +72,12 @@ RakNet::Time timeStamp; // Put the system time in here returned by RakNet::GetTi
 unsigned char typeId; // You should put here an enum you defined after the last one defined in MessageIdentifiers.h, lets say ID_SET_TIMED_MINE
 float x,y,z; // Mine position
 NetworkID networkId; // NetworkID of the mine, used as a common method to refer to the mine on different computers
-SystemAddress systemAddress; // The SystenAddress of the player that owns the mine
+SystemAddress systemAddress; // The SystemAddress of the player that owns the mine
 };
 #pragma pack(pop)
 ```
 
-As I wrote in the comment above, we have to define enums for our own packets types, so when the data stream arrives in a Receive call we know what we are looking at. You should define your enums as starting at ID_USER_PACKET_ENUM, like this:
+As written in the comment above, we have to define enums for our own packets types, so when the data stream arrives in a Receive call we know what we are looking at. You should define your enums as starting at ID_USER_PACKET_ENUM, like this:
 
 ```cpp
 // Define our custom packet ID's
@@ -86,10 +87,9 @@ ID_SET_TIMED_MINE = ID_USER_PACKET_ENUM,
 };
 ```
 
-
-**NOTE THAT YOU CANNOT INCLUDE POINTERS DIRECTLY OR INDIRECTLY IN THE STRUCTS.**
-
-It seems to be a fairly common mistake that people include a pointer or a class with a pointer in the struct and think that the data pointed to by the pointer will be sent over the network. This is not the case - all it would send is the pointer address.
+<Callout type="error">
+**You cannot include pointers directly or indirectly in the structs.** It is a fairly common mistake to include a pointer or a class with a pointer in the struct and think that the data pointed to by the pointer will be sent over the network. This is not the case -- all it would send is the pointer address.
+</Callout>
 
 ### Nested Structures
 
@@ -118,14 +118,14 @@ A a;
 #pragma pack(pop)
 ```
 
+</Tab>
+<Tab value="BitStream">
 
 ## Creating Packets with Bitstreams
 
 ### Write less data with bitstreams
 
-
 Lets take our mine example above and use a bitstream to write it out instead. We have all the same data as before.
-
 
 ```cpp
 MessageID useTimeStamp; // Assign this to ID_TIMESTAMP
@@ -145,7 +145,6 @@ myBitStream.Write(mine->GetPosition().z);
 myBitStream.Write(mine->GetNetworkID()); // In the struct this is NetworkID networkId
 myBitStream.Write(mine->GetOwner()); // In the struct this is SystemAddress systemAddress
 ```
-
 
 If we were to send myBitStream to RakPeerInterface::Send it would be identical internally to a casted struct at this point. Now lets try some improvements. Lets assume that a good deal of the time mines are at 0,0,0 for some reason. We can then do this instead:
 
@@ -177,24 +176,22 @@ myBitStream.Write(mine->GetNetworkID()); // In the struct this is NetworkID netw
 myBitStream.Write(mine->GetOwner()); // In the struct this is SystemAddress systemAddress
 ```
 
-
 This can potentially save us sending 3 floats over the network, at the cost of 1 bit.
 
-### Common mistake!
+<Callout type="error">
+**Common mistake:** When writing the first byte to a bitstream, be sure to cast it to `(MessageID)` or `(unsigned char)`. If you just write the enumeration directly you will be writing a full integer (4 bytes).
 
+Right: `bitStream->Write((MessageID)ID_SET_TIMED_MINE);`
 
-When writing the first byte to a bitstream, be sure to cast it to (MessageID) or (unsigned char). If you just write the enumeration directly you will be writing a full integer (4 bytes).
-
-Right:
-`bitStream->Write((MessageID)ID_SET_TIMED_MINE);`
-
-Wrong:
-`bitStream->Write(ID_SET_TIMED_MINE);`
+Wrong: `bitStream->Write(ID_SET_TIMED_MINE);`
 
 In the second case, RakNet will see the first byte is 0, which is reserved internally to ID_INTERNAL_PING, and you will never get it.
+</Callout>
 
+</Tab>
+</Tabs>
 
-**Writing strings**
+### Writing strings
 
 It is possible to write strings using the array overload of the BitStream. One way to do it would be to write the length, then the data such as:
 
@@ -202,7 +199,7 @@ It is possible to write strings using the array overload of the BitStream. One w
 void WriteStringToBitStream(char *myString, BitStream *output)
 {
 output->Write((unsigned short) strlen(myString));
-output->Write(myString, strlen(myString);
+output->Write(myString, strlen(myString));
 }
 ```
 
@@ -232,7 +229,9 @@ RakNet also has a string class, RakNet::RakString, found in RakString.h
 RakNet::RakString rakString("The value is %i", myInt);
 ```
 
-`bitStream->write(rakString);`
+```cpp
+bitStream->write(rakString);
+```
 
 RakString is approximately 3X faster than std::string.
 

@@ -1,12 +1,11 @@
 ---
 title: "NAT Type Detection"
+description: "Determine your NAT type in advance to predict whether NAT punchthrough will succeed between two peers."
 ---
-
-## NAT Type detection
 
 ### Determine in advance if you can complete NAT punchthrough
 
-[NAT punchthrough](/plugins/nat-punchthrough) success rates is based on what kind of algorithm the NAT uses.
+[NAT punchthrough](/plugins/nat-punchthrough) success rate is based on what kind of algorithm the NAT uses.
 
 **Full cone NAT**: Accepts any datagrams to a port that has been previously used. Will accept the first datagram from the remote peer.
 
@@ -41,29 +40,118 @@ The NatTypeDetection plugins allow you to determine which type of NAT you have, 
 
 ### Client Implementation
 
-1.  Create an instance of the plugin: `NatTypeDetectionServer nayTypeDetectionClient;`
-2.  Attach the plugin to an instance of RakPeerInterface: `rakPeer->AttachPlugin(&nayTypeDetectionClient);`
-3.  Connect to the server, and wait for ID_CONNECTION_REQUEST_ACCEPTED. Use the following line to use the free server provided by RakNet: `rakPeer->Connect("8.17.250.34", 60481, 0, 0);`
-4.  Call DetectNATType with the SystemAddress of the server.
-5.  Wait for ID_NAT_TYPE_DETECTION_RESULT
-6.  Byte 1 contains the type of NAT that you have. See the enumeration NATTypeDetectionResult in NATTypeDetectionCommon.h
-7.  Various utility functions are provided for this enumeration: `CanConnect(), NATTypeDetectionResultToString(), NATTypeDetectionResultToStringFriendly()`
+<Steps>
+<Step>
+
+### Create the plugin
+
+Create an instance of the plugin: `NatTypeDetectionClient natTypeDetectionClient;`
+
+</Step>
+
+<Step>
+
+### Attach to RakPeerInterface
+
+Attach the plugin to an instance of RakPeerInterface: `rakPeer->AttachPlugin(&natTypeDetectionClient);`
+
+</Step>
+
+<Step>
+
+### Connect to the server
+
+Connect to the server, and wait for ID_CONNECTION_REQUEST_ACCEPTED: `rakPeer->Connect("8.17.250.34", 60481, 0, 0);`
+
+</Step>
+
+<Step>
+
+### Start detection
+
+Call DetectNATType with the SystemAddress of the server.
+
+</Step>
+
+<Step>
+
+### Wait for result
+
+Wait for ID_NAT_TYPE_DETECTION_RESULT.
+
+</Step>
+
+<Step>
+
+### Read the result
+
+Byte 1 contains the type of NAT that you have. See the enumeration NATTypeDetectionResult in NATTypeDetectionCommon.h.
+
+</Step>
+
+<Step>
+
+### Use utility functions
+
+Various utility functions are provided for this enumeration: `CanConnect()`, `NATTypeDetectionResultToString()`, `NATTypeDetectionResultToStringFriendly()`
+
+</Step>
+</Steps>
 
 ### Server Implementation
 
-1.  Host a server somewhere, not using NAT / e.g. behind a firewall. (RakNet provides a free one at 8.17.250.34:60481, however you may wish to host your own for consistent uptime). The server must have enough external IP addresses, as described in **NAT Type Detection Algorithm**.
-2.  Create an instance of the plugin: `NatTypeDetectionServer natTypeDetectionServer;`
-3.  Attach the plugin: `rakPeer->AttachPlugin(&natTypeDetectionServer);`
-4.  Get a list of IP addresses on your system
+<Callout type="warn">
+The server must have enough external IP addresses for the detection algorithm to work (at least 4 IP addresses). The server must not be behind NAT.
+</Callout>
 
-    ```cpp
-    char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ];
-    unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
-    SocketLayer::Instance()->GetMyIP( ipList, binaryAddresses );
-    ```
+<Steps>
+<Step>
 
-5.  Call `natTypeDetectionServer.Startup(ip2,ip3,ip4); // ip2,ip3,ip4 must be ip addresses not already in use. If you bound RakNet to ip1 in the call to RakPeer::Startup(), then use the 2nd to 4th indices in ipList.`
+### Host a server
+
+Host a server somewhere, not using NAT / e.g. behind a firewall.
+
+</Step>
+
+<Step>
+
+### Create the plugin
+
+Create an instance of the plugin: `NatTypeDetectionServer natTypeDetectionServer;`
+
+</Step>
+
+<Step>
+
+### Attach to RakPeerInterface
+
+Attach the plugin: `rakPeer->AttachPlugin(&natTypeDetectionServer);`
+
+</Step>
+
+<Step>
+
+### Get IP addresses
+
+Get a list of IP addresses on your system:
+
+```cpp
+char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ];
+unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
+SocketLayer::Instance()->GetMyIP( ipList, binaryAddresses );
+```
+
+</Step>
+
+<Step>
+
+### Start the server
+
+Call `natTypeDetectionServer.Startup(ip2,ip3,ip4);` -- ip2, ip3, ip4 must be IP addresses not already in use. If you bound RakNet to ip1 in the call to RakPeer::Startup(), then use the 2nd to 4th indices in ipList.
+
+</Step>
+</Steps>
 
 ### Sample
 
-See the sample _Samples/NATCompleteClient_
+See the sample _Samples/NATCompleteClient_.

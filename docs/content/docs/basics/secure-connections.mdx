@@ -1,8 +1,7 @@
 ---
 title: "Secure Connections"
+description: "How to enable 256-bit Elliptic Curve encrypted connections in RakNet with key generation, setup, and error handling."
 ---
-
-## Secure Connections
 
 ### Secure your network traffic
 
@@ -17,20 +16,38 @@ RakNet provides data security on par with 256-bit TLS. An efficient 256-bit Elli
 -   Immune to active attacks (man-in-the-middle) if server key is known ahead of time
 -   Uses 256-bit Elliptic Curve Cryptography
 -   Elliptic Curve: Over finite field Fp, p = 2^n - c, c small
-         Shape of curve: a' * x^2 + y^2 = 1 + d' * x^2 * y^2, a' = -1 (square in Fp)
-         d' (non square in Fp) -> order of curve = q * cofactor h, order of generator point = q
-         Curves satisfy MOV conditions and are not anomalous
-         Point operations performed with Extended Twisted Edwards group laws
+         Shape of curve: a' * x^2 + y^2 = 1 + d' * x^2 * y^2, a' = -1 (square in Fp)
+         d' (non square in Fp) -> order of curve = q * cofactor h, order of generator point = q
+         Curves satisfy MOV conditions and are not anomalous
+         Point operations performed with Extended Twisted Edwards group laws
 
 Secure connections add up to 11 bytes per packet and take time to compute so you may wish to limit usage to release mode.
 
-### Usage:
+### Usage
 
-1. Add `#define LIBCAT_SECURITY 1` to "NativeFeatureIncludesOverrides.h". Rebuild all.
+<Steps>
 
-2. Include "Source/SecureHandshake.h". **DO NOT INCLUDE ANY FILES FROM Source/cat**
+<Step>
 
-3. Create the public and private keys in advance
+### Enable the LIBCAT_SECURITY define
+
+Add `#define LIBCAT_SECURITY 1` to "NativeFeatureIncludesOverrides.h". Rebuild all.
+
+</Step>
+
+<Step>
+
+### Include the secure handshake header
+
+Include "Source/SecureHandshake.h". **DO NOT INCLUDE ANY FILES FROM Source/cat**
+
+</Step>
+
+<Step>
+
+### Generate public and private keys
+
+Create the public and private keys in advance:
 
 ```cpp
 cat::EasyHandshake::Initialize()
@@ -40,32 +57,64 @@ char private_key[cat::EasyHandshake::PRIVATE_KEY_BYTES];
 handshake.GenerateServerKey(public_key, private_key);
 ```
 
-4. Save the public and private keys to disk
+</Step>
+
+<Step>
+
+### Save keys to disk
+
+Save the public and private keys to disk:
 
 ```cpp
 fwrite(private_key, sizeof(private_key), 1, fp);
 fwrite(public_key, sizeof(public_key), 1, fp);
 ```
 
-5. The server should load the public and private keys, and pass it to RakPeerInterface::InitializeSecurity(); Do not distribute the private key, this should remain secret.
+</Step>
 
-6. The client should load the public key. The public key should be distributed with the client application, or downloaded from a secure location. Pass the public key to RakPeerInterface::Connect()
+<Step>
 
-7. Connect the server to the client as usual.
+### Configure the server
 
+The server should load the public and private keys, and pass them to `RakPeerInterface::InitializeSecurity()`.
+
+<Callout type="warn">
+Do not distribute the private key. It should remain secret on the server only.
+</Callout>
+
+</Step>
+
+<Step>
+
+### Configure the client
+
+The client should load the public key. The public key should be distributed with the client application, or downloaded from a secure location. Pass the public key to `RakPeerInterface::Connect()`.
+
+</Step>
+
+<Step>
+
+### Connect
+
+Connect the server to the client as usual.
+
+</Step>
+
+</Steps>
+
+<Callout type="error">
 Possible errors, returned in `packet->data[0]`:
 
-**ID_REMOTE_SYSTEM_REQUIRES_PUBLIC_KEY**: You didn't pass a public key to RakPeerInterface::Connect().
-**ID_OUR_SYSTEM_REQUIRES_SECURITY**: You did pass a public key to RakPeerInterface::Connect(), but InitializeSecurity() was not called on the server.
-**ID_PUBLIC_KEY_MISMATCH**: The public key on the client does not match the public key on the server.
+- **ID_REMOTE_SYSTEM_REQUIRES_PUBLIC_KEY**: You didn't pass a public key to `RakPeerInterface::Connect()`.
+- **ID_OUR_SYSTEM_REQUIRES_SECURITY**: You did pass a public key to `RakPeerInterface::Connect()`, but `InitializeSecurity()` was not called on the server.
+- **ID_PUBLIC_KEY_MISMATCH**: The public key on the client does not match the public key on the server.
+</Callout>
 
-### Public key transmission:
+### Public key transmission
 
 You should generate the public key on a remote system in advance of trying to connect to that system. The reason is that the public key is used to identify the remote system, so you know the system that replied is the one you are actually trying to connect to. An attacker might know the public key, but they wouldn't know the private key (which you keep secret) so they would not be able to establish a connection with you.
 
 For peer to peer, you should run a dedicated server, which itself is secure. Distribute the client with the public key to that server known in advance. Connect to that server, upload the peer's public key into a database, and then wait for incoming connections. Correspondingly, when a peer wants to connect, connect to that server, download the public key for that peer, and use that public key for connections.
-
-You can rent a discounted dedicated server from dx.net at [http://www.dx.net/raknet_dx.php](http://www.dx.net/raknet_dx.php)
 
 Alternate solutions:
 

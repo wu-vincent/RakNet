@@ -1,10 +1,11 @@
 ---
 title: "IO Completion Ports"
+description: "Overview of IO Completion Ports support in RakNet for high-performance server-side asynchronous IO on Windows."
 ---
 
-> **Deprecated:** IO Completion Ports support is currently disabled in RakNet. Do not use.
-
-## IO Completion Ports
+<Callout type="warn">
+**Deprecated:** IO Completion Ports support is currently disabled in RakNet. Do not use.
+</Callout>
 
 IO Completion Ports require Windows NT 3.5, 2000, or XP.
 
@@ -15,7 +16,3 @@ RakNet pools the IO completion port worker threads. Therefore, multiple instance
 ### Enabling IO Completion Ports
 
 To enable IO completion ports, declare the preprocessor define `__USE_IO_COMPLETION_PORTS` and rebuild all. To not enable IO completion ports, simply do not define this. Note that the included pre-built DLLs do not use IO completion ports to ensure Windows compatibility. You can however easily build your own by loading the sample project found at `Samples\Project Samples\CreateDLLSampleProject`, defining `__USE_IO_COMPLETION_PORTS`, and building.
-
-## See Also
-
-- [Index](/)

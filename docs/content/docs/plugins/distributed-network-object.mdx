@@ -1,10 +1,11 @@
 ---
 title: "Distributed Network Object"
+description: "Automatically synchronize object creation, destruction, and member variables across all connected systems using the Distributed Network Object system."
 ---
 
-> **Deprecated:** This system has been superseded by [ReplicaManager3](/plugins/replica-manager3), which provides more flexible object replication.
-
-## Distributed Network Object
+<Callout type="warn">
+**Deprecated:** This system has been superseded by [ReplicaManager3](/plugins/replica-manager3), which provides more flexible object replication.
+</Callout>
 
 ### Overview of the distributed network object system
 
@@ -12,7 +13,7 @@ The distributed network object system is the highest level layer over RakNet. Th
 
 This is very useful conceptually because it has a direct analogy to game objects. For example, one tank in a multiplayer game with twenty players has actually been instantiated twenty times. However, as far as the player is concerned there is only one tank. The player expects that the position, orientation, number of shells left, and amount of armor is the same on all systems.
 
-Traditionally, to maintain a tank you would have to craft a series of custom packets for the tank. One packet to describe position, another packet for the tank to shoot, and another to have the tank take damage. Using the distributed network object system, you can synchronize the tank, those 3 member variables, and everything matches automatically.
+Traditionally, to maintain a tank you would have to craft a series of custom packets for the tank. One packet to describe position, another for the tank to shoot, and another to have the tank take damage. Using the distributed network object system, you can synchronize the tank, those 3 member variables, and everything matches automatically.
 
 **Strengths**
 
@@ -51,10 +52,39 @@ You would pass them to the `DistributedNetworkObjectManager` in exactly the same
 
 Once that is done, then you have several steps per class:
 
-1. Add `#include "DistributedNetworkObjectHeader.h"` to the header file for your class.
-2. The basemost class should derive from `DistributedNetworkObject`.
-3. If you plan to instantiate this class, add `REGISTER_DISTRIBUTED_CLASS(ClassName)` in `main()` or `WinMain()`, with the name of your class replacing `ClassName`.
-4. Once per game cycle call `objectInstance->UpdateDistributedObject(ClassName)` where `objectInstance` is the instance of your class and `ClassName` matches the identifier passed to `REGISTER_DISTRIBUTED_CLASS`.
+<Steps>
+<Step>
+
+### Add the header include
+
+Add `#include "DistributedNetworkObjectHeader.h"` to the header file for your class.
+
+</Step>
+
+<Step>
+
+### Derive from DistributedNetworkObject
+
+The basemost class should derive from `DistributedNetworkObject`.
+
+</Step>
+
+<Step>
+
+### Register the class
+
+If you plan to instantiate this class, add `REGISTER_DISTRIBUTED_CLASS(ClassName)` in `main()` or `WinMain()`, with the name of your class replacing `ClassName`.
+
+</Step>
+
+<Step>
+
+### Call UpdateDistributedObject
+
+Once per game cycle call `objectInstance->UpdateDistributedObject(ClassName)` where `objectInstance` is the instance of your class and `ClassName` matches the identifier passed to `REGISTER_DISTRIBUTED_CLASS`.
+
+</Step>
+</Steps>
 
 For example, if you want every instance of `Tank` to match among all systems:
 
@@ -88,7 +118,7 @@ The `SynchronizeMemory` function lets you add elements at runtime, members do no
 
 In the public section of the class definition, add a macro of the form:
 
-```
+```cpp
 REGISTER_X_DISTRIBUTED_OBJECT_MEMBERS(BaseClass,
     SynchronizationMethod, AuthoritativeNetwork, VariableType, VariableName,
     ...
@@ -99,15 +129,15 @@ Replace the `X` with however many member variables you are synchronizing (e.g. `
 
 **SynchronizationMethod** values:
 
-- `DOM_COPY_UNCOMPRESSED` — Send the data without [bitstream compression](/basics/bitstreams) and copy over the old value on arrival. Useful for data such as player health.
-- `DOM_COPY_COMPRESSED` — Same as above but with bitstream compression. Useful for values that stay near 0. Only works with native types (char, int, short, long, float, bool).
-- `DOM_INTERPOLATE_UNCOMPRESSED` — No compression; interpolate from old value to new value on arrival. Requires the `+`, `-`, `*`, and `=` operators.
-- `DOM_INTERPOLATE_COMPRESSED` — Same with bitstream compression. Only works with native types. Requires the `+`, `-`, `*`, and `=` operators.
+- `DOM_COPY_UNCOMPRESSED` -- Send the data without [bitstream compression](/basics/bitstreams) and copy over the old value on arrival. Useful for data such as player health.
+- `DOM_COPY_COMPRESSED` -- Same as above but with bitstream compression. Useful for values that stay near 0. Only works with native types (char, int, short, long, float, bool).
+- `DOM_INTERPOLATE_UNCOMPRESSED` -- No compression; interpolate from old value to new value on arrival. Requires the `+`, `-`, `*`, and `=` operators.
+- `DOM_INTERPOLATE_COMPRESSED` -- Same with bitstream compression. Only works with native types. Requires the `+`, `-`, `*`, and `=` operators.
 
 **AuthoritativeNetwork** values:
 
-- `DOM_SERVER_AUTHORITATIVE` — The server is in charge of the variable. Client changes will be overwritten when the server next changes it.
-- `DOM_CLIENT_AUTHORITATIVE` — The client(s) are in charge of the variable. By default, the client that created the object is the only one authorized to change client authoritative members. You can change the owner with `SetClientOwnerID`.
+- `DOM_SERVER_AUTHORITATIVE` -- The server is in charge of the variable. Client changes will be overwritten when the server next changes it.
+- `DOM_CLIENT_AUTHORITATIVE` -- The client(s) are in charge of the variable. By default, the client that created the object is the only one authorized to change client authoritative members. You can change the owner with `SetClientOwnerID`.
 
 Example with two synchronized members:
 
@@ -173,6 +203,5 @@ See `Samples\CodeSamples\DistributedNetworkObject\DistributedNetworkObjectSample
 
 ## See Also
 
-- [Index](/)
 - [Bitstreams](/basics/bitstreams)
 - [Timestamping](/basics/timestamping)

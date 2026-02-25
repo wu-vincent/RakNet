@@ -1,8 +1,11 @@
 ---
 title: "3rd party dependencies"
+description: "Optional third-party libraries required by specific RakNet projects and demos."
 ---
 
-## Optional 3rd party dependencies
+<Callout type="info">
+All dependencies listed on this page are **optional**. You can use RakNet without any of them. They are only needed if you want to build specific plugins or demos.
+</Callout>
 
 What follows is a list of projects that will not build without 3rd party dependencies, and where to get these dependencies. These projects are optional: you can use RakNet without them. Unpack to is where the project, library, and/or post build step paths are set to by default for the Visual Studio project, and can be changed manually.
 
@@ -22,7 +25,7 @@ Client/Server ReplicaManager3 and interpolation demo
 
 _Download from_: http://www.ogre3d.org/download
 
-_Unpack to_: Doesn't matter, Uses enviroment variable $(OGRE_HOME)
+_Unpack to_: Doesn't matter, uses environment variable $(OGRE_HOME)
 
 _Last checked against_: Prebuilt binary 1.7.4. OGRE_HOME set to C:\\OgreSDK_vc9_v1-7-4.
 
@@ -46,7 +49,7 @@ _Unpack to_: C:\\Program Files (x86)\\PostgreSQL\\9.1
 
 **SQLite\\Logger\\D3D9Samples\\Matrices**
 
-This is a demo that assumes the DirectX SDK is installed. Get it from [http://www.microsoft.com](http://www.microsoft.com) . You will also need to setup the Visual Studio global library and include paths.
+This is a demo that assumes the DirectX SDK is installed. Get it from [http://www.microsoft.com](http://www.microsoft.com). You will also need to setup the Visual Studio global library and include paths.
 
 ### [Lobby2Server_PGSQL](/plugins/lobby)
 
@@ -62,7 +65,7 @@ Visual front-end for the RoomsPlugin and Lobby2 systems, with the ability to log
 
 _Download from_: http://www.scaleform.com/
 
-_Unpack to_: Doesn't matter, uses enviroment variable $(GFXSDK)
+_Unpack to_: Doesn't matter, uses environment variable $(GFXSDK)
 
 ### [AutopatcherClientGFx3](/plugins/autopatcher)
 
@@ -70,7 +73,7 @@ Visual front-end for the AutopatcherClient system. Note: Scaleform requires regi
 
 _Download from_: http://www.scaleform.com/
 
-_Unpack to_: Doesn't matter, uses enviroment variable $(GFXSDK)
+_Unpack to_: Doesn't matter, uses environment variable $(GFXSDK)
 
 ### [RakVoiceDSound](/plugins/rakvoice)
 
@@ -78,7 +81,7 @@ One of three sound implementations of RakVoice, supporting DirectSound, FMOD, an
 
 _Download from_: http://msdn.microsoft.com/en-us/directx/aa937788.aspx
 
-_Unpack to_: Doesn't matter, uses enviroment variable $(DXSDK_DIR)
+_Unpack to_: Doesn't matter, uses environment variable $(DXSDK_DIR)
 
 ### [RakVoiceFMOD](/plugins/rakvoice)
 

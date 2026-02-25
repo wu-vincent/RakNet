@@ -32,9 +32,6 @@ if(MSVC)
         _CRT_SECURE_NO_DEPRECATE
         _CRT_NONSTDC_NO_DEPRECATE
     )
-    target_compile_options(RakNet PRIVATE /W0 /GS- /GR-)
-else()
-    target_compile_options(RakNet PRIVATE -w)
 endif()
 
 if(WIN32)

@@ -3,7 +3,7 @@ title: "TCPInterface"
 description: Utility class for TCP connections to Telnet, HTTP servers, mail servers, and more.
 ---
 
-TCPInterface, found at `TCPInterface.h`, is a utility class designed to connect using the TCP protocol in cases where this is necessary. The connection process is similar to `RakPeerInterface.h`, with the exception that `Receive()` returns the actual data received -- the first byte does not contain any specific identifiers.
+`TCPInterface`, found at `TCPInterface.h`, is a utility class designed to connect using the TCP protocol in cases where this is necessary. The connection process is similar to `RakPeerInterface.h`, with the exception that `Receive()` returns the actual data received -- the first byte does not contain any specific identifiers.
 
 To get connection status updates, use `HasNewConnection()` and `HasLostConnection()`.
 
@@ -21,19 +21,19 @@ bool Start(unsigned short port, unsigned short maxIncomingConnections);
 void Stop(void);
 
 // Connect to the specified host on the specified port
-SystemAddress Connect(const char* host, unsigned short remotePort);
+SystemAddress Connect(const char *host, unsigned short remotePort);
 
 // Sends a byte stream
-void Send( const char *data, unsigned length, SystemAddress systemAddress );
+void Send(const char *data, unsigned length, SystemAddress systemAddress);
 
 // Returns data received
-Packet* Receive( void );
+Packet *Receive(void);
 
 // Disconnects a player/address
-void CloseConnection( SystemAddress systemAddress );
+void CloseConnection(SystemAddress systemAddress);
 
 // Deallocates a packet returned by Receive
-void DeallocatePacket( Packet *packet );
+void DeallocatePacket(Packet *packet);
 
 // Queued events of new connections
 SystemAddress HasNewConnection(void);

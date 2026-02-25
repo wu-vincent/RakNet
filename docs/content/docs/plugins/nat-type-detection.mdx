@@ -24,17 +24,17 @@ description: "Determine your NAT type in advance to predict whether NAT punchthr
 | *Port-Restricted cone NAT* | YES | YES | YES | NO |
 | *Symmetric NAT* | YES | YES | NO | NO |
 
-The NatTypeDetection plugins allow you to determine which type of NAT you have, and therefore if NAT punchthrough is likely to complete or not. This can be determined in advance of joining a game.
+The `NatTypeDetection` plugins allow you to determine which type of NAT you have, and therefore if NAT punchthrough is likely to complete or not. This can be determined in advance of joining a game.
 
 ### NAT Type Detection algorithm
 
-1.  Client opens two ports on the same IP address. In NatTypeDetectionClient, the RakNet socket is the first port, c2 is the socket on the second port, created in NatTypeDetectionClient::DetectNATType()
-2.  Server opens two ports on one IP address, and one port on three additional IP addresses. This is done in NatTypeDetectionServer::Startup(). The first port on the first IP address is the normal RakNet socket. The second port on the first IP address is s1p2. The other three addresses are bound to the sockets s2p3, s3p4, and s4p5.
+1.  Client opens two ports on the same IP address. In `NatTypeDetectionClient`, the RakNet socket is the first port, `c2` is the socket on the second port, created in `NatTypeDetectionClient::DetectNATType()`.
+2.  Server opens two ports on one IP address, and one port on three additional IP addresses. This is done in `NatTypeDetectionServer::Startup()`. The first port on the first IP address is the normal RakNet socket. The second port on the first IP address is `s1p2`. The other three addresses are bound to the sockets `s2p3`, `s3p4`, and `s4p5`.
 3.  Client connects to the server on the first IP address normally
 4.  Client requests NAT type detection begins
-5.  Server attempts to send to client's second port. This was a port that was never opened previously on the client, therefore if received, then the client is not behind a NAT. This is done in NatTypeDetectionServer::Update(), defined by STATE_TESTING_NONE_1 and STATE_TESTING_NONE_2. The reason for 2 attempts is that every attempt occurs twice. The time for each attempt is the ping * 3 + 50 milliseconds. s4p5 is used for this.
-6.  Server sends from a different IP address to client's first port, the port that RakNet is connected on. If received, then the client will accept datagrams from any source IP address to a port already in use. This is therefore full-cone NAT. s2p3 is used for this.
-7.  Server sends from the second port on the already-connected IP address, s1p2. If received, then the client is using address-restricted cone NAT.
+5.  Server attempts to send to client's second port. This was a port that was never opened previously on the client, therefore if received, then the client is not behind a NAT. This is done in `NatTypeDetectionServer::Update()`, defined by `STATE_TESTING_NONE_1` and `STATE_TESTING_NONE_2`. The reason for 2 attempts is that every attempt occurs twice. The time for each attempt is the ping * 3 + 50 milliseconds. `s4p5` is used for this.
+6.  Server sends from a different IP address to client's first port, the port that RakNet is connected on. If received, then the client will accept datagrams from any source IP address to a port already in use. This is therefore full-cone NAT. `s2p3` is used for this.
+7.  Server sends from the second port on the already-connected IP address, `s1p2`. If received, then the client is using address-restricted cone NAT.
 8.  Client sends to another IP address on the server, from its first (already connected) port. If the IP address and port is the same, then the client uses the same external IP address and port to all connections from the same source address. This is port-restricted NAT.
 9.  Else symmetric NAT.
 
@@ -53,7 +53,7 @@ Create an instance of the plugin: `NatTypeDetectionClient natTypeDetectionClient
 
 ### Attach to RakPeerInterface
 
-Attach the plugin to an instance of RakPeerInterface: `rakPeer->AttachPlugin(&natTypeDetectionClient);`
+Attach the plugin to an instance of `RakPeerInterface`: `rakPeer->AttachPlugin(&natTypeDetectionClient);`
 
 </Step>
 
@@ -61,7 +61,7 @@ Attach the plugin to an instance of RakPeerInterface: `rakPeer->AttachPlugin(&na
 
 ### Connect to the server
 
-Connect to the server, and wait for ID_CONNECTION_REQUEST_ACCEPTED: `rakPeer->Connect("8.17.250.34", 60481, 0, 0);`
+Connect to the server, and wait for `ID_CONNECTION_REQUEST_ACCEPTED`: `rakPeer->Connect("8.17.250.34", 60481, 0, 0);`
 
 </Step>
 
@@ -69,7 +69,7 @@ Connect to the server, and wait for ID_CONNECTION_REQUEST_ACCEPTED: `rakPeer->Co
 
 ### Start detection
 
-Call DetectNATType with the SystemAddress of the server.
+Call `DetectNATType` with the `SystemAddress` of the server.
 
 </Step>
 
@@ -77,7 +77,7 @@ Call DetectNATType with the SystemAddress of the server.
 
 ### Wait for result
 
-Wait for ID_NAT_TYPE_DETECTION_RESULT.
+Wait for `ID_NAT_TYPE_DETECTION_RESULT`.
 
 </Step>
 
@@ -85,7 +85,7 @@ Wait for ID_NAT_TYPE_DETECTION_RESULT.
 
 ### Read the result
 
-Byte 1 contains the type of NAT that you have. See the enumeration NATTypeDetectionResult in NATTypeDetectionCommon.h.
+Byte 1 contains the type of NAT that you have. See the enumeration `NATTypeDetectionResult` in `NATTypeDetectionCommon.h`.
 
 </Step>
 
@@ -136,9 +136,9 @@ Attach the plugin: `rakPeer->AttachPlugin(&natTypeDetectionServer);`
 Get a list of IP addresses on your system:
 
 ```cpp
-char ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ][ 16 ];
+char ipList[MAXIMUM_NUMBER_OF_INTERNAL_IDS][16];
 unsigned int binaryAddresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS];
-SocketLayer::Instance()->GetMyIP( ipList, binaryAddresses );
+SocketLayer::Instance()->GetMyIP(ipList, binaryAddresses);
 ```
 
 </Step>
@@ -147,7 +147,7 @@ SocketLayer::Instance()->GetMyIP( ipList, binaryAddresses );
 
 ### Start the server
 
-Call `natTypeDetectionServer.Startup(ip2,ip3,ip4);` -- ip2, ip3, ip4 must be IP addresses not already in use. If you bound RakNet to ip1 in the call to RakPeer::Startup(), then use the 2nd to 4th indices in ipList.
+Call `natTypeDetectionServer.Startup(ip2,ip3,ip4);` -- `ip2`, `ip3`, `ip4` must be IP addresses not already in use. If you bound RakNet to `ip1` in the call to `RakPeer::Startup()`, then use the 2nd to 4th indices in `ipList`.
 
 </Step>
 </Steps>

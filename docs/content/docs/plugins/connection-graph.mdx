@@ -5,7 +5,7 @@ description: "Maintain an up-to-date graph of all peer connections across the en
 
 ### Connection Graph Implementation Overview
 
-The Connection Graph plugin maintains a graph of connections for the entire network, so every peer knows about every other peer. The graph of connections is updated as new systems connect or disconnect from the network.
+The `ConnectionGraph` plugin maintains a graph of connections for the entire network, so every peer knows about every other peer. The graph of connections is updated as new systems connect or disconnect from the network.
 You can optionally specify a password which you can use to allow certain systems to take part on the graph.
 
 <Callout type="info">
@@ -15,7 +15,8 @@ Connection Graph does not connect to the other involved systems. It only keeps a
 Returns the connection graph, stored as map of adjacency lists.
 
 ```cpp
-DataStructures::WeightedGraph<ConnectionGraph::SystemAddressAndGroupId, unsigned short, false> *GetGraph(void);
+DataStructures::WeightedGraph<ConnectionGraph::SystemAddressAndGroupId, unsigned short, false> *
+GetGraph(void);
 ```
 
 See the sample at _Samples\\ConnectionGraph_.

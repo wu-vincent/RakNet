@@ -5,14 +5,14 @@ description: "How to override RakNet's default malloc, realloc, and free functio
 
 ### Override new, delete, malloc, free, and realloc
 
-Users wishing to provide custom memory management functions can do so via RakMemoryOverride.cpp.
+Users wishing to provide custom memory management functions can do so via `RakMemoryOverride.cpp`.
 
 There are 3 global pointers defined in this file, with predefined defaults:
 
 ```cpp
-void* (*rakMalloc) (size_t size) = RakMalloc;
-void* (*rakRealloc) (void *p, size_t size) = RakRealloc;
-void (*rakFree) (void *p) = RakFree;
+void *(*rakMalloc)(size_t size) = RakMalloc;
+void *(*rakRealloc)(void *p, size_t size) = RakRealloc;
+void (*rakFree)(void *p) = RakFree;
 ```
 
 To override, simply set the values of these variables to something else.
@@ -28,24 +28,22 @@ For example, to override malloc, you may write:
 ```
 
 ```cpp
-void *MyMalloc(size_t size)
-{
-return malloc(size);
+void *MyMalloc(size_t size) {
+    return malloc(size);
 }
 ```
 
 ```cpp
-int main()
-{
-rakMalloc=MyMalloc;
-// ...
+int main() {
+    rakMalloc = MyMalloc;
+    // ...
 }
 ```
 
-Then edit the file RakNetDefinesOverrides.h and add
+Then edit the file `RakNetDefinesOverrides.h` and add
 
 ```cpp
 #define _USE_RAK_MEMORY_OVERRIDE 1
 ```
 
-Alternatively, edit RakNetDefines.h _USE_RAK_MEMORY_OVERRIDE
+Alternatively, edit `RakNetDefines.h` `_USE_RAK_MEMORY_OVERRIDE`

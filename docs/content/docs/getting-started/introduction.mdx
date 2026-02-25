@@ -31,7 +31,7 @@ While there are many types of ways to encode packets, they are all transmitted a
 
 ## How does RakNet help me with these issues?
 
-At the lowest level, RakNet's peer to peer class, RakPeerInterface provides a layer over UDP packets that handle these problems transparently, allowing the programmer to focus on the game rather than worrying about the engine.
+At the lowest level, RakNet's peer to peer class, `RakPeerInterface` provides a layer over UDP packets that handle these problems transparently, allowing the programmer to focus on the game rather than worrying about the engine.
 
 -   RakNet can automatically resend packets that did not arrive.
 -   RakNet can automatically order or sequence packets that arrived out of order, and does so efficiently.
@@ -55,7 +55,7 @@ Unlike some other networking APIs:
 
 ## What else can RakNet do for me?
 
-Working at the level of byte streams and packets is bandwidth efficient and gives you a great deal of control but is time consuming. RakNet provides many features to make networking easier, including remote function calls, the BitStream class, and automatic object synchronization.
+Working at the level of byte streams and packets is bandwidth efficient and gives you a great deal of control but is time consuming. RakNet provides many features to make networking easier, including remote function calls, the `BitStream` class, and automatic object synchronization.
 
 Most games share a common set of functionality, such as setting player limits, password production, and statistics. RakNet includes all these features and more. If your game needs it you should check to make sure RakNet doesn't have it integrated already.
 

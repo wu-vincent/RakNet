@@ -90,7 +90,7 @@ RTO = RTT + 4 * RTTVar + SYN
 **Implementation Note 2.4**: It is important to have a lower threshold for RTO. If RTO is too small, retransmission can be easily triggered by a busy CPU, etc. UDT uses 100ms as the lower threshold.
 </Callout>
 
-**Implementation Note 2.5**: Continuous timeout should increase the RTO value. In UDT, a counter (ExpCount) is used to track the number of continuous timeout:
+**Implementation Note 2.5**: Continuous timeout should increase the RTO value. In UDT, a counter (`ExpCount`) is used to track the number of continuous timeout:
 
 ```text
 RTO = ExpCount * (RTT + 4 * RTTVar) + SYN
@@ -112,7 +112,7 @@ The average packet arrival interval also requires a median filter, similar to th
 **This event and only this event can trigger the increase of a packet sending rate (or reduce packet sending period SND) and the update of the size of the congestion window (CWND).**
 </Callout>
 
-The congestion control is in the slow start phase initially. Within the slow start phase, the packet sending period (SND) is 0. The window size starts at 2 and is set to the number of total sent packets so far every time an ACK comes.
+The congestion control is in the slow start phase initially. Within the slow start phase, the packet sending period (`SND`) is 0. The window size starts at 2 and is set to the number of total sent packets so far every time an ACK comes.
 
 Slow start phase stops upon receiving an NAK or the maximum size of the window has been reached. At the end of the slow start phase, the packet interval should be set to the reverse of the packet arrival rate:
 
@@ -131,7 +131,7 @@ else
 
 where `B` is the estimated link capacity, `C` is the current sending speed (`C = 1/SND`), `MSS` is the fixed/maximum size of UDT packet (usually `MSS = MTU - UDP/UDT packet header size`), and `Beta` is a constant value of `0.0000015`.
 
-The SND value is then updated as:
+The `SND` value is then updated as:
 
 ```text
 SND = (SND * SYN) / (SND * inc + SYN)
@@ -149,15 +149,15 @@ CWND = AS * (RTT + SYN) + 16
 
 #### Congestion Period
 
-Every time an NAK is received, UDT updates the largest sequence number sent so far (`LastDecSeq`). A congestion period is defined as the time between two NAKs in which the biggest lost packet sequence number carried in the NAK is greater than the `LastDecSeq`.
+Every time an NAK is received, UDT updates the largest sequence number sent so far (`LastDecSeq`). A congestion period is defined as the time between two NAKs in which the biggest lost packet sequence number carried in the NAK is greater than `LastDecSeq`.
 
 For example, if the sender has sent out packets 1-100 and an NAK comes informing that packet 60 is missing, the `LastDecSeq` value should be updated as 100. If after a while, another NAK comes indicating that packet 140 is lost, this NAK starts a new congestion period.
 
-Note that one congestion period can cause multiple packet loss events. For example, if the sender sends out packets 1-100, and packets 60 and 80 are lost. When the sender receives NAK(60), a new congestion period is started and `LastDecSeq` is updated as 100. When the sender receives NAK(80), which is less than `LastDecSeq(100)`, the sender knows that it already decreased the sending rate before and may decrease less for this packet loss.
+Note that one congestion period can cause multiple packet loss events. For example, if the sender sends out packets 1-100, and packets 60 and 80 are lost. When the sender receives NAK(60), a new congestion period is started and `LastDecSeq` is updated as 100. When the sender receives NAK(80), which is less than `LastDecSeq` (100), the sender knows that it already decreased the sending rate before and may decrease less for this packet loss.
 
 #### Decreasing Sending Rate
 
-These four parameters are used in rate decrease (initial values in parentheses): `AvgNAKNum` (1), `NAKCount` (1), `DecCount` (0), `LastDecSeq` (initial sequence number - 1).
+These four parameters are used in rate decrease (initial values in parentheses): `AvgNAKNum` (1), `NAKCount` (1), `DecCount` (0), `LastDecSeq` (initial sequence number &minus; 1).
 
 ```text
 If it is in the slow start phase, set SND to 1/AS. Slow start ends. Stop.
@@ -183,7 +183,10 @@ If (DecCount <= 5) and (NAKCount == DecCount * DecRandom)
 Update LastDecSeq and NAKCount.
 ```
 
-UDT decreases the sending rate for each congestion period by a random factor between 1/8 to 1/2. For the first NAK in the congestion period, UDT decreases its sending rate by 1/8 (`SND = SND * 1.125`). For the following NAKs, UDT uses a random number (`DecRandom`) to decide if the rate should be decreased or not. The sending rate should not be decreased by more than 1/2 in each congestion period, so UDT will stop decreasing after the 6th decrease (`DecCount <= 5`), as `1.125^6 = 2`.
+UDT decreases the sending rate for each congestion period by a random factor between 1/8 to 1/2.
+For the first NAK in the congestion period, UDT decreases its sending rate by 1/8 (`SND = SND * 1.125`).
+For the following NAKs, UDT uses a random number (`DecRandom`) to decide if the rate should be decreased or not.
+The sending rate should not be decreased by more than 1/2 in each congestion period, so UDT will stop decreasing after the 6th decrease (`DecCount <= 5`), as `1.125^6 = 2`.
 
 ### Retransmission
 

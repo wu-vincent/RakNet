@@ -5,21 +5,21 @@ description: "Route datagrams between two systems that cannot directly connect b
 
 ### Send messages through intermediate systems
 
-Router2 routes datagrams between two systems that are not directly connected by using the bandwidth of a third system, to which the other two systems were connected. It is of benefit when a fully connected mesh topology is desired, but could not be completely established due to routers and/or firewalls. As the system address of a remote system will be the system address of the intermediary, it is necessary to use the RakNetGUID object to refer to systems, including with other plugins.
+`Router2` routes datagrams between two systems that are not directly connected by using the bandwidth of a third system, to which the other two systems were connected. It is of benefit when a fully connected mesh topology is desired, but could not be completely established due to routers and/or firewalls. As the system address of a remote system will be the system address of the intermediary, it is necessary to use the `RakNetGUID` object to refer to systems, including with other plugins.
 
 <Callout type="info">
-When using Router2, always refer to remote systems by RakNetGUID rather than SystemAddress, since the address of a routed connection will be the address of the intermediary, not the actual destination.
+When using `Router2`, always refer to remote systems by `RakNetGUID` rather than `SystemAddress`, since the address of a routed connection will be the address of the intermediary, not the actual destination.
 </Callout>
 
 **To use:**
 
-Attach one instance of the Router2 plugin to each system.
+Attach one instance of the `Router2` plugin to each system.
 
-Call EstablishRouting with the RakNetGUID of the destination system.
+Call `EstablishRouting` with the `RakNetGUID` of the destination system.
 
-A message will be broadcast to all connected instances of RakPeer. For each of those that are running the Router2 plugin, the connection list will be queried to see who, if anyone, is connected to the target system.
+A message will be broadcast to all connected instances of `RakPeer`. For each of those that are running the `Router2` plugin, the connection list will be queried to see who, if anyone, is connected to the target system.
 
-After all systems are queried, the system with the lowest total ping, that is also already forwarding the fewest connections, will start the UDPForwarder system and return ID_ROUTER_2_FORWARDING_ESTABLISHED. If no path is available, ID_ROUTER_2_FORWARDING_NO_PATH will be returned instead.
+After all systems are queried, the system with the lowest total ping, that is also already forwarding the fewest connections, will start the `UDPForwarder` system and return `ID_ROUTER_2_FORWARDING_ESTABLISHED`. If no path is available, `ID_ROUTER_2_FORWARDING_NO_PATH` will be returned instead.
 
 Once a path is established, you should attempt to connect to the target system as usual. The following code should be used:
 
@@ -32,7 +32,7 @@ unsigned short sourceToDestPort;
 bs.Read(sourceToDestPort);
 char ipAddressString[32];
 packet->systemAddress.ToString(false, ipAddressString);
-rakPeerInterface->EstablishRouting(ipAddressString, sourceToDestPort, 0,0);
+rakPeerInterface->EstablishRouting(ipAddressString, sourceToDestPort, 0, 0);
 ```
 
-Note that rerouting happens automatically. When a connection is rerouted, you will get ID_ROUTER_2_REROUTED. While the SystemAddress will have changed, the RakNetGUID will not. Therefore, you must only refer to the target system using RakNetGUID when using this plugin.
+Note that rerouting happens automatically. When a connection is rerouted, you will get `ID_ROUTER_2_REROUTED`. While the `SystemAddress` will have changed, the `RakNetGUID` will not. Therefore, you must only refer to the target system using `RakNetGUID` when using this plugin.

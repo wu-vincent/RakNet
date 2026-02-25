@@ -12,7 +12,7 @@ description: "Automatically connect all peers in a peer to peer game using the o
 The fully connected mesh implementation reads connection messages from RakNet and tries to connect to all systems on the network. On a new connection, it will tell the remote system of all systems it knows about. When that packet arrives, that system will then try to connect to all those systems in turn. You can optionally specify a password which you can use to allow certain systems to join the mesh and other systems to not do so.
 
 <Callout type="info">
-The implementation requires that a ConnectionGraph plugin is also attached to the RakPeer.
+The implementation requires that a `ConnectionGraph` plugin is also attached to the `RakPeer`.
 </Callout>
 
 ```cpp

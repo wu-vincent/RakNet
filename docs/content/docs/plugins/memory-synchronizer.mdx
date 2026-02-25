@@ -31,19 +31,17 @@ void RemoveParticipant(PlayerID playerId);
 `priority`, `reliability`, and `orderingChannel` are equivalent to the parameters in the RakNet send call. `sendUpdates` and `receiveUpdates` specify whether we scan for and send updates to other systems and whether we accept updates from other systems. Generally one system would send updates and all other systems receive updates for a particular memory block.
 
 ```cpp
-void SynchronizeMemory(
-    const char *stringId,
-    int maxUpdateFrequencyMS,
-    PacketPriority priority,
-    PacketReliability reliability,
-    char orderingChannel,
-    void *memory,
-    int memorySize,
-    MemSynchSpec *memorySpec,
-    bool sendUpdates,
-    bool receiveUpdates,
-    ObjectID optionalInstanceId = UNASSIGNED_OBJECT_ID
-);
+void SynchronizeMemory(const char *stringId,
+                       int maxUpdateFrequencyMS,
+                       PacketPriority priority,
+                       PacketReliability reliability,
+                       char orderingChannel,
+                       void *memory,
+                       int memorySize,
+                       MemSynchSpec *memorySpec,
+                       bool sendUpdates,
+                       bool receiveUpdates,
+                       ObjectID optionalInstanceId = UNASSIGNED_OBJECT_ID);
 ```
 
 ```cpp

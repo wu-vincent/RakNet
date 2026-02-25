@@ -3,7 +3,7 @@ title: "Plugin Interface"
 description: "Learn how to use PluginInterface2 to create and attach plugins that intercept, modify, and create messages in RakNet."
 ---
 
-PluginInterface2.h is a class interface that works with RakNet to provide automatic functionality. It can intercept, modify, and create messages before they get to the user. Plugins can be attached to either RakPeerInterface or PacketizedTCP. Plugins update every time Receive() is called. To use it, derive from the base class and implement the virtual functions you want to handle. Then register your class by calling RakPeerInterface::AttachPlugin().
+`PluginInterface2.h` is a class interface that works with RakNet to provide automatic functionality. It can intercept, modify, and create messages before they get to the user. Plugins can be attached to either `RakPeerInterface` or `PacketizedTCP`. Plugins update every time `Receive()` is called. To use it, derive from the base class and implement the virtual functions you want to handle. Then register your class by calling `RakPeerInterface::AttachPlugin()`.
 
 <Callout type="info">
 To attach a plugin, create an instance and register it with your RakPeerInterface:
@@ -24,22 +24,28 @@ virtual void Update(void);
 
 /// OnReceive is called for every packet.
 /// \param[in] packet the packet that is being returned to the user
-/// \return True to allow the game and other plugins to get this message, false to absorb it
+/// \return True to allow the game and other plugins to get this message, false
+/// to absorb it
 virtual PluginReceiveResult OnReceive(Packet *packet);
 ```
 
 ```cpp
-/// Called when a connection is dropped because the user called RakPeer::CloseConnection() for a particular system
+/// Called when a connection is dropped because the user called
+/// RakPeer::CloseConnection() for a particular system
 /// \param[in] systemAddress The system whose connection was closed
 /// \param[in] rakNetGuid The guid of the specified system
-/// \param[in] lostConnectionReason How the connection was closed: manually, connection lost, or notification of disconnection
-virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
+/// \param[in] lostConnectionReason How the connection was closed: manually,
+/// connection lost, or notification of disconnection
+virtual void OnClosedConnection(SystemAddress systemAddress,
+                                RakNetGUID rakNetGUID,
+                                PI2_LostConnectionReason lostConnectionReason);
 ```
 
 ```cpp
 /// Called when we got a new connection
 /// \param[in] systemAddress Address of the new connection
 /// \param[in] rakNetGuid The guid of the specified system
-/// \param[in] isIncoming If true, this is ID_NEW_INCOMING_CONNECTION, or the equivalent
+/// \param[in] isIncoming If true, this is ID_NEW_INCOMING_CONNECTION, or the
+/// equivalent
 virtual void OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming);
 ```

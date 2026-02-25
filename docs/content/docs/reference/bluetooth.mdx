@@ -9,8 +9,8 @@ description: "Guide to integrating Bluetooth communication with RakNet across Wi
 
 Bluetooth support is relatively easy to add.
 
-1.  Include "Ws2bth.h"
-2.  Modify socket calls in SocketLayer.cpp, refer to the MSDN Bluetooth programming documentation.
+1.  Include `Ws2bth.h`
+2.  Modify socket calls in `SocketLayer.cpp`, refer to the MSDN Bluetooth programming documentation.
 3.  See the WinSocket Bluetooth programming examples for source code reference.
 4.  There is also an API from Broadcom for Windows although it is unclear what the difference is between that and the native Windows system calls.
 
@@ -24,19 +24,19 @@ Linux uses the [BlueZ](http://www.bluez.org) library to interface with Bluetooth
 
 ### Indirectly send through IOBluetoothL2CAPChannelRef?
 
-Mac Bluetooth support is provided through the IOBluetooth library, written in Objective-C. C equivalents are available by suffixing Ref to the name, for example IOBluetoothObjectRef contains the interface in C. You are expected to create instances of IOBluetoothL2CAPChannel which represent a communication channel. L2CAP is an unreliable communications channel. The equivalent reliable communications channel uses RFCOMM.
+Mac Bluetooth support is provided through the `IOBluetooth` library, written in Objective-C. C equivalents are available by suffixing `Ref` to the name, for example `IOBluetoothObjectRef` contains the interface in C. You are expected to create instances of `IOBluetoothL2CAPChannel` which represent a communication channel. L2CAP is an unreliable communications channel. The equivalent reliable communications channel uses RFCOMM.
 
 <Callout type="info">
-It doesn't appear to be possible to get direct socket access to Bluetooth on the Mac. However, it may be possible to use RakNet and IOBluetoothL2CAPChannel together by using RakNet's SocketLayer::SetSocketLayerOverride(), and thereby changing RakNet's sendto and recvfrom calls to use IOBluetoothL2CAPChannel instead.
+It doesn't appear to be possible to get direct socket access to Bluetooth on the Mac. However, it may be possible to use RakNet and `IOBluetoothL2CAPChannel` together by using RakNet's `SocketLayer::SetSocketLayerOverride()`, and thereby changing RakNet's `sendto` and `recvfrom` calls to use `IOBluetoothL2CAPChannel` instead.
 </Callout>
 
 ## iPhone bluetooth integration
 
 ### Bluetooth exposed through GameKit
 
-The only interface for Bluetooth communications is through the higher level framework GameKit. GameKit uses Objective-C.
+The only interface for Bluetooth communications is through the higher level framework `GameKit`. `GameKit` uses Objective-C.
 
-Similar to the Mac, it may be possible to indirectly send through RakNet using SocketLayer::SetSocketLayerOverride() through the sendData:toPeers method exposed by GKSession, and sending that data unreliably.
+Similar to the Mac, it may be possible to indirectly send through RakNet using `SocketLayer::SetSocketLayerOverride()` through the `sendData:toPeers` method exposed by `GKSession`, and sending that data unreliably.
 
 ## Android bluetooth integration
 

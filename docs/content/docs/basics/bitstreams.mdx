@@ -5,25 +5,24 @@ description: "Overview of the BitStream class for dynamically packing and unpack
 
 ### Description
 
-The bitstream class is a helper class under the namespace RakNet that is used to wrap a dynamic array for the purpose of packing and unpacking bits. Its main four benefits are:
+The `BitStream` class is a helper class under the namespace `RakNet` that is used to wrap a dynamic array for the purpose of packing and unpacking bits. Its main four benefits are:
 
 1.  Creating packets dynamically
 2.  Compression
 3.  Writing Bits
 4.  Endian swapping
 
-With structs you have to predefine your structures and cast them to a `(char*)`. With a bitstream, you can choose to write blocks at runtime, depending on the context. Bitstreams can compress the native types using the SerializeBitsFromIntegerRange and SerializeFloat16().
+With structs you have to predefine your structures and cast them to a `(char*)`. With a bitstream, you can choose to write blocks at runtime, depending on the context. Bitstreams can compress the native types using `SerializeBitsFromIntegerRange` and `SerializeFloat16()`.
 
 You can also write bits. Most of the time you will not care about this. However, when writing booleans it will automatically only write one bit. This can also be very useful for encryption since your data will no longer be byte aligned.
 
 ### Writing Data
 
-Bitstream is templated to take any type of data. If this is a built-in type, such as NetworkIDObject, it uses partial template specialization to write the type more efficiently. If it's a native type, or a structure, it writes the individual bits, similar to memcpy. You can pass structs containing multiple data members to bitstreams. However, you may wish to serialize each individual element to do correct [endian](http://en.wikipedia.org/wiki/Endianness) swapping (needed for communication between PCs and Macs, for example).
+`BitStream` is templated to take any type of data. If this is a built-in type, such as `NetworkIDObject`, it uses partial template specialization to write the type more efficiently. If it's a native type, or a structure, it writes the individual bits, similar to `memcpy`. You can pass structs containing multiple data members to bitstreams. However, you may wish to serialize each individual element to do correct [endian](http://en.wikipedia.org/wiki/Endianness) swapping (needed for communication between PCs and Macs, for example).
 
 ```cpp
-struct MyVector
-{
-float x,y,z;
+struct MyVector {
+    float x, y, z;
 } myVector;
 
 // No endian swapping
@@ -38,17 +37,14 @@ bitStream.Write(myVector.z);
 // You can also override operator left shift and right shift
 // Shift operators have to be in the namespace RakNet or they might
 // use the default one in BitStream.h instead. Error occurs with std::string
-namespace RakNet
-{
+namespace RakNet {
 
-RakNet::BitStream& operator << (RakNet::BitStream& out, MyVector& in)
-{
-    out.WriteNormVector(in.x,in.y,in.z);
+RakNet::BitStream &operator<<(RakNet::BitStream &out, MyVector &in) {
+    out.WriteNormVector(in.x, in.y, in.z);
     return out;
 }
-RakNet::BitStream& operator >> (RakNet::BitStream& in, MyVector& out)
-{
-    bool success = in.ReadNormVector(out.x,out.y,out.z);
+RakNet::BitStream &operator>>(RakNet::BitStream &in, MyVector &out) {
+    bool success = in.ReadNormVector(out.x, out.y, out.z);
     assert(success);
     return in;
 }
@@ -72,15 +68,15 @@ Reading data is equally simple. Create a bitstream, and in the constructor assig
 ```cpp
 // Assuming we have a Packet *
 BitStream myBitStream(packet->data, packet->length, false);
-struct MyVector
-{
-float x,y,z;
+struct MyVector {
+    float x, y, z;
 } myVector;
 
 // No endian swapping
 bitStream.Read(myVector);
 
-// With endian swapping (__BITSTREAM_NATIVE_END should just be commented in RakNetDefines.h)
+// With endian swapping (__BITSTREAM_NATIVE_END should just be commented in
+// RakNetDefines.h)
 #undef __BITSTREAM_NATIVE_END
 #include "BitStream.h"
 bitStream.Read(myVector.x);
@@ -92,19 +88,17 @@ See [Receiving Packets](/basics/receiving-packets) for a more complete example.
 
 ### Serializing Data
 
-You can have the same function read and write, by using BitStream::Serialize() instead of Read() or Write().
+You can have the same function read and write, by using `BitStream::Serialize()` instead of `Read()` or `Write()`.
 
 ```cpp
-struct MyVector
-{
-float x,y,z;
-// writeToBitstream==true means write, writeToBitstream==false means read
-void Serialize(bool writeToBitstream, BitStream *bs)
-{
-bs->Serialize(writeToBitstream, x);
-bs->Serialize(writeToBitstream, y);
-bs->Serialize(writeToBitstream, z);
-}
+struct MyVector {
+    float x, y, z;
+    // writeToBitstream==true means write, writeToBitstream==false means read
+    void Serialize(bool writeToBitstream, BitStream *bs) {
+        bs->Serialize(writeToBitstream, x);
+        bs->Serialize(writeToBitstream, y);
+        bs->Serialize(writeToBitstream, z);
+    }
 } myVector;
 ```
 
@@ -112,7 +106,7 @@ See [Receiving Packets](/basics/receiving-packets) for a more complete example.
 
 ## Useful functions
 
-See BitStream.h for a full list of functions.
+See `BitStream.h` for a full list of functions.
 
 | Function | Return Type | Description |
 |----------|-------------|-------------|

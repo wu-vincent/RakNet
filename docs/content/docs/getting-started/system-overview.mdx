@@ -7,37 +7,37 @@ description: "Architecture overview of RakNet's network communication, plugin sy
 
 RakNet has code that falls into three categories: network communication, plugins that use network communication, and general game functionality.
 
-Network communication is provided by two user classes. RakPeerInterface, and TCPInterface. RakPeerInterface is the primary class that games will use and is based on UDP. It provides functionality such as connections, connection management, congestion control, remote server detection, out of band messaging, connection statistics, latency and packetloss simulation, ban lists, and secure connectivity.
+Network communication is provided by two user classes. `RakPeerInterface`, and `TCPInterface`. `RakPeerInterface` is the primary class that games will use and is based on UDP. It provides functionality such as connections, connection management, congestion control, remote server detection, out of band messaging, connection statistics, latency and packetloss simulation, ban lists, and secure connectivity.
 
-TCPInterface is a wrapper for TCP, and is used to communicate with external systems that are based on TCP. For example, the [EmailSender](/utilities/email-sender) class, used to report crashes from remote servers, interfaces with TCP. It is also supported by most plugin modules, and is suggested for file transfers such as with the autopatcher.
+`TCPInterface` is a wrapper for TCP, and is used to communicate with external systems that are based on TCP. For example, the [EmailSender](/utilities/email-sender) class, used to report crashes from remote servers, interfaces with TCP. It is also supported by most plugin modules, and is suggested for file transfers such as with the autopatcher.
 
-Plugins in RakNet are classes that you 'attach' to an instance of RakPeer or PacketizedTCP. This uses [chain of responsibility](http://en.wikipedia.org/wiki/Chain-of-responsibility_pattern) design pattern. Attached plugins update automatically when Receive() is called on the attachee, and filter or inject messages into the network stream. Functionality includes host determination in a peer to peer environment, file transfers, NAT traversal, voice communication, remote procedure calls, and game object replication.
+Plugins in RakNet are classes that you 'attach' to an instance of `RakPeer` or `PacketizedTCP`. This uses [chain of responsibility](http://en.wikipedia.org/wiki/Chain-of-responsibility_pattern) design pattern. Attached plugins update automatically when `Receive()` is called on the attachee, and filter or inject messages into the network stream. Functionality includes host determination in a peer to peer environment, file transfers, NAT traversal, voice communication, remote procedure calls, and game object replication.
 
 General game functionality includes the master server (note: the hosted service at masterserver2.raknet.com is now defunct), crash reporting, email sending through Gmail pop servers, and an SQL logging server.
 
 ### RakPeer internal architecture
 
-**RakPeer.h** provides the base functionality for UDP communication, and it is expected that most applications will use RakPeer as opposed to TCP. On start, RakPeer starts two threads - one thread to wait for incoming datagrams, and another to perform periodic updates, such as determining lost connections, or pings. The user specifies the maximum number of connections and an array of RemoteSystem structures is internally allocated to this size. Each connection or connection attempt is assigned to a Remote System structure, which contains a class to manage congestion control between the two systems. Connections are identified by SystemAddress or RakNetGuid, the latter of which is randomly generated and unique per instance of RakPeer.
+**RakPeer.h** provides the base functionality for UDP communication, and it is expected that most applications will use `RakPeer` as opposed to TCP. On start, `RakPeer` starts two threads - one thread to wait for incoming datagrams, and another to perform periodic updates, such as determining lost connections, or pings. The user specifies the maximum number of connections and an array of `RemoteSystem` structures is internally allocated to this size. Each connection or connection attempt is assigned to a `RemoteSystem` structure, which contains a class to manage congestion control between the two systems. Connections are identified by `SystemAddress` or `RakNetGUID`, the latter of which is randomly generated and unique per instance of `RakPeer`.
 
 Connections are established through UDP messages that contain a connection request payload, and an 'offline message' identifier. The 'offline message' identifier is used to differentiate between actual offline messages, and connected messages that happen to match the profile of an offline message. Connection requests are sent repeatedly over a short timeframe to account for packetloss, and if supported uses a decreasing MTU for path MTU detection.
 
-When a connection requests arrives, RakPeer transmits internal state data, such as the RakNetGUID, and checks this connection against the ban list, repeat connection list, and other security measures. If the connection was flagged as secure, the secure connection protocol activates and additional data is sent. On success, the user is informed about this, either with ID_CONNECTION_REQUEST_ACCEPTED, or ID_NEW_INCOMING_CONNECTION. Failure conditions are also returned in a similar fashion.
+When a connection requests arrives, `RakPeer` transmits internal state data, such as the `RakNetGUID`, and checks this connection against the ban list, repeat connection list, and other security measures. If the connection was flagged as secure, the secure connection protocol activates and additional data is sent. On success, the user is informed about this, either with `ID_CONNECTION_REQUEST_ACCEPTED`, or `ID_NEW_INCOMING_CONNECTION`. Failure conditions are also returned in a similar fashion.
 
 Outgoing messages from the user to connected systems are copied and internally buffered. If the outgoing message plus the header is larger than the MTU, the message is fragmented internally. On a periodic interval, outgoing messages are aggregated into a single datagram and sent according to the transmission constraints of congestion control and the MTU size. Datagrams that do not get an ACK are resent. NAKs are sent for missing datagram sequence numbers. Messages sent unreliably and cannot be sent within a user-defined threshold are deleted. Messages are sent in order of priority. Acks are not congestion controlled. However, resends and new sends are, with resends taking priority over new sends.
 
-As stated, incoming datagrams arrive on a blocking recvfrom thread. When a datagram arrives, the timestamp is immediately recorded, and the datagram is pushed into a thread-safe queue for the processing thread to manage. The processing thread is signaled, such that it will either immediately process the message (if sleeping) or process the message at the next available time.
+As stated, incoming datagrams arrive on a blocking `recvfrom` thread. When a datagram arrives, the timestamp is immediately recorded, and the datagram is pushed into a thread-safe queue for the processing thread to manage. The processing thread is signaled, such that it will either immediately process the message (if sleeping) or process the message at the next available time.
 
-Incoming datagrams are checked for the byte sequence that indicates if the sender thought it was connected or not. In addition, the source IP address is checked. If a message is flagged as unconnected, and the sender is not connected to us, the message is checked against a narrow range of accepted types, such as connection requests, or out of band messaging capabilities. If a message is flagged as connected, and the sender is connected to us, then it is processed through the ReliabilityLayer class, for congestion control and other communication related information (ACKS, NAKS, resends, encryption, reassembly of large messages).
+Incoming datagrams are checked for the byte sequence that indicates if the sender thought it was connected or not. In addition, the source IP address is checked. If a message is flagged as unconnected, and the sender is not connected to us, the message is checked against a narrow range of accepted types, such as connection requests, or out of band messaging capabilities. If a message is flagged as connected, and the sender is connected to us, then it is processed through the `ReliabilityLayer` class, for congestion control and other communication related information (ACKS, NAKS, resends, encryption, reassembly of large messages).
 
-Connected messages are first processed by RakPeer. This is currently only used for periodic pings and to detect lost connections should the user not send data within a given threshold. All other messages are processed by plugins, or returned to the user. Calling RakPeer::Receive() ticks all plugins' update functions one time, and returns one message. Messages returned to the user are returned from RakPeer::Receive(), one message per call. It is necessary to call Receive() in a loop to get all messages, until no further messages are returned.
+Connected messages are first processed by `RakPeer`. This is currently only used for periodic pings and to detect lost connections should the user not send data within a given threshold. All other messages are processed by plugins, or returned to the user. Calling `RakPeer::Receive()` ticks all plugins' update functions one time, and returns one message. Messages returned to the user are returned from `RakPeer::Receive()`, one message per call. It is necessary to call `Receive()` in a loop to get all messages, until no further messages are returned.
 
 ### Other systems
 
-The **NetworkIDObject** class provides the ability for systems to refer to common objects and is used by object member remote function calls. Each object has a 64 bit random number assigned and can be used to lookup pointers through a hash.
+The **`NetworkIDObject`** class provides the ability for systems to refer to common objects and is used by object member remote function calls. Each object has a 64 bit random number assigned and can be used to lookup pointers through a hash.
 
 The **[SystemAddress](/basics/system-addresses)** structure is what RakNet uses to represent remote systems. It is the binary encoding of the IP address along with the port of that system, supporting both IPV4 and IPV6.
 
-The **[BitStream](/basics/bitstreams)** class, located in BitStream.h, is natively supported by RakNet. This is both a user class and an internal class. It is primarily used to write single bits to a stream and for automatic endian swapping, which can be enabled by commenting out `__BITSTREAM_NATIVE_END` in RakNetDefines.h.
+The **[BitStream](/basics/bitstreams)** class, located in `BitStream.h`, is natively supported by RakNet. This is both a user class and an internal class. It is primarily used to write single bits to a stream and for automatic endian swapping, which can be enabled by commenting out `__BITSTREAM_NATIVE_END` in `RakNetDefines.h`.
 
 <Callout type="info">
 For a visual representation of the architecture, refer to the [UML Diagram](/images/RakNetUML.jpg).
@@ -55,9 +55,9 @@ For a visual representation of the architecture, refer to the [UML Diagram](/ima
 **Per message:**
 1 byte for bitflags
 2 bytes for message length
-if (RELIABLE,RELIABLE_SEQUENCED,RELIABLE_ORDERED)
+if (`RELIABLE`,`RELIABLE_SEQUENCED`,`RELIABLE_ORDERED`)
 A. 3 bytes for sequence number, used to prevent returning to the user duplicated messages
-if (UNRELIABLE_SEQUENCED,RELIABLE_SEQUENCED,RELIABLE_ORDERED)
+if (`UNRELIABLE_SEQUENCED`,`RELIABLE_SEQUENCED`,`RELIABLE_ORDERED`)
 A. 3 bytes for sequence number, used to reorganize messages on the same channel in order
 B. 1 byte for ordering channel
 if (message over MTU)
@@ -75,7 +75,7 @@ C. 4 bytes for index into number of splits, not compressed to improve performanc
 4 bytes for message length
 4 bytes for sequence number, used to prevent returning to the user duplicated messages
 4 bits for bitflags
-if (UNRELIABLE_SEQUENCED,RELIABLE_SEQUENCED,RELIABLE_ORDERED)
+if (`UNRELIABLE_SEQUENCED`,`RELIABLE_SEQUENCED`,`RELIABLE_ORDERED`)
 A. 4 bytes for sequence number, used to reorganize messages in order
 B. 5 bits for ordering channel
 if (message over MTU)

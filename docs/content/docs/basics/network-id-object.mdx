@@ -3,47 +3,45 @@ title: "Network ID Object"
 description: "How to use NetworkIDObject and NetworkIDManager to assign and look up globally unique identifiers for networked objects."
 ---
 
-The NetworkIDObject and NetworkIDManager classes allow lookup of pointers using a common ID.
+The `NetworkIDObject` and `NetworkIDManager` classes allow lookup of pointers using a common ID.
 
-The NetworkIDObject class is an optional class you can derive from that will automatically assign identification numbers (NetworkID) to objects that inherit from it. This is useful for multiplayer games, because otherwise you have no way to refer to dynamically allocated objects on remote systems.
+The `NetworkIDObject` class is an optional class you can derive from that will automatically assign identification numbers (`NetworkID`) to objects that inherit from it. This is useful for multiplayer games, because otherwise you have no way to refer to dynamically allocated objects on remote systems.
 
-In RakNet 4, NetworkIDs are 8 byte globally unique numbers, chosen at random. Older versions of RakNet required that a central authority (server) assign NetworkIDs. This approach was dropped because it creates difficulties for the programmer when the game is peer to peer, or there are multiple distributed servers. It also created extra work if a client were to create an object, because the client would have to assign a temporary ID, request the real NetworkID from the server, and then assign it sometime later.
+In RakNet 4, `NetworkID`s are 8 byte globally unique numbers, chosen at random. Older versions of RakNet required that a central authority (server) assign `NetworkID`s. This approach was dropped because it creates difficulties for the programmer when the game is peer to peer, or there are multiple distributed servers. It also created extra work if a client were to create an object, because the client would have to assign a temporary ID, request the real NetworkID from the server, and then assign it sometime later.
 
-The NetworkIDObject class provides the following major functions:
+The `NetworkIDObject` class provides the following major functions:
 
 `SetNetworkIDManager( NetworkIDManager *manager)`
-The NetworkIDManager holds a list of NetworkIDs for lookup. Therefore, it is required that you call SetNetworkIDManager before calling GetNetworkID() or SetNetworkID(). The reason the list isn't just static is that you might want multiple NetworkIDManagers, for example if you have multiple gameworlds that do not interact with each other.
+The `NetworkIDManager` holds a list of `NetworkID`s for lookup. Therefore, it is required that you call `SetNetworkIDManager` before calling `GetNetworkID()` or `SetNetworkID()`. The reason the list isn't just static is that you might want multiple `NetworkIDManager`s, for example if you have multiple gameworlds that do not interact with each other.
 
 `NetworkID GetNetworkID( void )`
-If SetNetworkID() was previously called, this returns that value. Otherwise it generates a new, presumably unique NetworkID for the object. Internally, the object is not assigned a NetworkID until GetNetworkID() is actually called. In a client/server application if all objects were still created by the server, then it would never be necessary for a client to generate a NetworkID.
+If `SetNetworkID()` was previously called, this returns that value. Otherwise it generates a new, presumably unique `NetworkID` for the object. Internally, the object is not assigned a `NetworkID` until `GetNetworkID()` is actually called. In a client/server application if all objects were still created by the server, then it would never be necessary for a client to generate a `NetworkID`.
 
 `SetNetworkID( NetworkID id )`
-Assigns a networkID to the object. An example of where this would be used is a server creating a new game object, and sending that object's data to the clients. The client would create a class of the same type, read the NetworkID encoded in the user message, and call SetNetworkID on the same object.
+Assigns a `NetworkID` to the object. An example of where this would be used is a server creating a new game object, and sending that object's data to the clients. The client would create a class of the same type, read the `NetworkID` encoded in the user message, and call `SetNetworkID` on the same object.
 
-The NetworkIDManager class only has one user function:
+The `NetworkIDManager` class only has one user function:
 
 ```cpp
-template <class returnType>
-returnType GET_OBJECT_FROM_ID(NetworkID x);
+template <class returnType> returnType GET_OBJECT_FROM_ID(NetworkID x);
 ```
 
 This is a templated function, so you write something like:
 
 ```cpp
-Soldier *soldier = networkIdManager.GET_OBJECT_FROM_ID<Soldier*>(networkId);
+Soldier *soldier = networkIdManager.GET_OBJECT_FROM_ID<Soldier *>(networkId);
 ```
 
 Here's an example of storing a pointer to a class, retrieving it back again, with an assert to make sure the system worked:
 
 ```cpp
-class Soldier : public NetworkIDObject {}
-int main(void)
-{
-NetworkIDManager networkIDManager;
-Soldier *soldier = new Soldier;
-soldier->SetNetworkIDManager(&networkIDManager);
-NetworkID soldierNetworkID = soldier->GetNetworkID();
-assert(networkIDManager.GET_OBJECT_FROM_ID<Soldier*>(soldierNetworkID)==soldier);
+class Soldier : public NetworkIDObject {};
+int main(void) {
+    NetworkIDManager networkIDManager;
+    Soldier *soldier = new Soldier;
+    soldier->SetNetworkIDManager(&networkIDManager);
+    NetworkID soldierNetworkID = soldier->GetNetworkID();
+    assert(networkIDManager.GET_OBJECT_FROM_ID<Soldier *>(soldierNetworkID) == soldier);
 }
 ```
 
@@ -52,14 +50,14 @@ Here's an example of using the system to create an object on a remote computer, 
 **Server:**
 
 ```cpp
-void CreateSoldier(void)
-{
-Soldier *soldier = new Soldier;
-soldier->SetNetworkIDManager(&networkIDManager);
-RakNet::BitStream bsOut;
-bsOut.Write((MessageID)ID_CREATE_SOLDIER);
-bsOut.Write(soldier->GetNetworkID());
-rakPeerInterface->Send(&bsOut,HIGH_PRIORITY,RELIABLE_ORDERED,0,UNASSIGNED_SYSTEM_ADDRESS,true);
+void CreateSoldier(void) {
+    Soldier *soldier = new Soldier;
+    soldier->SetNetworkIDManager(&networkIDManager);
+    RakNet::BitStream bsOut;
+    bsOut.Write((MessageID)ID_CREATE_SOLDIER);
+    bsOut.Write(soldier->GetNetworkID());
+    rakPeerInterface->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS,
+                           true);
 }
 ```
 
@@ -67,21 +65,20 @@ rakPeerInterface->Send(&bsOut,HIGH_PRIORITY,RELIABLE_ORDERED,0,UNASSIGNED_SYSTEM
 
 ```cpp
 Packet *packet = rakPeerInterface->Receive();
-if (packet->data[0]==ID_CREATE_SOLDIER)
-{
-RakNet::BitStream bsIn(packet->data, packet->length, false);
-bsIn.IgnoreBytes(sizeof(MessageID));
-NetworkID soldierNetworkID;
-bsIn.Read(soldierNetworkID);
-Soldier *soldier = new Soldier;
-soldier->SetNetworkIDManager(&networkIDManager);
-soldier->SetNetworkID(soldierNetworkID);
+if (packet->data[0] == ID_CREATE_SOLDIER) {
+    RakNet::BitStream bsIn(packet->data, packet->length, false);
+    bsIn.IgnoreBytes(sizeof(MessageID));
+    NetworkID soldierNetworkID;
+    bsIn.Read(soldierNetworkID);
+    Soldier *soldier = new Soldier;
+    soldier->SetNetworkIDManager(&networkIDManager);
+    soldier->SetNetworkID(soldierNetworkID);
 }
 ```
 
 ### Static objects
 
-Sometimes objects are not created dynamically, but instead already exist on all systems and are known ahead of time. For example, if you have a capture the flag map, with 3 flags, those 3 flags may be hardcoded into the level design and are thus created by all systems when the level loads. These are static objects, and can still be referred to by NetworkIDManager. Have those objects derive from NetworkIDObject and call SetNetworkIDManager as usual. Then simply assign a unique ID of your choosing. It doesn't matter what the ID is, as long as it is unique, so you could for example have flag 1 have the ID 0, flag 2 have the ID 1, and flag 3 have the ID 2.
+Sometimes objects are not created dynamically, but instead already exist on all systems and are known ahead of time. For example, if you have a capture the flag map, with 3 flags, those 3 flags may be hardcoded into the level design and are thus created by all systems when the level loads. These are static objects, and can still be referred to by `NetworkIDManager`. Have those objects derive from `NetworkIDObject` and call `SetNetworkIDManager` as usual. Then simply assign a unique ID of your choosing. It doesn't matter what the ID is, as long as it is unique, so you could for example have flag 1 have the ID 0, flag 2 have the ID 1, and flag 3 have the ID 2.
 
 <Callout type="info">
 For static objects that exist identically on all systems, assign a unique NetworkID of your choosing using `SetNetworkID()` rather than relying on the auto-generated random ID from `GetNetworkID()`.
@@ -89,22 +86,23 @@ For static objects that exist identically on all systems, assign a unique Networ
 
 ```cpp
 // All static network IDs added here.
-enum StaticNetworkIDs
-{
-CTF_FLAG_1,
-CTF_FLAG_2,
-CTF_FLAG_3,
+enum StaticNetworkIDs {
+    CTF_FLAG_1,
+    CTF_FLAG_2,
+    CTF_FLAG_3,
 };
 
-class Flag : public NetworkIDObject
-{
-// Level designer named the flag either flag1, flag2, or flag3, and this map will load identically on all systems
-Flag(std::string flagName, NetworkIDManager *networkIDManager) {
-
-SetNetworkIDManager(networkIDManager);
-
-if (flagName=="flag1") SetNetworkID(CTF_FLAG_1);
-else if (flagName=="flag2") SetNetworkID(CTF_FLAG_2);
-else if (flagName=="flag3") SetNetworkID(CTF_FLAG_3);
-};
+class Flag : public NetworkIDObject {
+    // Level designer named the flag either flag1, flag2, or flag3, and this map
+    // will load identically on all systems
+    Flag(std::string flagName, NetworkIDManager *networkIDManager) {
+        SetNetworkIDManager(networkIDManager);
+        if (flagName == "flag1") {
+            SetNetworkID(CTF_FLAG_1);
+        } else if (flagName == "flag2") {
+            SetNetworkID(CTF_FLAG_2);
+        } else if (flagName == "flag3") {
+            SetNetworkID(CTF_FLAG_3);
+        }
+    };
 ```

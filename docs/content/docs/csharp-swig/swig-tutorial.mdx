@@ -79,7 +79,7 @@ See "Downloading SWIG" below.
 
 ### Rebuild the solution
 
-If you do not plan on using SQLiteClientLoggerPlugin, `DependentExtensions\Swig\DLL_Swig\RakNet.sln` already contains a DLL project that makes the SWIG files, builds the DLL, and copies it to the C# sample. Perform a rebuild on this.
+If you do not plan on using `SQLiteClientLoggerPlugin`, `DependentExtensions\Swig\DLL_Swig\RakNet.sln` already contains a DLL project that makes the SWIG files, builds the DLL, and copies it to the C# sample. Perform a rebuild on this.
 
 </Step>
 
@@ -211,7 +211,7 @@ Unzip to `C:\Swig` or where you prefer. `C:\Swig` will be used for this tutorial
 
 ### Add to PATH (optional)
 
-If you wish to use the DLL\_Swig project you will need to add SWIG to the PATH variable as shown below.
+If you wish to use the `DLL_Swig` project you will need to add SWIG to the PATH variable as shown below.
 
 </Step>
 
@@ -386,7 +386,7 @@ Switch to your root user, or if user is a sudo user skip to the next command. If
 ### Windows
 
 <Callout type="info">
-This step on Windows can be skipped if you are using the included DLL\_Swig project as it runs the tools on rebuild.
+This step on Windows can be skipped if you are using the included `DLL_Swig` project as it runs the tools on rebuild.
 </Callout>
 
 <Steps>
@@ -427,9 +427,9 @@ For example: `MakeSwig.bat c:\RakNet\Source c:\swigwin-2.0.9`
 
 </Steps>
 
-**Extra instructions for SQLiteClientLoggerPlugin:**
+**Extra instructions for `SQLiteClientLoggerPlugin`:**
 
-- If you want to use SQLiteClientLoggerPlugin, skip the step above and use the next command instead.
+- If you want to use `SQLiteClientLoggerPlugin`, skip the step above and use the next command instead.
 - If you have added SWIG to your PATH variable, just use `""` for `PATH_TO_SWIG`.
 - `PATH_TO_SQLITEPLUGIN` is the path to the SQLite plugin directory, e.g. `C:\RakNet\DependentExtensions\SQLite3Plugin`.
 
@@ -491,9 +491,9 @@ chmod u+x MakeSwig.sh
 
 </Steps>
 
-**Extra instructions for SQLiteClientLoggerPlugin:**
+**Extra instructions for `SQLiteClientLoggerPlugin`:**
 
-- If you want to use SQLiteClientLoggerPlugin, skip the step above and use the next command instead.
+- If you want to use `SQLiteClientLoggerPlugin`, skip the step above and use the next command instead.
 - `PATH_TO_SQLITEPLUGIN` is the path to the SQLite plugin directory, e.g. `/home/usr/RakNet/DependentExtensions/SQLite3Plugin`.
 
 ```bash
@@ -542,9 +542,9 @@ C:\Swig\swig -c++ -csharp -namespace RakNet -I"PATH_TO_RAKNETSOURCE" -I"SwigInte
 
 </Steps>
 
-**Extra instructions for SQLiteClientLoggerPlugin:**
+**Extra instructions for `SQLiteClientLoggerPlugin`:**
 
-- If you want to use SQLiteClientLoggerPlugin, skip the step above.
+- If you want to use `SQLiteClientLoggerPlugin`, skip the step above.
 - `PATH_TO_SQLITEPLUGIN` is the path to the SQLite plugin directory, e.g. `C:\RakNet\DependentExtensions\SQLite3Plugin`.
 
 ```batch
@@ -589,9 +589,9 @@ swig -c++ -csharp -namespace RakNet -I"PATH_TO_RAKNETSOURCE" -I"SwigInterfaceFil
 
 </Steps>
 
-**Extra instructions for SQLiteClientLoggerPlugin:**
+**Extra instructions for `SQLiteClientLoggerPlugin`:**
 
-- If you want to use SQLiteClientLoggerPlugin, skip the step above.
+- If you want to use `SQLiteClientLoggerPlugin`, skip the step above.
 - `PATH_TO_SQLITEPLUGIN` is the path to the SQLite plugin directory, e.g. `/home/usr/RakNet/DependentExtensions/SQLite3Plugin`.
 
 ```bash
@@ -610,19 +610,19 @@ swig -c++ -csharp -namespace RakNet -I"PATH_TO_RAKNETSOURCE" -I"SwigInterfaceFil
 | `-outdir SwigOutput/SwigCSharpOutput` | Where the output files for the target language are placed. |
 | `-o SwigOutput/CplusDLLIncludes/RakNet_wrap.cxx` | Where the file included in the DLL project is placed. |
 
-The following two are used if SQLiteClientLoggerPlugin is used:
+The following two are used if `SQLiteClientLoggerPlugin` is used:
 
 | Option | Description |
 |--------|-------------|
 | `-I"PATH_TO_SQLITEPLUGIN"` | Another include directory -- the base directory where the SQLite plugin is. |
-| `-DSWIG_ADDITIONAL_SQL_LITE` | A conditional compilation symbol, defined to include SQLiteClientLoggerPlugin. |
+| `-DSWIG_ADDITIONAL_SQL_LITE` | A conditional compilation symbol, defined to include `SQLiteClientLoggerPlugin`. |
 
 ## Creating the SWIG Wrapped DLL Project
 
 ### Windows
 
 <Callout type="info">
-If you do not plan on using SQLiteClientLoggerPlugin, `DependentExtensions\Swig\DLL_Swig\RakNet.sln` already contains a DLL project that makes the SWIG files, builds the DLL, and copies it to the C# sample. You do not need to run these steps if you use that project. In that case, run the solution, rebuild the project, and go to "Creating the C# project".
+If you do not plan on using `SQLiteClientLoggerPlugin`, `DependentExtensions\Swig\DLL_Swig\RakNet.sln` already contains a DLL project that makes the SWIG files, builds the DLL, and copies it to the C# sample. You do not need to run these steps if you use that project. In that case, run the solution, rebuild the project, and go to "Creating the C# project".
 </Callout>
 
 <Steps>
@@ -709,7 +709,7 @@ Hit F7 or the equivalent to build your DLL and Lib.
 
 </Steps>
 
-**Extra instructions for SQLiteClientLoggerPlugin:**
+**Extra instructions for `SQLiteClientLoggerPlugin`:**
 
 - Add to the project these files under DependentExtensions: `SQLite3Plugin\SQLite3ClientPlugin.h`, `SQLite3Plugin\SQLite3PluginCommon.h`, `SQLite3Plugin\Logger\ClientOnly\SQLiteClientLoggerPlugin.h`, `SQLite3Plugin\Logger\SQLiteLoggerCommon.h`, `SQLite3Plugin\SQLite3ClientPlugin.cpp`, `SQLite3Plugin\SQLite3PluginCommon.cpp`, `SQLite3Plugin\Logger\ClientOnly\SQLiteClientLoggerPlugin.cpp`, `SQLite3Plugin\Logger\SQLiteLoggerCommon.cpp`
 - Add to "Additional Include Directories" the path to these folders in the DependentExtensions directory: `SQLite3Plugin\Logger\ClientOnly`, `SQLite3Plugin\Logger`, `SQLite3Plugin`
@@ -750,9 +750,9 @@ Note: `-l pthread` is lowercase L while `-I./` is uppercase i.
 
 </Steps>
 
-**Extra instructions for SQLiteClientLoggerPlugin:**
+**Extra instructions for `SQLiteClientLoggerPlugin`:**
 
-- If you wish to use SQLiteClientLoggerPlugin, use the following command instead:
+- If you wish to use `SQLiteClientLoggerPlugin`, use the following command instead:
 - `PATH_TO_SQLITEPLUGIN` is the path to the SQLite plugin directory, e.g. `/home/usr/RakNet/DependentExtensions/SQLite3Plugin`.
 
 ```bash
@@ -867,7 +867,7 @@ Make sure you have `using RakNet;` at the top of the files using RakNet. If this
 
 ### C# Sample (Windows)
 
-A C# sample project is included under `DependentExtensions\Swig\SwigWindowsCSharpSample`. The DLL file is not included and needs to be copied to `bin/Debug` or `bin/Release` depending on whether you are doing a release or debug build. If the DLL\_Swig project is used, the DLL is copied automatically.
+A C# sample project is included under `DependentExtensions\Swig\SwigWindowsCSharpSample`. The DLL file is not included and needs to be copied to `bin/Debug` or `bin/Release` depending on whether you are doing a release or debug build. If the `DLL_Swig` project is used, the DLL is copied automatically.
 
 ### Linux
 
@@ -1013,10 +1013,10 @@ A C# sample is included under `DependentExtensions/Swig/SwigLinuxCSharpSample`. 
 
 ## Limitations
 
-1. BitStream may have problems if larger than 9 megabytes.
+1. `BitStream` may have problems if larger than 9 megabytes.
 
 ## Important Information
 
 <Callout type="warn">
-RakPeer, RakString, FullyConnectedMesh2, UDPForwarder, and UDPProxyCoordinator need to be released before the program ends. Any item that goes out of scope before program end just needs to be garbage collected, so items not in main or global generally do not have issues. For these, just call the GC before program end. For globals and items in main, the items can be released with the `Dispose` method if `new` was used, or `DestroyInstance` if `CreateInstance` was used.
+`RakPeer`, `RakString`, `FullyConnectedMesh2`, `UDPForwarder`, and `UDPProxyCoordinator` need to be released before the program ends. Any item that goes out of scope before program end just needs to be garbage collected, so items not in main or global generally do not have issues. For these, just call the GC before program end. For globals and items in main, the items can be released with the `Dispose` method if `new` was used, or `DestroyInstance` if `CreateInstance` was used.
 </Callout>

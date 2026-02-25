@@ -35,7 +35,7 @@ Despite these weaknesses, this is the primary system in use by many games.
 
 ## How to implement
 
-Before you can use the distributed object system, you have to register your instance of `RakClient` and/or `RakServer` with the Distributed Network Object Manager.
+Before you can use the distributed object system, you have to register your instance of `RakClient` and/or `RakServer` with the `DistributedNetworkObjectManager`.
 
 ```cpp
 DistributedNetworkObjectManager::Instance()->RegisterRakClientInterface(rakClient);
@@ -91,13 +91,15 @@ For example, if you want every instance of `Tank` to match among all systems:
 ```cpp
 #include "DistributedNetworkObjectHeader.h"
 
-class Tank : public DistributedNetworkObject
-{
+class Tank : public DistributedNetworkObject {
     // Your data and functions here
     // ...
 
-    // The update function for the class is a good place to put UpdateDistributedObject
-    void Update(void) { UpdateDistributedObject("Tank"); }
+    // The update function for the class is a good place to put
+    // UpdateDistributedObject
+    void Update(void) {
+        UpdateDistributedObject("Tank");
+    }
 };
 
 REGISTER_DISTRIBUTED_CLASS(Tank);
@@ -107,34 +109,32 @@ REGISTER_DISTRIBUTED_CLASS(Tank);
 
 There are two ways to synchronize member variables:
 
-1. **REGISTER_X_DISTRIBUTED_OBJECT_MEMBERS** preprocessor macro
-2. **SynchronizeMemory** function
+1. `REGISTER_X_DISTRIBUTED_OBJECT_MEMBERS` preprocessor macro
+2. `SynchronizeMemory` function
 
 The macro supports automatic interpolation and requires only one line of code in your header file for all members. However, the declaration must match on all systems, variables cannot be added at runtime, and it doesn't support pointers or arrays.
 
 The `SynchronizeMemory` function lets you add elements at runtime, members do not have to match, and it can support anything. However, it cannot perform interpolation, is more susceptible to user error, and requires one line of code per variable.
 
-### The REGISTER_X_DISTRIBUTED_OBJECT_MEMBERS macro
+### The `REGISTER_X_DISTRIBUTED_OBJECT_MEMBERS` macro
 
 In the public section of the class definition, add a macro of the form:
 
 ```cpp
-REGISTER_X_DISTRIBUTED_OBJECT_MEMBERS(BaseClass,
-    SynchronizationMethod, AuthoritativeNetwork, VariableType, VariableName,
-    ...
-)
+REGISTER_X_DISTRIBUTED_OBJECT_MEMBERS(
+    BaseClass, SynchronizationMethod, AuthoritativeNetwork, VariableType, VariableName, ...)
 ```
 
 Replace the `X` with however many member variables you are synchronizing (e.g. `REGISTER_3_DISTRIBUTED_OBJECT_MEMBERS` for 3 variables).
 
-**SynchronizationMethod** values:
+**`SynchronizationMethod`** values:
 
 - `DOM_COPY_UNCOMPRESSED` -- Send the data without [bitstream compression](/basics/bitstreams) and copy over the old value on arrival. Useful for data such as player health.
 - `DOM_COPY_COMPRESSED` -- Same as above but with bitstream compression. Useful for values that stay near 0. Only works with native types (char, int, short, long, float, bool).
 - `DOM_INTERPOLATE_UNCOMPRESSED` -- No compression; interpolate from old value to new value on arrival. Requires the `+`, `-`, `*`, and `=` operators.
 - `DOM_INTERPOLATE_COMPRESSED` -- Same with bitstream compression. Only works with native types. Requires the `+`, `-`, `*`, and `=` operators.
 
-**AuthoritativeNetwork** values:
+**`AuthoritativeNetwork`** values:
 
 - `DOM_SERVER_AUTHORITATIVE` -- The server is in charge of the variable. Client changes will be overwritten when the server next changes it.
 - `DOM_CLIENT_AUTHORITATIVE` -- The client(s) are in charge of the variable. By default, the client that created the object is the only one authorized to change client authoritative members. You can change the owner with `SetClientOwnerID`.
@@ -144,35 +144,45 @@ Example with two synchronized members:
 ```cpp
 #include "DistributedNetworkObjectHeader.h"
 
-class Tank : public DistributedNetworkObject
-{
-    void Update(void) { UpdateDistributedObject("Tank"); }
-public:
+class Tank : public DistributedNetworkObject {
+    void Update(void) {
+        UpdateDistributedObject("Tank");
+    }
+
+  public:
     float turretAngle;
     Vector position;
 
     REGISTER_2_DISTRIBUTED_OBJECT_MEMBERS(DistributedNetworkObject,
-        DOM_INTERPOLATE_COMPRESSED, DOM_CLIENT_AUTHORITATIVE, float, turretAngle,
-        DOM_COPY_UNCOMPRESSED, DOM_SERVER_AUTHORITATIVE, Vector, position)
+                                          DOM_INTERPOLATE_COMPRESSED,
+                                          DOM_CLIENT_AUTHORITATIVE,
+                                          float,
+                                          turretAngle,
+                                          DOM_COPY_UNCOMPRESSED,
+                                          DOM_SERVER_AUTHORITATIVE,
+                                          Vector,
+                                          position)
 };
 
 REGISTER_DISTRIBUTED_CLASS(Tank);
 ```
 
-### The SynchronizeMemory function
+### The `SynchronizeMemory` function
 
 Synchronizing memory at runtime uses the `SynchronizeMemory` function:
 
 ```cpp
-class Tank : public DistributedNetworkObject
-{
+class Tank : public DistributedNetworkObject {
     Tank() {
         SynchronizeMemory(0, &turretAngle, sizeof(turretAngle), false);
         SynchronizeMemory(1, &position, sizeof(position), true);
     }
 
-    void Update(void) { UpdateDistributedObject("Tank"); }
-public:
+    void Update(void) {
+        UpdateDistributedObject("Tank");
+    }
+
+  public:
     float turretAngle;
     Vector position;
 };

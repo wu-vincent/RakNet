@@ -16,5 +16,5 @@ Fortunately, RakNet deals with this for you, compensating for both system time a
 See [Creating Packets](/basics/creating-packets) for instructions on how to encode timestamps into your packets.
 
 <Callout type="info">
-It's recommended that you use the time functions found in GetTime.h to get your system time as this is a high resolution timer. You can also use the Windows function `timeGetTime()`, but this is less accurate. Timestamping also depends on automatic pinging, so you will need to call the function `SetOccasionalPing` for it to maintain accuracy.
+It's recommended that you use the time functions found in `GetTime.h` to get your system time as this is a high resolution timer. You can also use the Windows function `timeGetTime()`, but this is less accurate. Timestamping also depends on automatic pinging, so you will need to call the function `SetOccasionalPing` for it to maintain accuracy.
 </Callout>

@@ -5,7 +5,7 @@ description: "Automatically send file differences between directories to synchro
 
 ### Send file differences between directories automatically
 
-DirectoryDeltaTransfer.h is useful if you allow user-moddable content. For example, if each server has a /skins directory, you could run this plugin to upload that directory to the clients. Each client that does not already have a particular skin will get it. You will get download progress notifications via a user-supplied callback. DirectoryDeltaTransfer relies on the FileListTransfer plugin to actually transmit the files.
+`DirectoryDeltaTransfer.h` is useful if you allow user-moddable content. For example, if each server has a `/skins` directory, you could run this plugin to upload that directory to the clients. Each client that does not already have a particular skin will get it. You will get download progress notifications via a user-supplied callback. `DirectoryDeltaTransfer` relies on the `FileListTransfer` plugin to actually transmit the files.
 
 <Steps>
 <Step>
@@ -52,9 +52,9 @@ Client: to download call: `directoryDeltaTransfer.DownloadFromSubdirectory("skin
 
 ### Wait for completion (client)
 
-Client: Wait for the callback member `OnFileProgress()`. When onFileStruct->fileIndex is equal to onFileStruct->setCount this download is done.
+Client: Wait for the callback member `OnFileProgress()`. When `onFileStruct->fileIndex` is equal to `onFileStruct->setCount` this download is done.
 
 </Step>
 </Steps>
 
-For full details on all parameters and other available functions, see the header file DirectoryDeltaTransfer.h and the sample at _Samples/DirectoryDeltaTransfer_.
+For full details on all parameters and other available functions, see the header file `DirectoryDeltaTransfer.h` and the sample at _`Samples/DirectoryDeltaTransfer`_.

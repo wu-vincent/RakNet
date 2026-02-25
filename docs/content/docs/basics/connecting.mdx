@@ -27,36 +27,36 @@ Disadvantages:
 -   Inflexible
 -   Users will only be able to play with people they already know.
 
-Note: Use 127.0.0.1, or localhost, to connect to another instance of RakPeer on the same computer, or the same application.
+Note: Use `127.0.0.1`, or `localhost`, to connect to another instance of RakPeer on the same computer, or the same application.
 
 #### LAN Broadcast
 
 RakNet supports the ability to broadcast a packet to find other systems on a local LAN, with optional data to send and retrieve identifying the application. The sample LANServerDiscovery demonstrates this technique.
 
-In RakPeerInterface.h, the Ping function can do this, as follows
+In `RakPeerInterface.h`, the `Ping` function can do this, as follows
 
 ```cpp
 rakPeer->Ping("255.255.255.255", REMOTE_GAME_PORT, onlyReplyOnAcceptingConnections);
 ```
 
-REMOTE_GAME_PORT should be whatever port the other system is running the application you care about on. onlyReplyOnAcceptingConnections is a boolean indicating if the other system should reply, even if they have no connections available for you to connect to.
+`REMOTE_GAME_PORT` should be whatever port the other system is running the application you care about on. `onlyReplyOnAcceptingConnections` is a boolean indicating if the other system should reply, even if they have no connections available for you to connect to.
 
-Open systems will reply with ID_UNCONNECTED_PONG. From the sample:
+Open systems will reply with `ID_UNCONNECTED_PONG`. From the sample:
 
 ```cpp
-if (p->data[0]==ID_UNCONNECTED_PONG)
-{
+if (p->data[0] == ID_UNCONNECTED_PONG) {
     RakNet::TimeMS time;
-    RakNet::BitStream bsIn(packet->data,packet->length,false);
+    RakNet::BitStream bsIn(packet->data, packet->length, false);
     bsIn.IgnoreBytes(1);
     bsIn.Read(time);
-    printf("Got pong from %s with time %i\n", p->systemAddress.ToString(), RakNet::GetTime() - time);
+    printf("Got pong from %s with time %i\n", p->systemAddress.ToString(),
+           RakNet::GetTime() - time);
 }
 ```
 
-In order to send custom user data, call RakPeer::SetOfflinePingResponse(customUserData, lengthInBytes); RakNet will copy the data passed to it and return this data appended to ID_UNCONNECTED_PONG.
+In order to send custom user data, call `RakPeer::SetOfflinePingResponse(customUserData, lengthInBytes)`; RakNet will copy the data passed to it and return this data appended to `ID_UNCONNECTED_PONG`.
 
-Note: there is a hardcoded define MAX_OFFLINE_DATA_LENGTH in RakPeer.cpp limiting the length of your custom user data. Change this value and recompile if your data is larger than this define.
+Note: there is a hardcoded define `MAX_OFFLINE_DATA_LENGTH` in `RakPeer.cpp` limiting the length of your custom user data. Change this value and recompile if your data is larger than this define.
 
 Advantages:
 
@@ -115,52 +115,53 @@ Disadvantages:
 -   Special licensing if you need the server sources
 
 ### Initiate connection attempt
-Once you know the IP address of the remote system(s) to connect to, use RakPeerInterface::Connect() to initiate an asynchronous connection attempt. The parameters to connect are:
+Once you know the IP address of the remote system(s) to connect to, use `RakPeerInterface::Connect()` to initiate an asynchronous connection attempt. The parameters to connect are:
 
 ```cpp
-ConnectionAttemptResult Connect(
-    const char* host, unsigned short remotePort,
-    const char *passwordData, int passwordDataLength,
-    PublicKey *publicKey=0, unsigned connectionSocketIndex=0,
-    unsigned sendConnectionAttemptCount=6,
-    unsigned timeBetweenSendConnectionAttemptsMS=1000,
-    RakNet::TimeMS timeoutTime=0
-)
+ConnectionAttemptResult Connect(const char *host,
+                                unsigned short remotePort,
+                                const char *passwordData,
+                                int passwordDataLength,
+                                PublicKey *publicKey = 0,
+                                unsigned connectionSocketIndex = 0,
+                                unsigned sendConnectionAttemptCount = 6,
+                                unsigned timeBetweenSendConnectionAttemptsMS = 1000,
+                                RakNet::TimeMS timeoutTime = 0)
 ```
 
--   host is an IP address, or domain name.
--   remotePort is the port that the remote system is listening on, which you passed to the Startup() function
--   passwordData is optional binary data to send with the connection request. If this data does not match what was passed to RakPeerInterface::SetPassword(), the remote system will reply with ID_INVALID_PASSWORD.
--   passwordDataLength is the length, in bytes, of passwordData
--   publicKey is the public key parameter that was passed to InitializeSecurity() on the remote system. If you don't use security, pass 0.
--   connectionSocketIndex is the index into the array of socket descriptors passed to socketDescriptors in RakPeer::Startup() to determine the one to send on.
--   sendConnectionAttemptCount is how many datagrams to send before giving up as unable to connect. This is also used for MTU detection, with 3 different MTU sizes. So the default of 12 means send each MTU size 4 times, which should be sufficient to tolerate any reasonable packet loss. Lower values mean that ID_CONNECTION_ATTEMPT_FAILED would be returned to you faster.
--   timeBetweenSendConnectionAttemptsMS is how many milliseconds to wait before sending another connection attempt. A good value is 4 times the expected ping.
--   timeoutTime is how many milliseconds to wait, for this particular connection, before dropping the remote system if a message cannot be delivered. The default value of 0 means use the global value from SetTimeoutTime().
+-   `host` is an IP address, or domain name.
+-   `remotePort` is the port that the remote system is listening on, which you passed to the `Startup()` function
+-   `passwordData` is optional binary data to send with the connection request. If this data does not match what was passed to `RakPeerInterface::SetPassword()`, the remote system will reply with `ID_INVALID_PASSWORD`.
+-   `passwordDataLength` is the length, in bytes, of `passwordData`
+-   `publicKey` is the public key parameter that was passed to `InitializeSecurity()` on the remote system. If you don't use security, pass `0`.
+-   `connectionSocketIndex` is the index into the array of socket descriptors passed to `socketDescriptors` in `RakPeer::Startup()` to determine the one to send on.
+-   `sendConnectionAttemptCount` is how many datagrams to send before giving up as unable to connect. This is also used for MTU detection, with 3 different MTU sizes. So the default of 12 means send each MTU size 4 times, which should be sufficient to tolerate any reasonable packet loss. Lower values mean that `ID_CONNECTION_ATTEMPT_FAILED` would be returned to you faster.
+-   `timeBetweenSendConnectionAttemptsMS` is how many milliseconds to wait before sending another connection attempt. A good value is 4 times the expected ping.
+-   `timeoutTime` is how many milliseconds to wait, for this particular connection, before dropping the remote system if a message cannot be delivered. The default value of `0` means use the global value from `SetTimeoutTime()`.
 
-Connect() will return CONNECTION_ATTEMPT_STARTED for a successful attempt, something else on failure.
+`Connect()` will return `CONNECTION_ATTEMPT_STARTED` for a successful attempt, something else on failure.
 
-Note: Connect() returning true does NOT mean you are connected. If successful the message ID_CONNECTION_REQUEST_ACCEPTED should be received. If not you will receive one of the error messages.
+Note: `Connect()` returning true does NOT mean you are connected. If successful the message `ID_CONNECTION_REQUEST_ACCEPTED` should be received. If not you will receive one of the error messages.
 
-### Connectivity messages returned as the first byte of the Packet::data structure
+### Connectivity messages returned as the first byte of the `Packet::data` structure
 
-**Connection closed**: ID_DISCONNECTION_NOTIFICATION, ID_CONNECTION_LOST
-**New connection**: ID_NEW_INCOMING_CONNECTION, ID_CONNECTION_REQUEST_ACCEPTED
-**Connection attempt failed**: ID_CONNECTION_ATTEMPT_FAILED, ID_REMOTE_SYSTEM_REQUIRES_PUBLIC_KEY, ID_OUR_SYSTEM_REQUIRES_SECURITY, ID_PUBLIC_KEY_MISMATCH, ID_ALREADY_CONNECTED, ID_NO_FREE_INCOMING_CONNECTIONS, ID_CONNECTION_BANNED, ID_INVALID_PASSWORD, ID_INCOMPATIBLE_PROTOCOL_VERSION, ID_IP_RECENTLY_CONNECTED
+**Connection closed**: `ID_DISCONNECTION_NOTIFICATION`, `ID_CONNECTION_LOST`
+**New connection**: `ID_NEW_INCOMING_CONNECTION`, `ID_CONNECTION_REQUEST_ACCEPTED`
+**Connection attempt failed**: `ID_CONNECTION_ATTEMPT_FAILED`, `ID_REMOTE_SYSTEM_REQUIRES_PUBLIC_KEY`, `ID_OUR_SYSTEM_REQUIRES_SECURITY`, `ID_PUBLIC_KEY_MISMATCH`, `ID_ALREADY_CONNECTED`, `ID_NO_FREE_INCOMING_CONNECTIONS`, `ID_CONNECTION_BANNED`, `ID_INVALID_PASSWORD`, `ID_INCOMPATIBLE_PROTOCOL_VERSION`, `ID_IP_RECENTLY_CONNECTED`
 
-### Troubleshooting ID_CONNECTION_ATTEMPT_FAILED
+### Troubleshooting `ID_CONNECTION_ATTEMPT_FAILED`
 
 <Callout type="error">
-ID_CONNECTION_ATTEMPT_FAILED is the generic message meaning no communication was established with the remote system. Possible reasons include:
+`ID_CONNECTION_ATTEMPT_FAILED` is the generic message meaning no communication was established with the remote system. Possible reasons include:
 
 -   The IP address is wrong
--   That system is not running RakNet, or RakPeerInterface::Startup() was not called on that system
--   The remote system has started RakNet, but RakPeerInterface::SetMaximumIncomingConnections() was not called
+-   That system is not running RakNet, or `RakPeerInterface::Startup()` was not called on that system
+-   The remote system has started RakNet, but `RakPeerInterface::SetMaximumIncomingConnections()` was not called
 -   A firewall on either system is blocking UDP packets on the port you have chosen
 -   A router on the remote system is blocking incoming UDP packets on the port you have chosen. See the [NAT Punchthrough](/plugins/nat-punchthrough) plugin to resolve this.
 -   On Windows Vista, the network driver security service pack sometimes breaks UDP, not just for RakNet, but in general, even for DirectPlay. This service pack should be rolled back, and not installed.
 -   [Secure connections](/basics/secure-connections) are enabled, and your system failed the security check.
--   Your IP address was banned with RakPeerInterface::AddToBanList(). Note that some plugins, such as the connection filter, have the option to ban IP addresses automatically.
+-   Your IP address was banned with `RakPeerInterface::AddToBanList()`. Note that some plugins, such as the connection filter, have the option to ban IP addresses automatically.
 </Callout>
 
 Assuming you are able to connect, it is time to go onto the section: [Creating Packets](/basics/creating-packets)

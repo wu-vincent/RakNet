@@ -5,7 +5,7 @@ description: "Manage teams and team members with support for join conditions, lo
 
 ### Manages lists of teams and team members. Supports client/server and peer to peer
 
-TeamManager reduces the work involved with managing teams and team members. Functionality includes:
+`TeamManager` reduces the work involved with managing teams and team members. Functionality includes:
 
 -   Support for any number of teams with join conditions on each.
 -   Support for team members being on multiple teams at the same time, or no team at all.
@@ -28,7 +28,7 @@ Define your game classes to represent teams and team members. Your game classes 
 
 ### Add TM_Team / TM_TeamMember instances
 
-Have those game classes contain a corresponding TM_Team or TM_TeamMember instance. Operations on teams will be performed by those instances. Use SetOwner() to refer to the parent object when using composition.
+Have those game classes contain a corresponding `TM_Team` or `TM_TeamMember` instance. Operations on teams will be performed by those instances. Use `SetOwner()` to refer to the parent object when using composition.
 
 </Step>
 
@@ -36,7 +36,7 @@ Have those game classes contain a corresponding TM_Team or TM_TeamMember instanc
 
 ### Set topology
 
-Call TeamManager::SetTopology() for client/server or peer to peer.
+Call `TeamManager::SetTopology()` for client/server or peer to peer.
 
 </Step>
 
@@ -44,7 +44,7 @@ Call TeamManager::SetTopology() for client/server or peer to peer.
 
 ### Add a world
 
-Call AddWorld() to instantiate a TM_World object which will contain references to your TM_TeamMember and TM_Team instances.
+Call `AddWorld()` to instantiate a `TM_World` object which will contain references to your `TM_TeamMember` and `TM_Team` instances.
 
 </Step>
 
@@ -52,7 +52,7 @@ Call AddWorld() to instantiate a TM_World object which will contain references t
 
 ### Reference teams and members
 
-When you instantiate a TM_TeamMember or TM_Team object, call ReferenceTeam() and ReferenceTeamMember() for each corresponding object. If using ReplicaManager3, the Reference calls should be at the top of DeserializeConstruction(), as well as when creating the object locally.
+When you instantiate a `TM_TeamMember` or `TM_Team` object, call `ReferenceTeam()` and `ReferenceTeamMember()` for each corresponding object. If using `ReplicaManager3`, the Reference calls should be at the top of `DeserializeConstruction()`, as well as when creating the object locally.
 
 </Step>
 
@@ -60,7 +60,7 @@ When you instantiate a TM_TeamMember or TM_Team object, call ReferenceTeam() and
 
 ### Serialize construction
 
-When sending world state to a new connection, for example in ReplicaManager3::SerializeConstruction(), call TM_SerializeConstruction() on the corresponding TM_TeamMember and TM_Team objects. TM_Team instances on the new connection must be created before TM_TeamMember instances.
+When sending world state to a new connection, for example in `ReplicaManager3::SerializeConstruction()`, call `TM_SerializeConstruction()` on the corresponding `TM_TeamMember` and `TM_Team` objects. `TM_Team` instances on the new connection must be created before `TM_TeamMember` instances.
 
 </Step>
 
@@ -68,7 +68,7 @@ When sending world state to a new connection, for example in ReplicaManager3::Se
 
 ### Deserialize construction
 
-Call TM_DeserializeConstruction() on your new corresponding TM_TeamMember and TM_Team instances.
+Call `TM_DeserializeConstruction()` on your new corresponding `TM_TeamMember` and `TM_Team` instances.
 
 </Step>
 
@@ -76,7 +76,7 @@ Call TM_DeserializeConstruction() on your new corresponding TM_TeamMember and TM
 
 ### Execute team operations
 
-Execute team operations. ID_TEAM_BALANCER_REQUESTED_TEAM_FULL, ID_TEAM_BALANCER_REQUESTED_TEAM_LOCKED, ID_TEAM_BALANCER_TEAM_REQUESTED_CANCELLED, and ID_TEAM_BALANCER_TEAM_ASSIGNED are returned to all systems when the corresponding event occurs for a team member.
+Execute team operations. `ID_TEAM_BALANCER_REQUESTED_TEAM_FULL`, `ID_TEAM_BALANCER_REQUESTED_TEAM_LOCKED`, `ID_TEAM_BALANCER_TEAM_REQUESTED_CANCELLED`, and `ID_TEAM_BALANCER_TEAM_ASSIGNED` are returned to all systems when the corresponding event occurs for a team member.
 
 </Step>
 
@@ -84,7 +84,7 @@ Execute team operations. ID_TEAM_BALANCER_REQUESTED_TEAM_FULL, ID_TEAM_BALANCER_
 
 ### Handle host changes
 
-As the peer to peer session host changes, call SetHost() (not necessary if using FullyConnectedMesh2). If using client/server, you must set the host.
+As the peer to peer session host changes, call `SetHost()` (not necessary if using `FullyConnectedMesh2`). If using client/server, you must set the host.
 
 </Step>
 
@@ -92,11 +92,11 @@ As the peer to peer session host changes, call SetHost() (not necessary if using
 
 ### Order of deserialization
 
-DeserializeConstruction must be called on TM_Team before DeserializeConstruction is called on TM_TeamMember that is a member of that team. If using ReplicaManager3, you can simply call ReplicaManager3::Reference() on TM_TeamMember later than any ReplicaManager3::Reference() calls to TM_Team.
+`DeserializeConstruction()` must be called on `TM_Team` before `DeserializeConstruction()` is called on `TM_TeamMember` that is a member of that team. If using `ReplicaManager3`, you can simply call `ReplicaManager3::Reference()` on `TM_TeamMember` later than any `ReplicaManager3::Reference()` calls to `TM_Team`.
 
 </Step>
 </Steps>
 
-See the header file TeamManager.h for more information and complete documentation of each parameter and function, as well as messages returned to the user.
+See the header file `TeamManager.h` for more information and complete documentation of each parameter and function, as well as messages returned to the user.
 
-_See the sample project Samples\\TeamManager for an implementation of this system._
+_See the sample project `Samples\TeamManager` for an implementation of this system._

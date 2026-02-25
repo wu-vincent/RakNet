@@ -4,7 +4,7 @@ description: "List game servers using a shared PHP webhost as a lightweight alte
 ---
 
 <Callout type="warn">
-**Deprecated:** This system has been supplanted by PHPDirectoryServer2. See the updated implementation in the samples.
+**Deprecated:** This system has been supplanted by `PHPDirectoryServer2`. See the updated implementation in the samples.
 </Callout>
 
 ### Use a shared webhost to list games
@@ -82,30 +82,22 @@ To update the system, you should pass packets from `TCPInterface` to both interf
 
 ```cpp
 Packet *packet = tcp.Receive();
-if(packet)
-{
-    if (packet->systemAddress == httpConnection.GetServerAddress())
-    {
-        if (httpConnection.ProcessFinalTCPPacket(packet))
-        {
+if (packet) {
+    if (packet->systemAddress == httpConnection.GetServerAddress()) {
+        if (httpConnection.ProcessFinalTCPPacket(packet)) {
             int code;
             RakNet::RakString data;
-            if (httpConnection.HasBadResponse(&code, &data) == false)
-            {
-                HTTPReadResult readResult =
-                    phpDirectoryServer.ProcessHTTPRead(httpResult);
-                if (readResult == HTTP_RESULT_GOT_TABLE)
-                {
+            if (httpConnection.HasBadResponse(&code, &data) == false) {
+                HTTPReadResult readResult = phpDirectoryServer.ProcessHTTPRead(httpResult);
+                if (readResult == HTTP_RESULT_GOT_TABLE) {
                     char out[10000];
                     const DataStructures::Table *games =
                         phpDirectoryServer.GetLastDownloadedTable();
                     games->PrintColumnHeaders(out, sizeof(out), ',');
                     printf("COLUMNS: %s\n", out);
 
-                    for (unsigned i = 0; i < games->GetRowCount(); i++)
-                    {
-                        games->PrintRow(out, sizeof(out), ',', true,
-                            games->GetRowByIndex(i, NULL));
+                    for (unsigned i = 0; i < games->GetRowCount(); i++) {
+                        games->PrintRow(out, sizeof(out), ',', true, games->GetRowByIndex(i, NULL));
                         printf("ROW %i: %s\n", i + 1, out);
                     }
                 }
@@ -135,7 +127,7 @@ Certain columns are reserved and returned to you in a query. These column names 
 `__SYSTEM_ADDRESS` will also be returned indicating the external IP that was used to upload to the webpage.
 
 <Callout type="info">
-Due to technical limitations only one upload can be processed at a time. This is not a problem if your server is only hosting one game. Calling `PHPDirectoryServer::UploadTable()` while an upload is pending will overwrite the prior upload. You can perform another upload when `HTTPConnectionIsBusy()` returns false.
+Due to technical limitations only one upload can be processed at a time. This is not a problem if your server is only hosting one game. Calling `PHPDirectoryServer::UploadTable()` while an upload is pending will overwrite the prior upload. You can perform another upload when `HTTPConnectionIsBusy()` returns `false`.
 </Callout>
 
 ## See Also

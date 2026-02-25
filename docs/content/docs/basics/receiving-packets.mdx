@@ -5,17 +5,17 @@ description: "How to receive and process incoming network packets by identifying
 
 ### Receiving a packet
 
-When a packet comes in on the network, i.e. Receive returns non-zero, there are three steps involved in handling it:
+When a packet comes in on the network, i.e. `Receive` returns non-zero, there are three steps involved in handling it:
 
 1. Determine the packet type. This is returned by the following code
 
 ```cpp
-unsigned char GetPacketIdentifier(Packet *p)
-{
-	if ((unsigned char)p->data[0] == ID_TIMESTAMP)
-		return (unsigned char) p->data[sizeof(unsigned char) + sizeof(unsigned long)];
-	else
-		return (unsigned char) p->data[0];
+unsigned char GetPacketIdentifier(Packet *p) {
+    if ((unsigned char)p->data[0] == ID_TIMESTAMP) {
+        return (unsigned char)p->data[sizeof(unsigned char) + sizeof(unsigned long)];
+    } else {
+        return (unsigned char)p->data[0];
+    }
 }
 ```
 
@@ -26,19 +26,22 @@ unsigned char GetPacketIdentifier(Packet *p)
 If you originally sent a structure, you can cast it back as follows:
 
 ```cpp
-if (GetPacketIdentifier(packet)==/* User assigned packet identifier here */)
-	DoMyPacketHandler(packet);
+if (GetPacketIdentifier(packet) == /* User assigned packet identifier here */) {
+    DoMyPacketHandler(packet);
+}
 
-// Put this anywhere you want.  Inside the state class that handles the game is a good place
-void DoMyPacketHandler(Packet *packet)
-{
-	// Cast the data to the appropriate type of struct
-	MyStruct *s = (MyStruct *) packet->data;
-	assert(p->length == sizeof(MyStruct)); // This is a good idea if you're transmitting structs.
-	if (p->length != sizeof(MyStruct))
-		return;
+// Put this anywhere you want.  Inside the state class that handles the game is
+// a good place
+void DoMyPacketHandler(Packet *packet) {
+    // Cast the data to the appropriate type of struct
+    MyStruct *s = (MyStruct *)packet->data;
+    assert(p->length == sizeof(MyStruct)); // This is a good idea if you're transmitting structs.
+    if (p->length != sizeof(MyStruct)) {
+        return;
+    }
 
-	// Perform the functionality for this type of packet, with your struct,  MyStruct *s
+    // Perform the functionality for this type of packet, with your struct,
+    // MyStruct *s
 }
 ```
 
@@ -55,28 +58,28 @@ void DoMyPacketHandler(Packet *packet)
 If you originally sent a bitstream, we create a bitstream to unparse the data in the same order we wrote it. We create a bitstream, using the data and the length of the packet. We then use the Read functions where we formerly used the Write functions, the ReadCompressed functions where we formerly used WriteCompressed, and follow the same logical branching if we wrote any data conditionally. This is all shown in the following example which would read in the data for the mine we created in [creating packets](/basics/creating-packets).
 
 ```cpp
-void DoMyPacketHandler(Packet *packet)
-{
-	Bitstream myBitStream(packet->data, packet->length, false); // The false is for efficiency so we don't make a copy of the passed data
-	myBitStream.Read(useTimeStamp);
-	myBitStream.Read(timeStamp);
-	myBitStream.Read(typeId);
-	bool isAtZero;
-	myBitStream.Read(isAtZero);
-	if (isAtZero==false)
-	{
-		x=0.0f;
-		y=0.0f;
-		z=0.0f;
-	} else {
-		myBitStream.Read(x);
-		myBitStream.Read(y);
-		myBitStream.Read(z);
-	}
+void DoMyPacketHandler(Packet *packet) {
+    Bitstream myBitStream(packet->data, packet->length,
+                          false); // The false is for efficiency so we don't
+                                  // make a copy of the passed data
+    myBitStream.Read(useTimeStamp);
+    myBitStream.Read(timeStamp);
+    myBitStream.Read(typeId);
+    bool isAtZero;
+    myBitStream.Read(isAtZero);
+    if (isAtZero == false) {
+        x = 0.0f;
+        y = 0.0f;
+        z = 0.0f;
+    } else {
+        myBitStream.Read(x);
+        myBitStream.Read(y);
+        myBitStream.Read(z);
+    }
 
-	myBitStream.Read(networkID); // In the struct this is NetworkID networkId
-	myBitStream.Read(systemAddress); // In the struct this is SystemAddress systemAddress
+    myBitStream.Read(networkID);     // In the struct this is NetworkID networkId
+    myBitStream.Read(systemAddress); // In the struct this is SystemAddress systemAddress
 }
 ```
 
-3. Deallocate the packet by passing it to `DeallocatePacket(Packet *packet)` of the RakPeerInterface instance that you got it from.
+3. Deallocate the packet by passing it to `DeallocatePacket(Packet *packet)` of the `RakPeerInterface` instance that you got it from.

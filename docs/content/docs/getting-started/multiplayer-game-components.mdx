@@ -17,15 +17,15 @@ The oldest and simplest method, this involves typing in the IP address of the us
 
 ### DNS entry
 
-Applicable to client/server games where you control the servers, you can have a DNS entry point to the server. Connecting clients can then connect to the DNS entry rather than typing in a fixed IP address. This is useful if the IP address of the server may change. This service is available for free through [http://www.dyndns.com/](http://www.dyndns.com/). RakNet provides a class to update DynDNS as well, found in Source/DynDNS.h and Source/DynDNS.cpp. This is usually used for client/server games where you host your own server.
+Applicable to client/server games where you control the servers, you can have a DNS entry point to the server. Connecting clients can then connect to the DNS entry rather than typing in a fixed IP address. This is useful if the IP address of the server may change. This service is available for free through [http://www.dyndns.com/](http://www.dyndns.com/). RakNet provides a class to update DynDNS as well, found in `Source/DynDNS.h` and `Source/DynDNS.cpp`. This is usually used for client/server games where you host your own server.
 
 ### LAN Broadcast
 
-If the remote computer is on the same LAN, you can discover this computer by sending a datagram to the IP address 255.255.255.255 provided that the remote computer is listening on the port you send on, and will send a datagram in response. RakNet provides this through the Ping() and AdvertiseSystem() functions.
+If the remote computer is on the same LAN, you can discover this computer by sending a datagram to the IP address 255.255.255.255 provided that the remote computer is listening on the port you send on, and will send a datagram in response. RakNet provides this through the `Ping()` and `AdvertiseSystem()` functions.
 
 ### Lobby server
 
-Consoles such as the XBOX 360 and the PS3, and services such as Steam on the PC offer a lobby system. The lobby system also typically provides services such as DLC, achievements, friends, and rooms. RakNet provides the SteamLobby plugin, and rough equivalents on the XBOX and PS3 with their respective lobby classes. This is usually used for peer-to-peer games, where players have some significant interaction between each other before the game starts.
+Consoles such as the XBOX 360 and the PS3, and services such as Steam on the PC offer a lobby system. The lobby system also typically provides services such as DLC, achievements, friends, and rooms. RakNet provides the `SteamLobby` plugin, and rough equivalents on the XBOX and PS3 with their respective lobby classes. This is usually used for peer-to-peer games, where players have some significant interaction between each other before the game starts.
 
 ### Master server
 
@@ -57,7 +57,7 @@ This is used for more informal game sessions without dedicated servers. It is th
 3.  Have to deal with host migration
 4.  Have to deal with contention. If two peers do the same mutually exclusive operation at the same time, how to resolve?
 
-RakNet provides plugins to make peer to peer programming easier: [NATPunchthrough](/plugins/nat-punchthrough), [ReadyEvent](/plugins/ready-event), [ConnectionGraph2](/plugins/connection-graph), [FullyConnectedMesh2](/plugins/fully-connected-mesh2), and [TeamBalancer](/plugins/team-balancer). See the project ComprehensivePCGame in the RakNet solution for an example where all these plugins are combined together.
+RakNet provides plugins to make peer to peer programming easier: [NATPunchthrough](/plugins/nat-punchthrough), [ReadyEvent](/plugins/ready-event), [ConnectionGraph2](/plugins/connection-graph), [FullyConnectedMesh2](/plugins/fully-connected-mesh2), and [TeamBalancer](/plugins/team-balancer). See the project `ComprehensivePCGame` in the RakNet solution for an example where all these plugins are combined together.
 
 ## Game and game design changes for networking
 
@@ -66,7 +66,7 @@ RakNet provides plugins to make peer to peer programming easier: [NATPunchthroug
 Rather than loading all objects in the level as done in single player, objects now need to be categorized according to how they influence networking
 
 1.  Objects that still load normally are those that always exist in the level and are not referenced by network code.
-2.  Objects may still load normally with the level, but need to be referred to by network code. For example, event triggers. These objects can either be loaded with a NetworkID (64 bit GUID), or the code at load time can gather these types of objects and assign them ids.
+2.  Objects may still load normally with the level, but need to be referred to by network code. For example, event triggers. These objects can either be loaded with a `NetworkID` (64 bit GUID), or the code at load time can gather these types of objects and assign them ids.
 3.  Objects may or may not exist on level load need to be dynamically loaded. For example, such as players, spawned weapons, and bullets. Some of these objects should be preloaded during level load, on the assumption that they will eventually be spawned, to avoid runtime harddrive access.
 
 Generally, after level load the game does not start until all players have finished loading. Even on consoles, the disk may be scratched so systems may take a different amount of time to load a level. Before considering level load complete:
@@ -83,7 +83,7 @@ Midgame joins are the same, except that you skip the intermission screen. Howeve
 Objects that are networkable need to implement an interface to support [ReplicaManager3](/plugins/replica-manager3). The key requirements are listed below.
 </Callout>
 
-1.  Objects must be able to return an identifier for what type of class the object is, for example ENUM_BULLET or "CBullet" for a bullet.
+1.  Objects must be able to return an identifier for what type of class the object is, for example `ENUM_BULLET` or `"CBullet"` for a bullet.
 2.  Object must be instantiable given that identifier and initialization data. Sometimes this is done through a class factory.
 3.  Objects should implement an interface allowing them to serialize data for construction, destruction, and per-tick serialization
 4.  Objects that are deleted when the owning user leaves the game session should support deletion. For example, if a remote user's avatar is deleted, this should not end the game session locally.
@@ -117,7 +117,7 @@ If the game supports teams, this needs to be serialized including players, team 
 
 ### World / Game State
 
-Not all game information is necessarily held by game objects, for example the match countdown. It can be represented using Replica3 as usual, or can be updated directly through network messages.
+Not all game information is necessarily held by game objects, for example the match countdown. It can be represented using `Replica3` as usual, or can be updated directly through network messages.
 
 ### Level End
 
@@ -165,7 +165,7 @@ RakNet provides the [CrashReporter](/utilities/crash-reporter) system to make th
 
 Games that persist data beyond a single session require a system to create user accounts. User accounts can store data such as game statistics, name, and logo. Users can also have friends, form clans, and perform other social tasks. In order to write such a system, a database backend is needed with a persistent server to store this data. The users should not be able to send arbitrary queries to the database, so the server will need code to form queries based on user inputs.
 
-RakNet provides a system called [LobbyServer and LobbyClient](/plugins/lobby) to provide this kind of functionality for the PC. Steam, the PS3, and the XBOX already store this on their own backend. For those cases, RakNet uses the same [LobbyClient](/plugins/lobby) interface so as to provide a unified interface to all systems.
+RakNet provides a system called [LobbyServer and LobbyClient](/plugins/lobby) to provide this kind of functionality for the PC. Steam, the PS3, and the XBOX already store this on their own backend. For those cases, RakNet uses the same [LobbyClient](/plugins/lobby) interface to provide a unified interface to all systems.
 
 ## Security
 

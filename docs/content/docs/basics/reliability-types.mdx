@@ -10,11 +10,11 @@ description: "Reference for PacketPriority and PacketReliability enums that cont
 | Value | Description |
 |-------|-------------|
 | `IMMEDIATE_PRIORITY` | The highest possible priority. These messages trigger sends immediately, and are generally not buffered or aggregated into a single datagram. |
-| `HIGH_PRIORITY` | For every 2 IMMEDIATE_PRIORITY messages, 1 HIGH_PRIORITY will be sent. Messages at this level and lower are buffered to be sent in groups at 10 millisecond intervals. |
-| `MEDIUM_PRIORITY` | For every 2 HIGH_PRIORITY messages, 1 MEDIUM_PRIORITY will be sent. |
-| `LOW_PRIORITY` | For every 2 MEDIUM_PRIORITY messages, 1 LOW_PRIORITY will be sent. |
+| `HIGH_PRIORITY` | For every 2 `IMMEDIATE_PRIORITY` messages, 1 `HIGH_PRIORITY` will be sent. Messages at this level and lower are buffered to be sent in groups at 10 millisecond intervals. |
+| `MEDIUM_PRIORITY` | For every 2 `HIGH_PRIORITY` messages, 1 `MEDIUM_PRIORITY` will be sent. |
+| `LOW_PRIORITY` | For every 2 `MEDIUM_PRIORITY` messages, 1 `LOW_PRIORITY` will be sent. |
 
-PacketPriority is simple. High priority packets go out before medium priority packets and medium priority packets go out before low priority packets do. Originally I raised the priority of packets that took a long time to get out, but in practice this would disrupt games in progress as unimportant data to new connections (such as the map data) would get in the way of the game data.
+`PacketPriority` is simple. High priority packets go out before medium priority packets and medium priority packets go out before low priority packets do. Originally I raised the priority of packets that took a long time to get out, but in practice this would disrupt games in progress as unimportant data to new connections (such as the map data) would get in the way of the game data.
 
 ## PacketReliability
 
@@ -65,13 +65,13 @@ Disadvantages - Wasteful of bandwidth because it uses the overhead of reliable U
 
 `*_WITH_ACK_RECEIPT`
 
-By specifying one of the PacketReliability types that contain `_WITH_ACK_RECEIPT`, you can request that RakPeerInterface notify you when a message has been acknowledged by the remote system, or delivery has timed out.
+By specifying one of the `PacketReliability` types that contain `_WITH_ACK_RECEIPT`, you can request that `RakPeerInterface` notify you when a message has been acknowledged by the remote system, or delivery has timed out.
 
-Calls to RakPeerInterface::Send() or RakPeerInterface::SendLists() return a 4 byte unsigned integer representing an ID for the message sent. When using `_WITH_ACK_RECEIPT`, this same ID will be returned to you when you call RakPeerInterface::Receive(). In the packet, byte 0 will be either ID_SND_RECEIPT_ACKED or ID_SND_RECEIPT_LOSS. Bytes 1-4 inclusive will contain the same number returned to you from Send() or SendLists().
+Calls to `RakPeerInterface::Send()` or `RakPeerInterface::SendLists()` return a 4 byte unsigned integer representing an ID for the message sent. When using `_WITH_ACK_RECEIPT`, this same ID will be returned to you when you call `RakPeerInterface::Receive()`. In the packet, byte 0 will be either `ID_SND_RECEIPT_ACKED` or `ID_SND_RECEIPT_LOSS`. Bytes 1-4 inclusive will contain the same number returned to you from `Send()` or `SendLists()`.
 
-ID_SND_RECEIPT_ACKED means that the message arrived. For reliable sends, this is all you will ever get.
+`ID_SND_RECEIPT_ACKED` means that the message arrived. For reliable sends, this is all you will ever get.
 
-ID_SND_RECEIPT_LOSS is only returned for UNRELIABLE_WITH_ACK_RECEIPT and UNRELIABLE_SEQUENCED_WITH_ACK_RECEIPT. It means that an ack for the message did not arrive within the threshold given for message resends (roughly a multiple of your ping). It could mean any of the following:
+`ID_SND_RECEIPT_LOSS` is only returned for `UNRELIABLE_WITH_ACK_RECEIPT` and `UNRELIABLE_SEQUENCED_WITH_ACK_RECEIPT`. It means that an ack for the message did not arrive within the threshold given for message resends (roughly a multiple of your ping). It could mean any of the following:
 
 -   The message was lost in transmission
 -   The message arrived, but the ack was lost in transmission
@@ -83,31 +83,29 @@ Here's an example of reading out the return receipt:
 
 ```cpp
 packet = rakPeer->Receive();
-while (packet)
-{
-switch(packet->data[0])
-{
-case ID_SND_RECEIPT_ACKED:
-memcpy(&msgNumber, packet->data+1, 4);
-printf("Msg #%i was delivered.\n", msgNumber);
-break;
-case ID_SND_RECEIPT_LOSS:
-memcpy(&msgNumber, packet->data+1, 4);
-printf("Msg #%i was probably not delivered.\n", msgNumber);
-break;
-}
-sender->DeallocatePacket(packet);
-packet = sender->Receive();
+while (packet) {
+    switch (packet->data[0]) {
+    case ID_SND_RECEIPT_ACKED:
+        memcpy(&msgNumber, packet->data + 1, 4);
+        printf("Msg #%i was delivered.\n", msgNumber);
+        break;
+    case ID_SND_RECEIPT_LOSS:
+        memcpy(&msgNumber, packet->data + 1, 4);
+        printf("Msg #%i was probably not delivered.\n", msgNumber);
+        break;
+    }
+    sender->DeallocatePacket(packet);
+    packet = sender->Receive();
 }
 ```
 
-The typical reason you would want to use this is to know if unreliable messages arrived or not. Sometimes you want to resend unreliable messages, but with more up-to-date data, rather than relying on RELIABLE to just resend the old data until it arrives. To do so, when you send your unreliable data you would internally create a mapping between the number returned by Send() or SendLists() and reference that number when the return receipt arrives. If the receipt is ID_SND_RECEIPT_LOSS, you can resend whatever message that Send() or SendLists() call contained.
+The typical reason you would want to use this is to know if unreliable messages arrived or not. Sometimes you want to resend unreliable messages, but with more up-to-date data, rather than relying on `RELIABLE` to just resend the old data until it arrives. To do so, when you send your unreliable data you would internally create a mapping between the number returned by `Send()` or `SendLists()` and reference that number when the return receipt arrives. If the receipt is `ID_SND_RECEIPT_LOSS`, you can resend whatever message that `Send()` or `SendLists()` call contained.
 
 ## Advanced send types
 
 **Send most recent values on resends**
 
-When RakNet resends a message, it can only send what you gave to it originally. For data that changes continually (position for example) you may only want to resend the most recent value. To do so, send the data using UNRELIABLE_WITH_ACK_RECEIPT. Call RakPeer::GetNextSendReceipt() and pass the value to RakPeer::Send(). And in memory store an association between what type of message that was, and the send receipt. If you get ID_SND_RECEIPT_ACKED, delete the association (the message was delivered). If you get ID_SND_RECEIPT_LOSS, resend the message using the most current values.
+When RakNet resends a message, it can only send what you gave to it originally. For data that changes continually (position for example) you may only want to resend the most recent value. To do so, send the data using `UNRELIABLE_WITH_ACK_RECEIPT`. Call `RakPeer::GetNextSendReceipt()` and pass the value to `RakPeer::Send()`. And in memory store an association between what type of message that was, and the send receipt. If you get `ID_SND_RECEIPT_ACKED`, delete the association (the message was delivered). If you get `ID_SND_RECEIPT_LOSS`, resend the message using the most current values.
 
 If you want the data to also be sequenced, then write your own sequence number along with the message. The remote side should store the highest sequenced number received. If the incoming message has a lower sequence number than the highest received, it is an old message and can be ignored.
 
@@ -116,11 +114,12 @@ Here is code using an unsigned char sequence number. It will work as long as you
 ```cpp
 typedef unsigned char SequenceNumberType;
 
-bool GreaterThan(SequenceNumberType a, SequenceNumberType b)
-{
+bool GreaterThan(SequenceNumberType a, SequenceNumberType b) {
     // a > b?
-    const SequenceNumberType halfSpan = (SequenceNumberType) (((SequenceNumberType)(const SequenceNumberType)-1)/(SequenceNumberType)2);
-    return b!=a && b-a>halfSpan;
+    const SequenceNumberType halfSpan =
+        (SequenceNumberType)(((SequenceNumberType)(const SequenceNumberType)-1) /
+                             (SequenceNumberType)2);
+    return b != a && b - a > halfSpan;
 }
 ```
 
@@ -134,4 +133,4 @@ Message C contains position
 
 Using normal sequencing, if the messages arrived in the order A,C,B, message B would be discarded. However, you lose useful information, since message B contains a more recent health value and could have been used.
 
-You can subsequence on data manually by writing your own sequence number per variable that you are serializing (as described above). Then send the data using a non-sequenced send type depending on your needs, UNRELIABLE, UNRELIABLE_WITH_ACK_RECEIPT, RELIABLE, etc. While this does incur more bandwidth and processing overhead, it has the advantage that every update can be processed as soon as possible.
+You can subsequence on data manually by writing your own sequence number per variable that you are serializing (as described above). Then send the data using a non-sequenced send type depending on your needs, `UNRELIABLE`, `UNRELIABLE_WITH_ACK_RECEIPT`, `RELIABLE`, etc. While this does incur more bandwidth and processing overhead, it has the advantage that every update can be processed as soon as possible.

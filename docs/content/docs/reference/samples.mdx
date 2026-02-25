@@ -18,8 +18,8 @@ All the following samples are located under _Samples\Code Samples_.
 
 **AutopatcherClient / AutopatcherServer** -- _Intermediate_
 
-The autopatcher samples demonstrate the use of the autopatcher system. To run it, start one instance of the AutoPatcherClient sample, and one of the AutoPatcherServer. The server uses the provided PostgreRepository class to store the application files in a PostgreSQL database.
-The client sample (AutopatcherClient) doesn't know anything about the mechanism used by the server to store the applications. It just asks for patches for applications.
+The autopatcher samples demonstrate the use of the autopatcher system. To run it, start one instance of the `AutoPatcherClient` sample, and one of the `AutoPatcherServer`. The server uses the provided `PostgreRepository` class to store the application files in a PostgreSQL database.
+The client sample (`AutopatcherClient`) doesn't know anything about the mechanism used by the server to store the applications. It just asks for patches for applications.
 
 ## Basic Tests
 
@@ -43,8 +43,8 @@ This sample will read all the files in the Debug directory, generate a 20 byte S
 
 **CommandConsoleClient / CommandConsoleServer** -- _Intermediate_
 
-CommandConsoleClient demonstrates connecting to the command console, using the RakNet transport protocol. It's the equivalent of a secure telnet client.
-CommandConsoleServer demonstrates the command console server, which can be a standalone application or part of your game server. It allows you to easily parse text strings sent from a client using either secure RakNet or Telnet.
+`CommandConsoleClient` demonstrates connecting to the command console, using the RakNet transport protocol. It's the equivalent of a secure telnet client.
+`CommandConsoleServer` demonstrates the command console server, which can be a standalone application or part of your game server. It allows you to easily parse text strings sent from a client using either secure RakNet or Telnet.
 
 ## Compression and Data Transfer
 
@@ -83,13 +83,13 @@ The loopback performance test is good for discovering implementation flaws and m
 
 **MessageFilter** -- _Beginner_
 
-Demonstrates the use of the MessageFilter plugin to filter all incoming messages, and only allow messages of a certain type.
+Demonstrates the use of the `MessageFilter` plugin to filter all incoming messages, and only allow messages of a certain type.
 
 ## NAT and RPC
 
 **NATPunchThrough** -- _Intermediate_
 
-Shows how to use the NatPunchthrough plugin to connect two systems that are both behind NATs.
+Shows how to use the `NatPunchthrough` plugin to connect two systems that are both behind NATs.
 
 **ObjectMemberRPC** -- _Advanced_
 
@@ -104,8 +104,8 @@ This project tests the advertise system and offline ping messages.
 
 **PacketLoggerTest** -- _Intermediate_
 
-Shows how to use the PacketLogger class, to display all packets being sent or received.
-You can derive PacketLogger, and overwrite PacketLogger::WriteLog to render output into your own program.
+Shows how to use the `PacketLogger` class, to display all packets being sent or received.
+You can derive `PacketLogger`, and overwrite `PacketLogger::WriteLog()` to render output into your own program.
 
 **Ping** -- _Beginner_
 
@@ -115,13 +115,13 @@ Starts a server, then a client, then does an unconnected ping between the two.
 
 **RakVoice / RakVoiceFMOD** -- _Intermediate_
 
-These two projects show how to integrate RakVoice with a sound engine. RakVoice sample shows how to integrate with portaudio, and RakVoiceFMOD shows how to integrate with FMOD sound engine.
+These two projects show how to integrate `RakVoice` with a sound engine. `RakVoice` sample shows how to integrate with portaudio, and `RakVoiceFMOD` shows how to integrate with FMOD sound engine.
 This uses peer to peer connections between all chatting systems.
 See [RakVoice](/plugins/rakvoice) for more details.
 
 **ReplicaManagerCS / ReplicaManagerP2P** -- _Advanced_
 
-Shows how to use the ReplicaManager class in a Client/Server environment or P2P. ReplicaManager is a very lightweight and efficient system that provides object creation, destruction, and serialization updates such that you have all copies of all desired objects on all desired systems semi-automatically.
+Shows how to use the `ReplicaManager` class in a Client/Server environment or P2P. `ReplicaManager` is a very lightweight and efficient system that provides object creation, destruction, and serialization updates such that you have all copies of all desired objects on all desired systems semi-automatically.
 See [ReplicaManager](/plugins/replica-manager) for more details.
 
 ## Reliability and Routing
@@ -136,7 +136,7 @@ Shows how to send a message to the server using RPC, and then using RPC to send 
 
 **Router** -- _Advanced_
 
-Demonstration of the Router plugin. The Router plugin exposes a Send function allowing you to send to systems you are not directly connected to.
+Demonstration of the `Router` plugin. The `Router` plugin exposes a `Send()` function allowing you to send to systems you are not directly connected to.
 
 ## Static Data and Timestamps
 

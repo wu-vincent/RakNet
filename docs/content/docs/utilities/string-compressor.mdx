@@ -5,7 +5,7 @@ description: Encode and decode strings safely with Huffman compression and prede
 
 ## Encode and Decode Strings Safely
 
-The StringCompressor class, found in `StringCompressor.h`, will encode and decode a given string in a safe fashion, protecting from overruns.
+The `StringCompressor` class, found in `StringCompressor.h`, will encode and decode a given string in a safe fashion, protecting from overruns.
 
 Sender:
 
@@ -33,7 +33,7 @@ If your application is using the `CString` class, you can enable support for thi
 
 ### Predefine Static Strings to Reduce Bandwidth
 
-The StringTable class is identical to the StringCompressor class, with the addition of the `AddString` function.
+The `StringTable` class is identical to the `StringCompressor` class, with the addition of the `AddString` function.
 
 ```cpp
 void AddString(const char *str, bool copyString);
@@ -41,8 +41,8 @@ void AddString(const char *str, bool copyString);
 
 `str` is the string to add. `copyString` should be true if your string is not persistent, false if it is statically in memory (only a pointer will be stored).
 
-`AddString` will check an internal array to see if this string has already been registered. If not, it will internally store a two byte identifier representing this string. Further sends using the StringTable class will only send that two byte identifier, rather than the whole string, which is faster and takes less bandwidth if your string is 3 or more characters long. If you send a string which has not been added with `AddString()`, the function acts the same as if you called stringCompressor, but at the cost of 1 extra bit.
+`AddString` will check an internal array to see if this string has already been registered. If not, it will internally store a two byte identifier representing this string. Further sends using the `StringTable` class will only send that two byte identifier, rather than the whole string, which is faster and takes less bandwidth if your string is 3 or more characters long. If you send a string which has not been added with `AddString()`, the function acts the same as if you called `stringCompressor`, but at the cost of 1 extra bit.
 
 <Callout type="warn">
-Both systems must have the same set of strings registered in advance, in the same order, and both systems must use StringTable and StringCompressor in the corresponding send and receive calls. You cannot mix and match the two.
+Both systems must have the same set of strings registered in advance, in the same order, and both systems must use `StringTable` and `StringCompressor` in the corresponding send and receive calls. You cannot mix and match the two.
 </Callout>

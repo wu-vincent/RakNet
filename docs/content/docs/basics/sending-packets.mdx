@@ -52,13 +52,13 @@ Sloppy from a design point of view. Can only be used for certain types of data. 
 
 ### Step 3: Determine what type of reliability and which ordering stream you need.
 
-PacketPriority.h contains the enums for these. You have four priorities to choose from: _IMMEDIATE_PRIORITY, HIGH_PRIORITY, MEDIUM_PRIORITY, LOW_PRIORITY_
+`PacketPriority.h` contains the enums for these. You have four priorities to choose from: `IMMEDIATE_PRIORITY`, `HIGH_PRIORITY`, `MEDIUM_PRIORITY`, `LOW_PRIORITY`
 
-Each priority is sent approximately twice as often as the priority below it. So for example, if you send 2 messages HIGH_PRIORITY and at a similar time send another message IMMEDIATE_PRIORITY, the odds are the IMMEDIATE_PRIORITY will arrive first, although this is not guaranteed.
+Each priority is sent approximately twice as often as the priority below it. So for example, if you send 2 messages `HIGH_PRIORITY` and at a similar time send another message `IMMEDIATE_PRIORITY`, the odds are the `IMMEDIATE_PRIORITY` will arrive first, although this is not guaranteed.
 
-Reliability types are covered in the [Detailed Implementation](/getting-started/detailed-implementation). You will usually want RELIABLE_ORDERED packets for your game. For all ordered types, you will want to pick an ordering stream, covered below.
+Reliability types are covered in the [Detailed Implementation](/getting-started/detailed-implementation). You will usually want `RELIABLE_ORDERED` packets for your game. For all ordered types, you will want to pick an ordering stream, covered below.
 
-### Step 4: Call the Send function in RakPeerInterface.h
+### Step 4: Call the `Send` function in `RakPeerInterface.h`
 
 The send method will not change your data and will make a copy, so from a programmer's point of view you are done here.
 
@@ -72,4 +72,4 @@ The easiest way to illustrate this is with an example. Suppose you want to order
 
 Packets in sequence drop older packets, so if you were to get packet 2, then 1, then 3, the end result would be you'd receive 2, 1 would get dropped, and you'd receive 3. This is useful for ammunition because ammunition only goes down. If you get an older packet it would raise the amount of ammunition you have so is wrong. Since sequenced packets are on a different set of streams than ordered packets you can use any stream number you want, such as 0. Just to be clear it would have no relation to chat messages because chat messages use the ordered stream set rather than the sequenced stream set.
 
-Packets that are not ordered or sequenced at all, i.e. UNRELIABLE AND RELIABLE, have no bearing on sequences. That parameter is ignored by the send function for those types of packets.
+Packets that are not ordered or sequenced at all, i.e. `UNRELIABLE` and `RELIABLE`, have no bearing on sequences. That parameter is ignored by the send function for those types of packets.

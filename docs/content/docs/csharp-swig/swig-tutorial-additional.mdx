@@ -62,7 +62,7 @@ For 5.1 on Vista the location looks like:
 #### Replacement SWIG File Generation Tool Steps
 
 <Callout type="info">
-These are replacement steps. If the DLL project is used, the `PreBuild.bat` needs to be modified -- see the last steps for instructions on how to do that.
+These are replacement steps. If the `DLL_Swig` project is used, the `PreBuild.bat` needs to be modified -- see the last steps for instructions on how to do that.
 </Callout>
 
 <Steps>
@@ -101,17 +101,17 @@ MakeSwigWithExtras.bat PATH_TO_RAKNETSOURCE PATH_TO_SWIG PATH_TO_DEPENDENTEXTENS
 
 <Step>
 
-### Update DLL\_Swig project (if applicable)
+### Update `DLL_Swig` project (if applicable)
 
-If you are not using the DLL\_Swig project, go to "Creating the SWIG Wrapped DLL Project" in the [SWIG Tutorial](/csharp-swig/swig-tutorial). If you are using the DLL\_Swig project, open `Prebuild.bat` in the project directory and replace the line `MakeSwig.bat "../../Source"` with the command created in these steps. Then go to "Creating the SWIG Wrapped DLL Project" in the [SWIG Tutorial](/csharp-swig/swig-tutorial). Make sure the extra configuration in this help file is followed.
+If you are not using the `DLL_Swig` project, go to "Creating the SWIG Wrapped DLL Project" in the [SWIG Tutorial](/csharp-swig/swig-tutorial). If you are using the `DLL_Swig` project, open `Prebuild.bat` in the project directory and replace the line `MakeSwig.bat "../../Source"` with the command created in these steps. Then go to "Creating the SWIG Wrapped DLL Project" in the [SWIG Tutorial](/csharp-swig/swig-tutorial). Make sure the extra configuration in this help file is followed.
 
 </Step>
 
 </Steps>
 
-**Extra instructions for SQLiteClientLoggerPlugin:**
+**Extra instructions for `SQLiteClientLoggerPlugin`:**
 
-- If you want to use SQLiteClientLoggerPlugin, skip the step above and use the next command instead.
+- If you want to use `SQLiteClientLoggerPlugin`, skip the step above and use the next command instead.
 - If you have added SWIG to your PATH variable, just use `""` for `PATH_TO_SWIG`.
 - `PATH_TO_SQLITEPLUGIN` is the path to the SQLite plugin directory, e.g. `C:\RakNet\DependentExtensions\SQLite3Plugin`.
 
@@ -219,9 +219,9 @@ MakeSwigWithExtras.sh PATH_TO_RAKNETSOURCE PATH_TO_DEPENDENTEXTENSIONS OPTION1
 
 </Steps>
 
-**Extra instructions for SQLiteClientLoggerPlugin:**
+**Extra instructions for `SQLiteClientLoggerPlugin`:**
 
-- If you want to use SQLiteClientLoggerPlugin, skip the step above and use the next command instead.
+- If you want to use `SQLiteClientLoggerPlugin`, skip the step above and use the next command instead.
 - `PATH_TO_SQLITEPLUGIN` is the path to the SQLite plugin directory, e.g. `/home/usr/RakNet/DependentExtensions/SQLite3Plugin`.
 
 ```bash
@@ -312,9 +312,9 @@ Note: `-l pthread` is lowercase L while `-I./` is uppercase i.
 
 </Steps>
 
-**Extra instructions for SQLiteClientLoggerPlugin:**
+**Extra instructions for `SQLiteClientLoggerPlugin`:**
 
-- If you wish to use SQLiteClientLoggerPlugin, use the following command instead of the compile step above:
+- If you wish to use `SQLiteClientLoggerPlugin`, use the following command instead of the compile step above:
 - `PATH_TO_SQLITEPLUGIN` is the path to the SQLite plugin directory, e.g. `/home/usr/RakNet/DependentExtensions/SQLite3Plugin`.
 
 ```bash

@@ -11,7 +11,7 @@ Sometimes you want a large number of clients that are not connected and do not n
 - In-game statistics for millions of players
 - Cloud computing
 
-The "Cloud" in CloudServer means that the system supports distributed servers. Any client can `Post()` to or `Get()` from any server. `Post()` operations can be subscribed to or `Get()` by other clients, regardless of what server that client is subscribed to. Servers can be added or removed at runtime, and the system will continue to work as expected. This allows the system to be scaled according to your player load, using your own servers or virtual servers such as [Rackspace](/basics/rackspace-interface).
+The "Cloud" in `CloudServer` means that the system supports distributed servers. Any client can `Post()` to or `Get()` from any server. `Post()` operations can be subscribed to or `Get()` by other clients, regardless of what server that client is subscribed to. Servers can be added or removed at runtime, and the system will continue to work as expected. This allows the system to be scaled according to your player load, using your own servers or virtual servers such as [Rackspace](/basics/rackspace-interface).
 
 <Callout type="info">
 The design of the system assumes that all servers are connected in a fully connected mesh. You should authenticate other servers before adding them with `CloudServer::AddServer()`. The [TwoWayAuthentication](/plugins/two-way-authentication) and [ConnectionGraph2](/plugins/connection-graph) plugins can help with this. Or just run/modify the CloudServer sample, which does this already.
@@ -48,9 +48,9 @@ Cloud_ClientCallback clientCallback;
 cloudClient.SetCallbacks(&cloudAllocator, &clientCallback);
 // Every upload is associated with a pair of keys
 Cloud_DataKey dataKey;
-dataKey.primaryKey="ApplicationName";
-dataKey.secondaryKey=ID_PLAYER_COUNT; // Enumeration
-unsigned char playerCount=16;
+dataKey.primaryKey = "ApplicationName";
+dataKey.secondaryKey = ID_PLAYER_COUNT; // Enumeration
+unsigned char playerCount = 16;
 // Upload data to the cloud, to a server we are already connected to
 cloudClient.Post(&dataKey, &playerCount, sizeof(playerCount), serverAddressOrGuid);
 // Download the data we just uploaded. clientCallback will have the
@@ -64,7 +64,7 @@ cloudClient.Get(&query, serverAddressOrGuid);
 
 _Server directory_
 
-Assign a secret unique name for the application and use that as the `Cloud_DataKey` `primaryKey`. Have each game server maintain a common list of enumerations representing fields to query, such as `PLAYER_COUNT`, `PLAYER_LIST`, and `LEVEL_NAME`. The IP address and RakNetGUID properties of the other game servers are maintained automatically. When a game server becomes available to be listed, use `CloudClient::Post()` once per field to be uploaded. To query for other servers, use `CloudClient::Get()` for any system, passing the list of `Cloud_DataKey` keys you care about to `Cloud_KeyQuery`. If you did not query all keys in the prior call, you can get more detail on a particular server again using `CloudClient::Get()` with a larger list of keys, and by using the overloaded version that has the `specificSystems` parameter. You can subscribe to updates for a particular system in the `CloudClient::Get()` call if desired, but this is usually not necessary. The game server is delisted if it disconnects from the CloudServer (for example crashing) and games can be manually delisted with `CloudClient::Release()`.
+Assign a secret unique name for the application and use that as the `Cloud_DataKey` `primaryKey`. Have each game server maintain a common list of enumerations representing fields to query, such as `PLAYER_COUNT`, `PLAYER_LIST`, and `LEVEL_NAME`. The IP address and `RakNetGUID` properties of the other game servers are maintained automatically. When a game server becomes available to be listed, use `CloudClient::Post()` once per field to be uploaded. To query for other servers, use `CloudClient::Get()` for any system, passing the list of `Cloud_DataKey` keys you care about to `Cloud_KeyQuery`. If you did not query all keys in the prior call, you can get more detail on a particular server again using `CloudClient::Get()` with a larger list of keys, and by using the overloaded version that has the `specificSystems` parameter. You can subscribe to updates for a particular system in the `CloudClient::Get()` call if desired, but this is usually not necessary. The game server is delisted if it disconnects from the `CloudServer` (for example crashing) and games can be manually delisted with `CloudClient::Release()`.
 
 _In-game statistics_
 
@@ -76,11 +76,11 @@ Sometimes you want to split a problem across many clients. For example, renderin
 
 **Distributed CloudServer Implementation**
 
-See `Samples/CloudServer` for a distributed authenticated implementation of CloudServer with DNS based host migration. See `Samples/CloudServer/readme.txt` for specific details on how it is implemented, how to implement load balancing among clients, and for a list of supported plugins.
+See `Samples/CloudServer` for a distributed authenticated implementation of `CloudServer` with DNS based host migration. See `Samples/CloudServer/readme.txt` for specific details on how it is implemented, how to implement load balancing among clients, and for a list of supported plugins.
 
 **Server Directory Implementation**
 
-See `Samples/CloudClient` for an implementation of a high-performance server directory using the CloudServer sample as the backend. The distributed topology allows for new servers to be added at runtime with no restarts, configuration, or code changes.
+See `Samples/CloudClient` for an implementation of a high-performance server directory using the `CloudServer` sample as the backend. The distributed topology allows for new servers to be added at runtime with no restarts, configuration, or code changes.
 
 See `CloudServer.h` and `CloudClient.h` for a complete list of all documented functions and parameters.
 

@@ -5,23 +5,28 @@ description: "Call C functions on local and remote systems using the RPC4 plugin
 
 ### Call C functions on local and remote systems
 
-RPC4 contains mappings between string identifiers for functions, and a pointer to those functions.
+`RPC4` contains mappings between string identifiers for functions, and a pointer to those functions.
 
 **Registering functions:**
 
-To register a function, use the RegisterSlot() or RegisterBlockingFunction() members.
+To register a function, use the `RegisterSlot()` or `RegisterBlockingFunction()` members.
 
 ```cpp
-void RegisterSlot(const char *sharedIdentifier, void ( *functionPointer ) ( RakNet::BitStream *userData, Packet *packet ), int callPriority);
-bool RegisterBlockingFunction(const char* uniqueID, void ( *functionPointer ) ( RakNet::BitStream *userData, RakNet::BitStream *returnData, Packet *packet ));
+void RegisterSlot(const char *sharedIdentifier,
+                  void (*functionPointer)(RakNet::BitStream *userData, Packet *packet),
+                  int callPriority);
+bool RegisterBlockingFunction(const char *uniqueID,
+                              void (*functionPointer)(RakNet::BitStream *userData,
+                                                      RakNet::BitStream *returnData,
+                                                      Packet *packet));
 ```
 
-The first parameter is a string representing that function. It can be the same as the name of the function. The second parameter is a pointer to the function to be called. If it is a blocking function, the parameter list also contains a BitStream to return data to the caller.
+The first parameter is a string representing that function. It can be the same as the name of the function. The second parameter is a pointer to the function to be called. If it is a blocking function, the parameter list also contains a `BitStream` to return data to the caller.
 
-The class RPC4GlobalRegistration can be used to register functions where they are declared. For example:
+The class `RPC4GlobalRegistration` can be used to register functions where they are declared. For example:
 
 ```cpp
-void CFunc1( RakNet::BitStream *bitStream, Packet *packet ) {}
+void CFunc1(RakNet::BitStream *bitStream, Packet *packet) {}
 RPC4GlobalRegistration cfunc1reg("CFunc1", CFunc1);
 ```
 
@@ -31,13 +36,26 @@ If you use RPC4GlobalRegistration extensively, you may need to change `RPC4_GLOB
 
 **Calling functions:**
 
-Use the Signal() function to call a non-blocking function. Use the CallBlocking() function otherwise.
+Use the `Signal()` function to call a non-blocking function. Use the `CallBlocking()` function otherwise.
 
 ```cpp
-void Signal(const char *sharedIdentifier, RakNet::BitStream * bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, bool invokeLocal);
-bool CallBlocking( const char* uniqueID, RakNet::BitStream * bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, RakNet::BitStream *returnData );
+void Signal(const char *sharedIdentifier,
+            RakNet::BitStream *bitStream,
+            PacketPriority priority,
+            PacketReliability reliability,
+            char orderingChannel,
+            const AddressOrGUID systemIdentifier,
+            bool broadcast,
+            bool invokeLocal);
+bool CallBlocking(const char *uniqueID,
+                  RakNet::BitStream *bitStream,
+                  PacketPriority priority,
+                  PacketReliability reliability,
+                  char orderingChannel,
+                  const AddressOrGUID systemIdentifier,
+                  RakNet::BitStream *returnData);
 ```
 
-Signal will call all functions registered with that identifier using RegisterSlot(), including potentially on the same system. CallBlocking() will call a single function on a single system, registered with RegisterBlockingFunction(). CallBlocking() does not return until the remote system replies or the connection to that system is lost.
+`Signal` will call all functions registered with that identifier using `RegisterSlot()`, including potentially on the same system. `CallBlocking()` will call a single function on a single system, registered with `RegisterBlockingFunction()`. `CallBlocking()` does not return until the remote system replies or the connection to that system is lost.
 
 See _Samples/RPC4_ for a demonstration of this plugin.

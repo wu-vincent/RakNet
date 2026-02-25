@@ -5,7 +5,7 @@ description: Catch crashes, write minidumps, and send email reports automaticall
 
 ## Minidumps Made Easy
 
-The CrashReporter, found at `RakNet/Samples/CrashReporter`, is a Windows-only class designed to make it easier to debug unmonitored servers and/or game clients. When a crash occurs, the CrashReporter implementation catches the exception, writes a minidump, and then writes to disk or sends an email. The email operation can be interactive, opening the user's email client, or non-interactive, connecting to the mail server with the [EmailSender](/utilities/email-sender) class and sending a report automatically.
+The `CrashReporter`, found at `RakNet/Samples/CrashReporter`, is a Windows-only class designed to make it easier to debug unmonitored servers and/or game clients. When a crash occurs, the `CrashReporter` implementation catches the exception, writes a minidump, and then writes to disk or sends an email. The email operation can be interactive, opening the user's email client, or non-interactive, connecting to the mail server with the [EmailSender](/utilities/email-sender) class and sending a report automatically.
 
 <Callout type="info">
 The minidump can be opened in Visual Studio and will show you where the crash occurred and give you the local variable values.

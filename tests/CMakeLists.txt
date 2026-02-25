@@ -5,6 +5,8 @@ add_executable(tests
     CrossConnectionTest.cpp
     MessageSizeTest.cpp
     OfflineMessagesTest.cpp
+    StatisticsHistoryTest.cpp
+    ThreadTest.cpp
 )
 target_link_libraries(tests PRIVATE RakNet GTest::gtest_main)
 

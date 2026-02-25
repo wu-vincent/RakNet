@@ -7,6 +7,8 @@ if(NOT WIN32)
     find_package(Threads REQUIRED)
 endif()
 
+find_package(OpenSSL QUIET)
+
 # Single library target — BUILD_SHARED_LIBS controls static vs shared
 add_library(RakNet ${RAKNET_SOURCES} ${RAKNET_HEADERS})
 add_library(RakNet::RakNet ALIAS RakNet)
@@ -16,7 +18,6 @@ target_include_directories(RakNet
         $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include/RakNet>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/RakNet>
     PRIVATE
-        "${CMAKE_SOURCE_DIR}/DependentExtensions/openssl-1.0.0d/include"
         "${CMAKE_SOURCE_DIR}/DependentExtensions"
 )
 
@@ -40,6 +41,10 @@ if(WIN32)
     target_link_libraries(RakNet PUBLIC ws2_32)
 else()
     target_link_libraries(RakNet PUBLIC Threads::Threads)
+endif()
+
+if(OpenSSL_FOUND)
+    target_link_libraries(RakNet PRIVATE OpenSSL::SSL OpenSSL::Crypto)
 endif()
 
 set_target_properties(RakNet PROPERTIES FOLDER "Library")

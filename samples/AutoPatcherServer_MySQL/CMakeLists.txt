@@ -4,7 +4,6 @@ if(NOT TARGET AutoPatcherMySQLRepository)
 endif()
 
 set(AUTOPATCHER_DIR "${CMAKE_SOURCE_DIR}/DependentExtensions/Autopatcher")
-set(BZIP2_DIR "${CMAKE_SOURCE_DIR}/DependentExtensions/bzip2-1.0.6")
 
 set(AUTOSRC
     "${AUTOPATCHER_DIR}/AutopatcherServer.cpp"
@@ -13,23 +12,13 @@ set(AUTOSRC
     "${AUTOPATCHER_DIR}/CreatePatch.cpp"
 )
 
-if(WIN32)
-    file(GLOB BZSRC CONFIGURE_DEPENDS "${BZIP2_DIR}/*.c" "${BZIP2_DIR}/*.h")
-    list(FILTER BZSRC EXCLUDE REGEX "(dlltest|mk251|bzip2recover|bzip2)\\.c$")
-endif()
-
 add_executable(AutoPatcherServer_MySQL
     AutopatcherServerTest_MySQL.cpp
     ${AUTOSRC}
-    ${BZSRC}
 )
-target_include_directories(AutoPatcherServer_MySQL PRIVATE
-    "${AUTOPATCHER_DIR}"
-    "${BZIP2_DIR}"
-)
+target_include_directories(AutoPatcherServer_MySQL PRIVATE "${AUTOPATCHER_DIR}")
 target_link_libraries(AutoPatcherServer_MySQL PRIVATE
-    RakNet
-    AutoPatcherMySQLRepository
+    RakNet BZip2::BZip2 AutoPatcherMySQLRepository
 )
 if(NOT WIN32)
     target_link_libraries(AutoPatcherServer_MySQL PRIVATE LibAutopatcher LibMySQLInterface)

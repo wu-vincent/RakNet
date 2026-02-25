@@ -1,0 +1,13 @@
+[requires]
+bzip2/1.0.8
+libjpeg/9f
+miniupnpc/2.2.5
+openssl/3.6.1
+portaudio/19.7
+
+[generators]
+CMakeDeps
+CMakeToolchain
+
+[layout]
+cmake_layout

@@ -7,23 +7,24 @@ if(NOT DEFINED ENV{DXSDK_DIR} OR "$ENV{DXSDK_DIR}" STREQUAL "")
     return()
 endif()
 
+if(NOT TARGET LibRakVoice)
+    message(STATUS "LibRakVoice not available -- skipping RakVoiceDSound sample")
+    return()
+endif()
+
 set(DXSDK_DIR "$ENV{DXSDK_DIR}")
 
 add_executable(RakVoiceDSound
     DSoundVoiceAdapter.cpp DSoundVoiceAdapter.h
     main.cpp
-    "${CMAKE_SOURCE_DIR}/DependentExtensions/RakVoice.cpp"
-    "${CMAKE_SOURCE_DIR}/DependentExtensions/RakVoice.h"
 )
-target_link_libraries(RakVoiceDSound PRIVATE RakNet LibSpeex winmm
+target_link_libraries(RakVoiceDSound PRIVATE RakNet LibRakVoice Speex::speex winmm
     "${DXSDK_DIR}lib/x86/Dsound.lib"
     "${DXSDK_DIR}lib/x86/Dxguid.lib"
     "${DXSDK_DIR}lib/x86/Dxerr.lib"
 )
 target_include_directories(RakVoiceDSound PRIVATE
     "${CMAKE_SOURCE_DIR}/DependentExtensions"
-    "${CMAKE_SOURCE_DIR}/DependentExtensions/speex-1.1.12/include"
-    "${CMAKE_SOURCE_DIR}/DependentExtensions/speex-1.1.12/win32"
     "${DXSDK_DIR}include"
 )
-target_compile_definitions(RakVoiceDSound PRIVATE HAVE_CONFIG_H _UNICODE UNICODE)
+target_compile_definitions(RakVoiceDSound PRIVATE _UNICODE UNICODE)

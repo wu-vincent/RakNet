@@ -7,17 +7,10 @@ option(RAKNET_EXTENSION_USEIRRKLANG "Enable extensions using IrrKlang" ON)
 option(RAKNET_EXTENSION_USEOGRE3D "Enable extensions using Ogre3D" ON)
 option(RAKNET_EXTENSION_Autopatcher "Enable Autopatcher extension" ON)
 
-# Bundled bzip2 library
-file(GLOB BZIP2_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/bzip2-1.0.6/*.c")
-list(FILTER BZIP2_SOURCES EXCLUDE REGEX "(dlltest|mk251|bzip2recover|bzip2)\\.c$")
-file(GLOB BZIP2_HEADERS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/bzip2-1.0.6/*.h")
-add_library(LibBZip2 STATIC ${BZIP2_SOURCES} ${BZIP2_HEADERS})
-target_include_directories(LibBZip2 PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/bzip2-1.0.6")
-set_target_properties(LibBZip2 PROPERTIES FOLDER "DependentExtensions")
-if(MSVC)
-    target_compile_options(LibBZip2 PRIVATE /W0)
-else()
-    target_compile_options(LibBZip2 PRIVATE -w)
+find_package(BZip2 REQUIRED)
+# Alias so existing targets (LibAutopatcher) can keep linking LibBZip2
+if(NOT TARGET LibBZip2)
+    add_library(LibBZip2 ALIAS BZip2::BZip2)
 endif()
 
 # Bundled XML library
@@ -33,49 +26,14 @@ else()
     target_compile_options(RakNetXML PRIVATE -w)
 endif()
 
-# Bundled PortAudio (Windows only)
-if(WIN32 AND NOT CMAKE_GENERATOR STREQUAL "MSYS Makefiles")
-    file(GLOB PA_SOURCES CONFIGURE_DEPENDS
-        "${CMAKE_CURRENT_SOURCE_DIR}/portaudio_v18_1/pa_common/*.c"
-        "${CMAKE_CURRENT_SOURCE_DIR}/portaudio_v18_1/pa_win_wmme/*.c"
-    )
-    file(GLOB PA_HEADERS CONFIGURE_DEPENDS
-        "${CMAKE_CURRENT_SOURCE_DIR}/portaudio_v18_1/pa_common/*.h"
-    )
-    add_library(LibPortAudioV18_1 STATIC ${PA_SOURCES} ${PA_HEADERS})
-    target_include_directories(LibPortAudioV18_1 PUBLIC
-        "${CMAKE_CURRENT_SOURCE_DIR}/portaudio_v18_1/pa_common"
-    )
-    set_target_properties(LibPortAudioV18_1 PROPERTIES FOLDER "DependentExtensions")
-    if(MSVC)
-        target_compile_options(LibPortAudioV18_1 PRIVATE /W0)
-    else()
-        target_compile_options(LibPortAudioV18_1 PRIVATE -w)
-    endif()
+find_package(portaudio REQUIRED)
+if(NOT TARGET LibPortAudioV18_1)
+    add_library(LibPortAudioV18_1 ALIAS portaudio::portaudio)
 endif()
 
-# Bundled Speex (Windows only)
-if(WIN32)
-    file(GLOB SPEEX_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/speex-1.1.12/libspeex/*.c")
-    file(GLOB SPEEX_HEADERS CONFIGURE_DEPENDS
-        "${CMAKE_CURRENT_SOURCE_DIR}/speex-1.1.12/include/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/speex-1.1.12/include/speex/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/speex-1.1.12/libspeex/*.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/speex-1.1.12/win32/*.h"
-    )
-    list(FILTER SPEEX_SOURCES EXCLUDE REGEX "pcm_wrapper\\.c$")
-    add_library(LibSpeex STATIC ${SPEEX_SOURCES} ${SPEEX_HEADERS})
-    target_include_directories(LibSpeex PUBLIC
-        "${CMAKE_CURRENT_SOURCE_DIR}/speex-1.1.12/include"
-        "${CMAKE_CURRENT_SOURCE_DIR}/speex-1.1.12/win32"
-    )
-    target_compile_definitions(LibSpeex PRIVATE HAVE_CONFIG_H)
-    set_target_properties(LibSpeex PROPERTIES FOLDER "DependentExtensions")
-    if(MSVC)
-        target_compile_options(LibSpeex PRIVATE /W0)
-    else()
-        target_compile_options(LibSpeex PRIVATE -w)
-    endif()
+find_package(Speex REQUIRED)
+if(NOT TARGET LibSpeex)
+    add_library(LibSpeex ALIAS Speex::speex)
 endif()
 
 # MySQL Interface
@@ -98,17 +56,10 @@ if(RAKNET_EXTENSION_USEBOOST)
     add_subdirectory(RPC3)
 endif()
 
-# LibRakVoice (non-Windows, requires Speex)
-if(NOT WIN32 AND RAKNET_EXTENSION_USESPEEX)
-    find_package(Speex QUIET)
-    if(SPEEX_FOUND)
-        add_library(LibRakVoice STATIC RakVoice.h RakVoice.cpp)
-        target_include_directories(LibRakVoice PRIVATE ${SPEEX_INCLUDE_DIRS})
-        target_link_libraries(LibRakVoice PUBLIC RakNet ${SPEEX_LIBRARIES})
-        set_target_properties(LibRakVoice PROPERTIES FOLDER "DependentExtensions")
-    else()
-        message(STATUS "Speex not found -- LibRakVoice will not be built")
-    endif()
+if(RAKNET_EXTENSION_USESPEEX)
+    add_library(LibRakVoice STATIC RakVoice.h RakVoice.cpp)
+    target_link_libraries(LibRakVoice PUBLIC RakNet Speex::speex)
+    set_target_properties(LibRakVoice PROPERTIES FOLDER "DependentExtensions")
 endif()
 
 # Irrlicht Demo

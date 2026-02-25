@@ -1,21 +1,11 @@
-file(GLOB SOURCES CONFIGURE_DEPENDS *.cpp *.h)
-add_executable(tests ${SOURCES})
-target_link_libraries(tests PRIVATE RakNet)
+find_package(GTest REQUIRED)
+include(GoogleTest)
 
-add_subdirectory("BigPacketTest")
-add_subdirectory("BurstTest")
-add_subdirectory("CloudTest")
-add_subdirectory("ComprehensiveTest")
-add_subdirectory("CrossConnectionTest")
-add_subdirectory("DroppedConnectionTest")
-add_subdirectory("FlowControlTest")
-add_subdirectory("LoopbackPerformanceTest")
-add_subdirectory("MessageSizeTest")
-add_subdirectory("OfflineMessagesTest")
-add_subdirectory("RankingServerDBTest")
-add_subdirectory("RelayPluginTest")
-add_subdirectory("ReliableOrderedTest")
-add_subdirectory("ServerClientTest2")
-add_subdirectory("StatisticsHistoryTest")
-add_subdirectory("TestDLL")
-add_subdirectory("ThreadTest")
+add_executable(tests
+    CrossConnectionTest.cpp
+    MessageSizeTest.cpp
+    OfflineMessagesTest.cpp
+)
+target_link_libraries(tests PRIVATE RakNet GTest::gtest_main)
+
+gtest_discover_tests(tests)

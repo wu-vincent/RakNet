@@ -1,5 +1,6 @@
 [requires]
 bzip2/1.0.8
+gtest/1.14.0
 libjpeg/9f
 miniupnpc/2.2.5
 openssl/3.6.1

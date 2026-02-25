@@ -9,7 +9,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 option(BUILD_SHARED_LIBS "Build shared libraries instead of static" OFF)
 option(RAKNET_ENABLE_SAMPLES "Generate RakNet sample projects if true." OFF)
 option(RAKNET_ENABLE_EXTENSIONS "Enable extension projects that might need specific dependencies." OFF)
-option(RAKNET_ENABLE_TESTS "Build RakNet test suite" OFF)
+option(RAKNET_ENABLE_TESTS "Build RakNet test suite" ON)
 
 # Build targets
 add_subdirectory(src)
@@ -23,6 +23,7 @@ if(RAKNET_ENABLE_SAMPLES)
 endif()
 
 if(RAKNET_ENABLE_TESTS)
+    enable_testing()
     add_subdirectory(tests)
 endif()
 

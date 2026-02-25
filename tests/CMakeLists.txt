@@ -3,7 +3,9 @@ include(GoogleTest)
 
 add_executable(tests
     BurstTest.cpp
+    ComprehensiveTest.cpp
     CrossConnectionTest.cpp
+    DroppedConnectionTest.cpp
     MessageSizeTest.cpp
     OfflineMessagesTest.cpp
     ReliableOrderedTest.cpp

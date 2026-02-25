@@ -53,6 +53,21 @@ TEST_F(OfflineMessagesTest, AdvertiseAndPing) {
 
     peer1->SetOfflinePingResponse(pingData, static_cast<int>(strlen(pingData)) + 1);
 
+    // Verify GetOfflinePingResponse returns what we just set
+    char *responseData = nullptr;
+    unsigned int responseLen = 0;
+    peer1->GetOfflinePingResponse(&responseData, &responseLen);
+    ASSERT_NE(responseData, nullptr);
+    EXPECT_STREQ(responseData, pingData);
+    EXPECT_EQ(responseLen, static_cast<unsigned int>(strlen(pingData)) + 1);
+
+    // Verify GUIDs are retrievable
+    RakNetGUID guid1 = peer1->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
+    RakNetGUID guid2 = peer2->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
+    EXPECT_NE(guid1, UNASSIGNED_RAKNET_GUID);
+    EXPECT_NE(guid2, UNASSIGNED_RAKNET_GUID);
+    EXPECT_NE(guid1, guid2);
+
     unsigned short peer2Port = peer2->GetMyBoundAddress().GetPort();
     unsigned short peer1Port = peer1->GetMyBoundAddress().GetPort();
 

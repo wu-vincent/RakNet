@@ -1,4 +1,6 @@
-raknet_add_sample(${CMAKE_CURRENT_SOURCE_DIR} FOLDER "Tests")
+file(GLOB SOURCES CONFIGURE_DEPENDS *.cpp *.h)
+add_executable(tests ${SOURCES})
+target_link_libraries(tests PRIVATE RakNet)
 
 add_subdirectory("BigPacketTest")
 add_subdirectory("BurstTest")

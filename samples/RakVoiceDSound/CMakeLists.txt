@@ -31,6 +31,4 @@ target_include_directories(RakVoiceDSound PRIVATE
     "${CMAKE_SOURCE_DIR}/DependentExtensions/speex-1.1.12/win32"
     "${DXSDK_DIR}include"
 )
-target_compile_definitions(RakVoiceDSound PRIVATE HAVE_CONFIG_H _UNICODE UNICODE _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE)
-target_compile_options(RakVoiceDSound PRIVATE /W0)
-set_target_properties(RakVoiceDSound PROPERTIES FOLDER "Samples/Voice")
+target_compile_definitions(RakVoiceDSound PRIVATE HAVE_CONFIG_H _UNICODE UNICODE)

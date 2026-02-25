@@ -5,20 +5,18 @@ if(NOT Boost_FOUND)
 endif()
 
 set(RPC3_DIR "${CMAKE_SOURCE_DIR}/DependentExtensions/RPC3")
+file(GLOB SOURCES CONFIGURE_DEPENDS *.cpp *.c *.h)
 
 if(WIN32)
-    set(RPC3_PLUGIN_FILES
+    add_executable(RPC3 ${SOURCES}
         "${RPC3_DIR}/RPC3.cpp"
         "${RPC3_DIR}/RPC3.h"
         "${RPC3_DIR}/RPC3_Boost.h"
     )
-    raknet_add_sample(${CMAKE_CURRENT_SOURCE_DIR}
-        EXTRA_SOURCES ${RPC3_PLUGIN_FILES}
-        EXTRA_INCLUDES "${RPC3_DIR}" ${Boost_INCLUDE_DIRS}
-    )
+    target_link_libraries(RPC3 PRIVATE RakNet)
+    target_include_directories(RPC3 PRIVATE "${RPC3_DIR}" ${Boost_INCLUDE_DIRS})
 else()
-    raknet_add_sample(${CMAKE_CURRENT_SOURCE_DIR}
-        EXTRA_INCLUDES "${RPC3_DIR}" ${Boost_INCLUDE_DIRS}
-        EXTRA_LIBS LibRPC3
-    )
+    add_executable(RPC3 ${SOURCES})
+    target_link_libraries(RPC3 PRIVATE RakNet LibRPC3)
+    target_include_directories(RPC3 PRIVATE "${RPC3_DIR}" ${Boost_INCLUDE_DIRS})
 endif()

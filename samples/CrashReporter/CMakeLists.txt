@@ -1,5 +1,5 @@
 if(WIN32)
-    raknet_add_sample(${CMAKE_CURRENT_SOURCE_DIR}
-        EXTRA_LIBS Dbghelp
-    )
+    file(GLOB SOURCES CONFIGURE_DEPENDS *.cpp *.c *.h)
+    add_executable(CrashReporter ${SOURCES})
+    target_link_libraries(CrashReporter PRIVATE RakNet Dbghelp)
 endif()

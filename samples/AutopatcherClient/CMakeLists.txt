@@ -17,10 +17,3 @@ target_include_directories(AutopatcherClient PRIVATE
     "${BZIP2_DIR}"
 )
 target_link_libraries(AutopatcherClient PRIVATE RakNet)
-set_target_properties(AutopatcherClient PROPERTIES FOLDER "Samples/AutoPatcher")
-if(MSVC)
-    target_compile_definitions(AutopatcherClient PRIVATE _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE)
-    target_compile_options(AutopatcherClient PRIVATE /W0)
-else()
-    target_compile_options(AutopatcherClient PRIVATE -w)
-endif()

@@ -1,2 +1,0 @@
-# Legacy find macros removed. Use standard find_package() instead.
-# Find*.cmake modules are still available via CMAKE_MODULE_PATH.

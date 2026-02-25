@@ -11,14 +11,8 @@ option(RAKNET_ENABLE_SAMPLES "Generate RakNet sample projects if true." ON)
 option(RAKNET_ENABLE_EXTENSIONS "Enable extension projects that might need specific dependencies." ON)
 option(RAKNET_ENABLE_TESTS "Build RakNet test suite" ON)
 
-# Module path for bundled Find*.cmake modules
-list(APPEND CMAKE_MODULE_PATH
-    "${CMAKE_CURRENT_SOURCE_DIR}/CmakeIncludes"
-    "${CMAKE_CURRENT_SOURCE_DIR}/CmakeIncludes/Ogre3D"
-)
-
 # Include the raknet_add_sample() helper
-include(${CMAKE_CURRENT_SOURCE_DIR}/CmakeIncludes/CmakeMacros.txt)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/RakNetMacros.cmake)
 
 # Build targets
 add_subdirectory(src)

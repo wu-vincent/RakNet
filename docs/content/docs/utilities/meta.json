@@ -5,6 +5,7 @@
     "console-server",
     "email-sender",
     "string-compressor",
-    "tcp-interface"
+    "tcp-interface",
+    "network-simulator"
   ]
 }

@@ -1,0 +1,35 @@
+---
+title: "Network Simulator"
+---
+
+## Network Simulator Overview
+
+If you are using RakNet locally, chances are you will not have real-world problems like packet loss and ping fluctuations. RakNet provides some functions to simulate those problems.
+
+## Network Simulator Functions
+
+### ApplyNetworkSimulator
+
+```cpp
+ApplyNetworkSimulator(double maxSendBPS, unsigned short minExtraPing, unsigned short extraPingVariance)
+```
+
+Enables simulated ping and packet loss to the outgoing data flow. To simulate bi-directional ping and packet loss, you should call this on both the sender and the recipient, with half the total ping and `maxSendBPS` value on each.
+
+| Parameter | Description |
+|---|---|
+| `maxSendBPS` | Maximum bits per second to send. Packet loss grows linearly. `0` to disable. |
+| `minExtraPing` | The minimum time to delay sends. |
+| `extraPingVariance` | The additional random time to delay sends. |
+
+### IsNetworkSimulatorActive
+
+```cpp
+bool IsNetworkSimulatorActive(void)
+```
+
+Returns whether you previously called `ApplyNetworkSimulator`.
+
+## See Also
+
+- [Index](/)

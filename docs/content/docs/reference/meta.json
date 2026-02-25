@@ -6,6 +6,9 @@
     "programming-tips",
     "revision-log",
     "bluetooth",
-    "samples"
+    "samples",
+    "congestion-control",
+    "io-completion-ports",
+    "training-videos"
   ]
 }

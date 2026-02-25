@@ -20,6 +20,7 @@
     "preprocessor-directives",
     "custom-memory-management",
     "ipv6-support",
-    "marmalade"
+    "marmalade",
+    "data-compression"
   ]
 }

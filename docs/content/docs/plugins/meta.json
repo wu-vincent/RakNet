@@ -21,6 +21,14 @@
     "sqlite3-logger-plugin",
     "sqlite3-plugin",
     "team-manager",
-    "two-way-authentication"
+    "two-way-authentication",
+    "cloud-computing",
+    "distributed-network-object",
+    "fully-connected-mesh",
+    "lightweight-database",
+    "master-server",
+    "memory-synchronizer",
+    "php-directory-server",
+    "team-balancer"
   ]
 }

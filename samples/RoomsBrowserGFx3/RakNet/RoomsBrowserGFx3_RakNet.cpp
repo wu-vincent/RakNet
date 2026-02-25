@@ -10,7 +10,7 @@
 
 #include "RoomsBrowserGFx3_RakNet.h"
 #include "Lobby2Client.h"
-#include "XMLParser.h"
+#include <pugixml.hpp>
 #include "MessageIdentifiers.h"
 #include "RoomTypes.h"
 #include "GetTime.h"
@@ -101,33 +101,29 @@ void RoomsBrowserGFx3_RakNet::Shutdown(void)
 }
 void RoomsBrowserGFx3_RakNet::SaveProperty(const char *propertyId, const char *propertyValue)
 {
-	// this open and parse the XML file:
-	XMLNode xMainNode=XMLNode::openFileHelper(pathToXMLPropertyFile.C_String(),"");
-	if (xMainNode.isEmpty())
+	pugi::xml_document doc;
+	doc.load_file(pathToXMLPropertyFile.C_String());
+	pugi::xml_node node = doc.child(propertyId);
+	if (node)
 	{
-		xMainNode=XMLNode::createXMLTopNode("");
-	}
-	XMLNode xNode=xMainNode.getChildNode(propertyId);
-	if (xNode.isEmpty()==false)
-	{
-		xNode.deleteAttribute(0);
-		xNode.addAttribute("value", propertyValue);
+		node.remove_attribute(node.first_attribute());
+		node.append_attribute("value") = propertyValue;
 	}
 	else
 	{
-		xNode = xMainNode.addChild(propertyId);
-		xNode.addAttribute("value", propertyValue);
+		node = doc.append_child(propertyId);
+		node.append_attribute("value") = propertyValue;
 	}
-	xMainNode.writeToFile(pathToXMLPropertyFile.C_String());
+	doc.save_file(pathToXMLPropertyFile.C_String());
 }
 void RoomsBrowserGFx3_RakNet::LoadProperty(const char *propertyId, RakNet::RakString &propertyOut)
 {
-	XMLNode xMainNode=XMLNode::openFileHelper(pathToXMLPropertyFile.C_String(),"");
-	if (xMainNode.isEmpty())
+	pugi::xml_document doc;
+	if (!doc.load_file(pathToXMLPropertyFile.C_String()))
 		return;
-	XMLNode xNode=xMainNode.getChildNode(propertyId);
-	LPCTSTR attr = xNode.getAttribute("value", 0);
-	if (attr)
+	pugi::xml_node node = doc.child(propertyId);
+	const char *attr = node.attribute("value").value();
+	if (attr && attr[0])
 		propertyOut = attr;
 	else
 		propertyOut.Clear();

@@ -9,19 +9,6 @@ option(RAKNET_EXTENSION_Autopatcher "Enable Autopatcher extension" ON)
 
 find_package(BZip2 REQUIRED)
 
-# Bundled XML library
-file(GLOB XML_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/XML/*.cpp")
-file(GLOB XML_HEADERS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/XML/*.h")
-add_library(RakNetXML STATIC ${XML_SOURCES} ${XML_HEADERS})
-target_include_directories(RakNetXML PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/XML")
-target_link_libraries(RakNetXML PRIVATE RakNet)
-set_target_properties(RakNetXML PROPERTIES FOLDER "extensions")
-if(MSVC)
-    target_compile_options(RakNetXML PRIVATE /W0)
-else()
-    target_compile_options(RakNetXML PRIVATE -w)
-endif()
-
 # MySQL Interface
 if(RAKNET_EXTENSION_USEMYSQL)
     add_subdirectory(MySQLInterface)

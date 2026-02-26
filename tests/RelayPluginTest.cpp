@@ -8,16 +8,18 @@
  *
  */
 
+#include <chrono>
+
 #include <gtest/gtest.h>
 
 #include "RakPeerInterface.h"
 #include "BitStream.h"
-#include "GetTime.h"
 #include "MessageIdentifiers.h"
 #include "RakSleep.h"
 #include "RelayPlugin.h"
 
 using namespace RakNet;
+using Clock = std::chrono::steady_clock;
 
 class RelayPluginTest : public ::testing::Test {
 protected:
@@ -67,8 +69,8 @@ protected:
 
         // Wait for both clients to connect
         bool aConnected = false, bConnected = false;
-        Time deadline = GetTime() + 5000;
-        while (GetTime() < deadline && !(aConnected && bConnected)) {
+        auto deadline = Clock::now() + std::chrono::seconds(5);
+        while (Clock::now() < deadline && !(aConnected && bConnected)) {
             DrainServer();
             for (Packet *p = clientA->Receive(); p;
                  clientA->DeallocatePacket(p), p = clientA->Receive()) {
@@ -113,8 +115,8 @@ protected:
     }
 
     RelayPluginEnums WaitForRelayResponse(RakPeerInterface *peer, int timeoutMs = 3000) {
-        Time deadline = GetTime() + timeoutMs;
-        while (GetTime() < deadline) {
+        auto deadline = Clock::now() + std::chrono::milliseconds(timeoutMs);
+        while (Clock::now() < deadline) {
             DrainServer();
             for (Packet *p = peer->Receive(); p;
                  peer->DeallocatePacket(p), p = peer->Receive()) {
@@ -165,8 +167,8 @@ TEST_F(RelayPluginTest, PointToPointMessage) {
 
     // Bob should receive RPE_MESSAGE_TO_CLIENT_FROM_SERVER
     bool gotMessage = false;
-    Time deadline = GetTime() + 3000;
-    while (GetTime() < deadline && !gotMessage) {
+    auto deadline = Clock::now() + std::chrono::seconds(3);
+    while (Clock::now() < deadline && !gotMessage) {
         DrainServer();
         for (Packet *p = clientB->Receive(); p;
              clientB->DeallocatePacket(p), p = clientB->Receive()) {
@@ -228,8 +230,8 @@ TEST_F(RelayPluginTest, GroupMessaging) {
 
     // Bob should receive RPE_GROUP_MSG_FROM_SERVER
     bool bobGotGroupMsg = false;
-    Time deadline = GetTime() + 3000;
-    while (GetTime() < deadline && !bobGotGroupMsg) {
+    auto deadline = Clock::now() + std::chrono::seconds(3);
+    while (Clock::now() < deadline && !bobGotGroupMsg) {
         DrainServer();
         for (Packet *p = clientB->Receive(); p;
              clientB->DeallocatePacket(p), p = clientB->Receive()) {

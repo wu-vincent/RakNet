@@ -15,12 +15,15 @@
 #include <gtest/gtest.h>
 
 #include "RakPeerInterface.h"
-#include "GetTime.h"
 #include "MessageIdentifiers.h"
 #include "RakSleep.h"
 
 using namespace RakNet;
 
+/**
+ * @brief Tests that RakNet will not crash if called from multiple threads
+ * concurrently.
+ */
 class ThreadTest : public ::testing::Test {
 protected:
     RakPeerInterface *peer1 = nullptr;
@@ -86,6 +89,7 @@ TEST_F(ThreadTest, ConcurrentProducersAndConsumers) {
     };
 
     std::vector<std::thread> threads;
+    threads.reserve(30);
     for (int i = 0; i < 10; i++) {
         threads.emplace_back(producer, i);
     }
@@ -97,7 +101,7 @@ TEST_F(ThreadTest, ConcurrentProducersAndConsumers) {
     RakSleep(3000);
     stop = true;
 
-    for (auto &t : threads) {
+    for (auto &t: threads) {
         t.join();
     }
 

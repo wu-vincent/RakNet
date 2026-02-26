@@ -8,6 +8,7 @@
  *
  */
 
+#include <chrono>
 #include <cstring>
 #include <random>
 
@@ -15,15 +16,20 @@
 
 #include "RakPeerInterface.h"
 #include "RakNetStatistics.h"
-#include "GetTime.h"
 #include "MessageIdentifiers.h"
 #include "RakSleep.h"
 
 using namespace RakNet;
+using Clock = std::chrono::steady_clock;
 
 static constexpr int NUM_PEERS = 10;
 static constexpr int CONNECTIONS_PER_SYSTEM = 4;
 
+/**
+ * @brief Stress test that exercises a bit of everything—connect, disconnect,
+ * send, ping, statistics—to verify RakNet does not crash or leak under
+ * sustained random operations.
+ */
 class ComprehensiveTest : public ::testing::Test {
 protected:
     RakPeerInterface *peers[NUM_PEERS] = {};
@@ -77,9 +83,9 @@ TEST_F(ComprehensiveTest, RandomOperationsNoCrash) {
     }
 
     char data[8096];
-    TimeMS endTime = GetTimeMS() + 5000;
+    auto endTime = Clock::now() + std::chrono::seconds(5);
 
-    while (GetTimeMS() < endTime) {
+    while (Clock::now() < endTime) {
         float action = actionDist(rng);
         int peerIdx = peerDist(rng);
 

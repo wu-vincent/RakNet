@@ -8,18 +8,23 @@
  *
  */
 
+#include <chrono>
 #include <cstring>
 
 #include <gtest/gtest.h>
 
 #include "RakPeerInterface.h"
 #include "BitStream.h"
-#include "GetTime.h"
 #include "MessageIdentifiers.h"
 #include "RakSleep.h"
 
 using namespace RakNet;
+using Clock = std::chrono::steady_clock;
 
+/**
+ * @brief Tests sending messages to systems you are not connected to, including
+ * AdvertiseSystem and offline pings.
+ */
 class OfflineMessagesTest : public ::testing::Test {
 protected:
     RakPeerInterface *peer1 = nullptr;
@@ -79,8 +84,8 @@ TEST_F(OfflineMessagesTest, AdvertiseAndPing) {
     bool gotAdvertise = false;
     bool gotPong = false;
 
-    RakNet::Time deadline = RakNet::GetTime() + 5000;
-    while (RakNet::GetTime() < deadline) {
+    auto deadline = Clock::now() + std::chrono::seconds(5);
+    while (Clock::now() < deadline) {
         peer1->DeallocatePacket(peer1->Receive());
 
         for (Packet *p = peer2->Receive(); p;

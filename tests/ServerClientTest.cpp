@@ -8,21 +8,26 @@
  *
  */
 
+#include <chrono>
 #include <random>
 
 #include <gtest/gtest.h>
 
 #include "RakPeerInterface.h"
-#include "GetTime.h"
 #include "MessageIdentifiers.h"
 #include "RakSleep.h"
 
 using namespace RakNet;
+using Clock = std::chrono::steady_clock;
 
 static constexpr int NUM_CLIENTS = 100;
 static constexpr int RANDOM_DATA_SIZE_1 = 50;
 static constexpr int RANDOM_DATA_SIZE_2 = 100;
 
+/**
+ * @brief Tests connecting many clients to a single server with bidirectional
+ * data flow using a server/client topology.
+ */
 class ServerClientTest : public ::testing::Test {
 protected:
     RakPeerInterface *server = nullptr;
@@ -106,8 +111,8 @@ protected:
 
 TEST_F(ServerClientTest, AllClientsConnect) {
     // Wait for all clients to connect
-    Time deadline = GetTime() + 10000;
-    while (GetTime() < deadline) {
+    auto deadline = Clock::now() + std::chrono::seconds(10);
+    while (Clock::now() < deadline) {
         DrainServer();
         DrainClients();
 
@@ -125,8 +130,8 @@ TEST_F(ServerClientTest, BidirectionalDataFlow) {
     std::mt19937 rng{std::random_device{}()};
 
     // Wait for connections to establish
-    Time deadline = GetTime() + 10000;
-    while (GetTime() < deadline) {
+    auto deadline = Clock::now() + std::chrono::seconds(10);
+    while (Clock::now() < deadline) {
         DrainServer();
         DrainClients();
         if (CountServerConnections() >= NUM_CLIENTS)
@@ -137,12 +142,12 @@ TEST_F(ServerClientTest, BidirectionalDataFlow) {
         << "Not enough clients connected";
 
     // Run bidirectional traffic for 5 seconds
-    TimeMS endTime = GetTimeMS() + 5000;
-    TimeMS nextServerSend = 0;
-    TimeMS nextClientSend[NUM_CLIENTS] = {};
+    auto endTime = Clock::now() + std::chrono::seconds(5);
+    auto nextServerSend = Clock::now();
+    Clock::time_point nextClientSend[NUM_CLIENTS] = {};
 
-    while (GetTimeMS() < endTime) {
-        TimeMS curTime = GetTimeMS();
+    while (Clock::now() < endTime) {
+        auto curTime = Clock::now();
 
         // Server broadcasts periodically
         if (curTime > nextServerSend) {
@@ -152,7 +157,7 @@ TEST_F(ServerClientTest, BidirectionalDataFlow) {
             else
                 server->Send(randomData1, RANDOM_DATA_SIZE_1, HIGH_PRIORITY,
                              RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
-            nextServerSend = curTime + 100;
+            nextServerSend = curTime + std::chrono::milliseconds(100);
         }
 
         // Each client sends periodically
@@ -168,7 +173,7 @@ TEST_F(ServerClientTest, BidirectionalDataFlow) {
                         clients[i]->Send(randomData1, RANDOM_DATA_SIZE_1, HIGH_PRIORITY,
                                          RELIABLE_ORDERED, 0, UNASSIGNED_SYSTEM_ADDRESS, true);
                 }
-                nextClientSend[i] = curTime + 50;
+                nextClientSend[i] = curTime + std::chrono::milliseconds(50);
             }
         }
 

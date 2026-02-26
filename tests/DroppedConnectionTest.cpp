@@ -8,19 +8,24 @@
  *
  */
 
+#include <chrono>
 #include <random>
 
 #include <gtest/gtest.h>
 
 #include "RakPeerInterface.h"
-#include "GetTime.h"
 #include "MessageIdentifiers.h"
 #include "RakSleep.h"
 
 using namespace RakNet;
+using Clock = std::chrono::steady_clock;
 
 static constexpr int NUM_CLIENTS = 9;
 
+/**
+ * @brief Tests silently dropping multiple instances of RakNet. Verifies that
+ * lost connections are detected properly.
+ */
 class DroppedConnectionTest : public ::testing::Test {
 protected:
     RakPeerInterface *server = nullptr;
@@ -110,10 +115,10 @@ TEST_F(DroppedConnectionTest, RandomDisconnectReconnectCycle) {
     std::uniform_int_distribution<int> actionDist(0, 3);
     std::uniform_int_distribution<int> clientDist(0, NUM_CLIENTS - 1);
 
-    TimeMS entryTime = GetTimeMS();
+    auto entryTime = Clock::now();
 
     // Run for 15 seconds (ConvertTest ran for 30s)
-    while (GetTimeMS() - entryTime < 15000) {
+    while (Clock::now() - entryTime < std::chrono::seconds(15)) {
         int action = actionDist(rng);
 
         switch (action) {

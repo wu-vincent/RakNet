@@ -8,16 +8,21 @@
  *
  */
 
+#include <chrono>
+
 #include <gtest/gtest.h>
 
 #include "RakPeerInterface.h"
 #include "BitStream.h"
-#include "GetTime.h"
 #include "MessageIdentifiers.h"
 #include "RakSleep.h"
 
 using namespace RakNet;
+using Clock = std::chrono::steady_clock;
 
+/**
+ * @brief Tests sending a burst of messages to a remote system.
+ */
 class BurstTest : public ::testing::Test {
 protected:
     RakPeerInterface *sender = nullptr;
@@ -67,8 +72,8 @@ protected:
 
         // Receive and validate
         uint32_t received = 0;
-        Time deadline = GetTime() + 5000;
-        while (GetTime() < deadline) {
+        auto deadline = Clock::now() + std::chrono::seconds(5);
+        while (Clock::now() < deadline) {
             for (Packet *p = receiver->Receive(); p;
                  receiver->DeallocatePacket(p), p = receiver->Receive()) {
                 if (p->data[0] == ID_USER_PACKET_ENUM) {

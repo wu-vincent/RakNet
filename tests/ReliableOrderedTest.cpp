@@ -8,21 +8,26 @@
  *
  */
 
+#include <chrono>
 #include <random>
 
 #include <gtest/gtest.h>
 
 #include "RakPeerInterface.h"
 #include "BitStream.h"
-#include "GetTime.h"
 #include "MessageIdentifiers.h"
 #include "RakSleep.h"
 
 using namespace RakNet;
+using Clock = std::chrono::steady_clock;
 
 static constexpr int NUM_CHANNELS = 32;
 static constexpr int PACKETS_PER_CHANNEL = 50;
 
+/**
+ * @brief Tests sending a large volume of messages using RELIABLE_ORDERED
+ * across multiple channels to verify ordering guarantees.
+ */
 class ReliableOrderedTest : public ::testing::Test {
 protected:
     RakPeerInterface *sender = nullptr;
@@ -47,8 +52,8 @@ protected:
 
         // Wait for connection
         bool connected = false;
-        Time deadline = GetTime() + 5000;
-        while (GetTime() < deadline) {
+        auto deadline = Clock::now() + std::chrono::seconds(5);
+        while (Clock::now() < deadline) {
             for (Packet *p = sender->Receive(); p;
                  sender->DeallocatePacket(p), p = sender->Receive()) {
                 if (p->data[0] == ID_CONNECTION_REQUEST_ACCEPTED)
@@ -78,11 +83,11 @@ TEST_F(ReliableOrderedTest, PacketsArriveInOrderPerChannel) {
     unsigned int totalSent = 0;
     unsigned int totalExpected = NUM_CHANNELS * PACKETS_PER_CHANNEL;
 
-    TimeMS sendDeadline = GetTimeMS() + 6000;
-    TimeMS nextSend = GetTimeMS();
+    auto sendDeadline = Clock::now() + std::chrono::seconds(6);
+    auto nextSend = Clock::now();
 
-    while (GetTimeMS() < sendDeadline && totalSent < totalExpected) {
-        if (GetTimeMS() >= nextSend) {
+    while (Clock::now() < sendDeadline && totalSent < totalExpected) {
+        if (Clock::now() >= nextSend) {
             for (unsigned char ch = 0; ch < NUM_CHANNELS; ch++) {
                 if (sendSeq[ch] >= PACKETS_PER_CHANNEL)
                     continue;
@@ -97,7 +102,7 @@ TEST_F(ReliableOrderedTest, PacketsArriveInOrderPerChannel) {
                     totalSent++;
                 }
             }
-            nextSend = GetTimeMS() + 30;
+            nextSend = Clock::now() + std::chrono::milliseconds(30);
         }
         // Drain sender while waiting
         for (Packet *p = sender->Receive(); p;
@@ -112,8 +117,8 @@ TEST_F(ReliableOrderedTest, PacketsArriveInOrderPerChannel) {
     unsigned int expectedSeq[NUM_CHANNELS] = {};
     unsigned int totalReceived = 0;
 
-    Time recvDeadline = GetTime() + 10000;
-    while (GetTime() < recvDeadline) {
+    auto recvDeadline = Clock::now() + std::chrono::seconds(10);
+    while (Clock::now() < recvDeadline) {
         for (Packet *p = receiver->Receive(); p;
              receiver->DeallocatePacket(p), p = receiver->Receive()) {
             if (p->data[0] != ID_USER_PACKET_ENUM + 1)

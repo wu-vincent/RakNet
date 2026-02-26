@@ -23,6 +23,9 @@ enum HistoryObject {
     HO_COS_WAVE,
 };
 
+/**
+ * @brief Tests the StatisticsHistory class and plugin.
+ */
 class StatisticsHistoryTest : public ::testing::Test {
 protected:
     StatisticsHistory history;

@@ -8,6 +8,8 @@
  *
  */
 
+#include <chrono>
+
 #include <gtest/gtest.h>
 
 #include "RakPeerInterface.h"
@@ -17,7 +19,12 @@
 #include "RakSleep.h"
 
 using namespace RakNet;
+using Clock = std::chrono::steady_clock;
 
+/**
+ * @brief Tests what happens when two instances of RakNet connect to each other
+ * at the same time. This has caused handshaking problems in the past.
+ */
 class CrossConnectionTest : public ::testing::Test {
 protected:
     RakPeerInterface *peer1 = nullptr;
@@ -63,8 +70,8 @@ TEST_F(CrossConnectionTest, SimultaneousConnect) {
     int gotNewIncomingConnection[2] = {0, 0};
     bool gotConnectionAttemptFailed = false;
 
-    RakNet::Time deadline = RakNet::GetTime() + 5000;
-    while (RakNet::GetTime() < deadline) {
+    auto deadline = Clock::now() + std::chrono::seconds(5);
+    while (Clock::now() < deadline) {
         for (Packet *p = peer1->Receive(); p;
              peer1->DeallocatePacket(p), p = peer1->Receive()) {
             if (p->data[0] == ID_NEW_INCOMING_CONNECTION)

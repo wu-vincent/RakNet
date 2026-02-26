@@ -8,6 +8,7 @@
  *
  */
 
+#include <chrono>
 #include <cstring>
 #include <vector>
 
@@ -15,12 +16,16 @@
 
 #include "RakPeerInterface.h"
 #include "BitStream.h"
-#include "GetTime.h"
 #include "MessageIdentifiers.h"
 #include "RakSleep.h"
 
 using namespace RakNet;
+using Clock = std::chrono::steady_clock;
 
+/**
+ * @brief Sends a large packet over the loopback to test packet splitting,
+ * reassembly, and flow control.
+ */
 class BigPacketTest : public ::testing::Test {
 protected:
     RakPeerInterface *server = nullptr;
@@ -68,8 +73,8 @@ protected:
         bool serverSawClient = false;
         SystemAddress clientAddr;
 
-        Time deadline = GetTime() + 5000;
-        while (GetTime() < deadline && !(clientConnected && serverSawClient)) {
+        auto deadline = Clock::now() + std::chrono::seconds(5);
+        while (Clock::now() < deadline && !(clientConnected && serverSawClient)) {
             for (Packet *p = server->Receive(); p;
                  server->DeallocatePacket(p), p = server->Receive()) {
                 if (p->data[0] == ID_NEW_INCOMING_CONNECTION) {
@@ -98,9 +103,8 @@ protected:
         int progressCount = 0;
 
         // Allow generous time for large packets
-        int timeoutMs = 5000 + packetSize / 10000;
-        Time recvDeadline = GetTime() + timeoutMs;
-        while (GetTime() < recvDeadline && !received) {
+        auto recvDeadline = Clock::now() + std::chrono::milliseconds(5000 + packetSize / 10000);
+        while (Clock::now() < recvDeadline && !received) {
             for (Packet *p = client->Receive(); p;
                  client->DeallocatePacket(p), p = client->Receive()) {
                 if (p->data[0] == ID_DOWNLOAD_PROGRESS) {

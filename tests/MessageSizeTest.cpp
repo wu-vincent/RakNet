@@ -9,15 +9,16 @@
  */
 
 #include <array>
+#include <chrono>
 
 #include <gtest/gtest.h>
 
 #include "RakPeerInterface.h"
-#include "GetTime.h"
 #include "MessageIdentifiers.h"
 #include "RakSleep.h"
 
 using namespace RakNet;
+using Clock = std::chrono::steady_clock;
 
 class MessageSizeTest : public ::testing::Test {
 protected:
@@ -72,8 +73,8 @@ protected:
         }
 
         int receiveCount = 0;
-        RakNet::Time timeout = RakNet::GetTime() + 1000;
-        while (RakNet::GetTime() < timeout) {
+        auto timeout = Clock::now() + std::chrono::seconds(1);
+        while (Clock::now() < timeout) {
             for (Packet *p = receiver->Receive(); p;
                  receiver->DeallocatePacket(p), p = receiver->Receive()) {
                 if (p->data[0] == ID_USER_PACKET_ENUM) {

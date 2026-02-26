@@ -2,6 +2,7 @@ find_package(GTest REQUIRED)
 include(GoogleTest)
 
 add_executable(tests
+    BigPacketTest.cpp
     BurstTest.cpp
     ComprehensiveTest.cpp
     CrossConnectionTest.cpp
@@ -9,6 +10,8 @@ add_executable(tests
     MessageSizeTest.cpp
     OfflineMessagesTest.cpp
     ReliableOrderedTest.cpp
+    RelayPluginTest.cpp
+    ServerClientTest.cpp
     StatisticsHistoryTest.cpp
     ThreadTest.cpp
 )

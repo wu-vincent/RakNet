@@ -8,8 +8,10 @@ add_executable(tests
     ComprehensiveTest.cpp
     CrossConnectionTest.cpp
     DroppedConnectionTest.cpp
+    EightPeerTest.cpp
     FlowControlTest.cpp
     LoopbackPerformanceTest.cpp
+    MaximumConnectTest.cpp
     MessageSizeTest.cpp
     OfflineMessagesTest.cpp
     ReliableOrderedTest.cpp

@@ -4,17 +4,11 @@ const withMDX = createMDX();
 
 /** @type {import('next').NextConfig} */
 const config = {
-  serverExternalPackages: ['@takumi-rs/image-response'],
-  
+  output: 'export',
+  basePath: process.env.GITHUB_PAGES ? '/RakNet' : '',
+  images: { unoptimized: true },
   reactStrictMode: true,
-  async rewrites() {
-    return [
-      {
-        source: '/docs/:path*.mdx',
-        destination: '/llms.mdx/docs/:path*',
-      },
-    ];
-  },
+  serverExternalPackages: ['@takumi-rs/image-response'],
 };
 
 export default withMDX(config);

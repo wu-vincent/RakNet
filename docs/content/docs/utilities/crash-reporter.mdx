@@ -5,21 +5,21 @@ description: Catch crashes, write minidumps, and send email reports automaticall
 
 ## Minidumps Made Easy
 
-The `CrashReporter`, found at `RakNet/Samples/CrashReporter`, is a Windows-only class designed to make it easier to debug unmonitored servers and/or game clients. When a crash occurs, the `CrashReporter` implementation catches the exception, writes a minidump, and then writes to disk or sends an email. The email operation can be interactive, opening the user's email client, or non-interactive, connecting to the mail server with the [EmailSender](/utilities/email-sender) class and sending a report automatically.
+`CrashReporter`, found at `RakNet/Samples/CrashReporter`, is a Windows-only class that simplifies debugging unmonitored servers and game clients. When a crash occurs, `CrashReporter` catches the exception, writes a minidump, and either writes to disk or sends an email. The email operation can be interactive (opening the user's email client) or non-interactive (connecting to the mail server with the [EmailSender](/utilities/email-sender) class and sending a report automatically).
 
 <Callout type="info">
 The minidump can be opened in Visual Studio and will show you where the crash occurred and give you the local variable values.
 </Callout>
 
-## How to Use the Minidump
+## Using the Minidump
 
-Put the minidump on your hard drive and double click it. It will open Visual Studio. It will look for the exe that caused the crash in the directory that the program that crashed was running at. If it can't find this exe, or if it is different, it will look in the current directory for that exe. If it still can't find it, or if it is different, it will load Visual Studio and indicate that it can't find the executable module. No source code will be shown at that point. However, you can specify `modpath=<pathToExeDirectory>` in the project properties window for "Command Arguments". The best solution is to copy the `.dmp` to a directory containing a copy of the exe that crashed.
+Place the minidump on your hard drive and double-click it. Visual Studio opens and looks for the exe that caused the crash in the directory the crashed program was running from. If it cannot find this exe, or if the exe differs, it searches the current directory. If it still cannot find a match, Visual Studio loads but indicates it cannot find the executable module, and no source code appears. You can specify `modpath=<pathToExeDirectory>` in the project properties window for "Command Arguments". The most reliable approach is to copy the `.dmp` to a directory containing a copy of the exe that crashed.
 
-On load, Visual Studio will look for the `.pdb`, which it uses to find the source code files and other information. This is fine as long as the source code files on your hard drive match those that were used to create the exe. If they don't, you will see source code but it will be the wrong code. There are three ways to deal with this:
+On load, Visual Studio looks for the `.pdb`, which it uses to locate source code files and other information. This works correctly as long as the source code files on your hard drive match those used to create the exe. If they do not match, the debugger displays the wrong source code. There are three ways to handle this:
 
-**Method 1:** Change the path to your source code so it won't find the wrong code automatically. This will cause the debugger to not find the source code pointed to in the `.pdb`. You will be prompted for the location of the correct source code.
+**Method 1:** Change the path to your source code so the debugger does not find the wrong code automatically. The debugger fails to locate the source code pointed to in the `.pdb` and prompts you for the correct source code location.
 
-**Method 2:** Build the exe on a different path than what you normally program with. For example, when you program you use `c:/Working/Mygame`. When you release builds, you do so at `c:/Version2.2/Mygame`. After a build, you keep the source files, the exe, and the pdb on a hard drive at that location. When you get a crash `.dmp`, copy it to the same directory as the exe (e.g. `c:/Version2.2/Mygame/bin`). This way the `.pdb` will point to the correct sources to begin with.
+**Method 2:** Build the exe on a different path than your development path. For example, use `c:/Working/Mygame` for development and `c:/Version2.2/Mygame` for release builds. After a build, keep the source files, the exe, and the pdb at that location. When you receive a crash `.dmp`, copy it to the same directory as the exe (e.g., `c:/Version2.2/Mygame/bin`). This way the `.pdb` points to the correct sources from the start.
 
 **Method 3:** Save build labels or branches in source control and get that version (you only need source code + `.exe` + `.pdb`) before debugging. After debugging, restore your previous work.
 

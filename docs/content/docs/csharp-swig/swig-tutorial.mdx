@@ -3,25 +3,25 @@ title: "SWIG Tool-Based Tutorial"
 description: Use SWIG to generate C# bindings for RakNet on Windows and Linux.
 ---
 
-## What is SWIG?
+## SWIG
 
-SWIG is an application that generates wrapper code for a native DLL to interface with other languages, allowing you to use a C/C++ library in one of the supported languages. Currently SWIG configuration for RakNet is set up to generate a managed interface that can be used in managed C# in Windows, as well as in Linux with Mono.
+SWIG generates wrapper code for a native DLL, enabling a C/C++ library to be used from other languages. The RakNet SWIG configuration produces a managed interface usable from C# on Windows, and from Mono on Linux.
 
-SWIG generates a CXX and .h file, which exposes interfaces that can be used by the target language. The CXX file is included when building the C++ DLL that the target language uses.
+SWIG generates a CXX and .h file that expose interfaces consumed by the target language. The CXX file is included when building the C++ DLL that the target language loads.
 
-SWIG also generates files in the target language for inclusion in the project of the target language to interface with the DLL. These are added to the project of the target language.
+SWIG also generates target-language source files for inclusion in the target-language project to interface with the DLL.
 
-## What is Mono?
+## Mono
 
-Mono is a cross-platform implementation of the .NET framework. This allows you to compile C# and other .NET code and run them on platforms that originally are not .NET compatible like Linux.
+Mono is a cross-platform implementation of the .NET framework. It allows you to compile C# and other .NET code and run it on platforms that are not natively .NET-compatible, such as Linux.
 
 ## Choices to Make
 
 You may choose to use the tools with RakNet or start from scratch.
 
-On Windows, batch tools are provided to make the process easier. These tools are located under the Swig directory under DependentExtensions. For Linux the tools will use Wget to pull down SWIG and install version 2.0.00 if SWIG is not installed.
+On Windows, batch tools are provided to simplify the process. These tools are located under the Swig directory in DependentExtensions. On Linux, the tools use Wget to download and install SWIG version 2.0.00 if SWIG is not already installed.
 
-You may also download SWIG yourself and compile them by specifying the options manually. In the manual portion the options used will be explained.
+You can also download SWIG yourself and compile by specifying the options manually. The manual portion below explains the options used.
 
 ## Step Summary
 
@@ -179,7 +179,7 @@ Go to [http://www.swig.org/](http://www.swig.org/)
 
 ### Navigate to downloads
 
-On the left hand side click Download.
+On the left-hand side, click Download.
 
 </Step>
 
@@ -195,7 +195,7 @@ Either fill out the survey or click the Download area link.
 
 ### Download the Windows package
 
-It will say Windows users should download `<link>` -- click on it.
+The page indicates which package Windows users need -- click the download link.
 
 </Step>
 
@@ -203,7 +203,7 @@ It will say Windows users should download `<link>` -- click on it.
 
 ### Unzip
 
-Unzip to `C:\Swig` or where you prefer. `C:\Swig` will be used for this tutorial.
+Unzip to `C:\Swig` or your preferred location. This tutorial uses `C:\Swig`.
 
 </Step>
 
@@ -211,7 +211,7 @@ Unzip to `C:\Swig` or where you prefer. `C:\Swig` will be used for this tutorial
 
 ### Add to PATH (optional)
 
-If you wish to use the `DLL_Swig` project you will need to add SWIG to the PATH variable as shown below.
+To use the `DLL_Swig` project, add SWIG to the PATH variable as shown below.
 
 </Step>
 
@@ -225,7 +225,7 @@ If you wish to use the `DLL_Swig` project you will need to add SWIG to the PATH 
 
 ### Open System Properties
 
-Right click My Computer and click Properties.
+Right-click My Computer and click Properties.
 
 </Step>
 
@@ -241,7 +241,7 @@ Click on the Advanced tab.
 
 ### Open Environment Variables
 
-Under Advanced, there is an Environment Variables button -- click it.
+Under Advanced, click the Environment Variables button.
 
 </Step>
 
@@ -278,7 +278,7 @@ Add the path `C:\Swig` or wherever you unzipped SWIG to.
 ### Linux
 
 <Callout type="info">
-You may be able to install SWIG using your favorite package manager. If you can, go that route. The instructions vary depending on your package manager and distribution. The batch file will attempt to install 1.6, but it is recommended to use the package manager if you are able to.
+You may be able to install SWIG using your package manager. If so, prefer that route. The instructions vary by package manager and distribution. The batch file attempts to install 1.6, but using the package manager is recommended when available.
 </Callout>
 
 <Steps>
@@ -295,7 +295,7 @@ Go to [http://www.swig.org/](http://www.swig.org/)
 
 ### Navigate to downloads
 
-On the left hand side click Download.
+On the left-hand side, click Download.
 
 </Step>
 
@@ -311,7 +311,7 @@ Either fill out the survey or click the Download area link.
 
 ### Download the latest release
 
-It will say the latest development release is `<link>` -- click on it.
+The page lists the latest development release -- click the download link.
 
 </Step>
 
@@ -375,7 +375,7 @@ make
 
 ### Install
 
-Switch to your root user, or if user is a sudo user skip to the next command. If root, type `make install` and hit enter; otherwise type `sudo make install` and hit enter.
+Switch to root, or skip to the next command if your user has sudo privileges. As root, run `make install`; otherwise run `sudo make install`.
 
 </Step>
 
@@ -395,7 +395,7 @@ This step on Windows can be skipped if you are using the included `DLL_Swig` pro
 
 ### Open a command prompt
 
-Click the start menu and click on run. In Vista click start, search, type "run", and hit enter. Type `cmd` and hit enter.
+Click the Start menu and click Run. In Vista, click Start, search for "run", and press Enter. Type `cmd` and press Enter.
 
 </Step>
 
@@ -403,7 +403,7 @@ Click the start menu and click on run. In Vista click start, search, type "run",
 
 ### Navigate to the SWIG directory
 
-In the next command `PATH_TO_RAKNET_SWIG_FILES` is the path to the swig directory. For example `C:\RakNet\DependentExtensions\Swig`.
+In the next command, `PATH_TO_RAKNET_SWIG_FILES` is the path to the swig directory. For example, `C:\RakNet\DependentExtensions\Swig`.
 
 ```batch
 cd PATH_TO_RAKNET_SWIG_FILES
@@ -415,7 +415,7 @@ cd PATH_TO_RAKNET_SWIG_FILES
 
 ### Run the MakeSwig batch file
 
-`PATH_TO_RAKNETSOURCE` is the path to the RakNet source directory (e.g. `C:\RakNet\Source`). `PATH_TO_SWIG` is an unquoted path with a trailing slash to the SWIG directory (e.g. `C:\Swig\`). If you added SWIG to your PATH variable then `PATH_TO_SWIG` is not needed and can be ignored.
+`PATH_TO_RAKNETSOURCE` is the path to the RakNet source directory (e.g., `C:\RakNet\Source`). `PATH_TO_SWIG` is an unquoted path with a trailing slash to the SWIG directory (e.g., `C:\Swig\`). If you added SWIG to your PATH variable, `PATH_TO_SWIG` is not needed and can be omitted.
 
 ```batch
 MakeSwig.bat PATH_TO_RAKNETSOURCE PATH_TO_SWIG
@@ -429,9 +429,9 @@ For example: `MakeSwig.bat c:\RakNet\Source c:\swigwin-2.0.9`
 
 **Extra instructions for `SQLiteClientLoggerPlugin`:**
 
-- If you want to use `SQLiteClientLoggerPlugin`, skip the step above and use the next command instead.
-- If you have added SWIG to your PATH variable, just use `""` for `PATH_TO_SWIG`.
-- `PATH_TO_SQLITEPLUGIN` is the path to the SQLite plugin directory, e.g. `C:\RakNet\DependentExtensions\SQLite3Plugin`.
+- To use `SQLiteClientLoggerPlugin`, skip the step above and use the following command instead.
+- If SWIG is in your PATH variable, use `""` for `PATH_TO_SWIG`.
+- `PATH_TO_SQLITEPLUGIN` is the path to the SQLite plugin directory, e.g., `C:\RakNet\DependentExtensions\SQLite3Plugin`.
 
 ```batch
 MakeSwig.bat PATH_TO_RAKNETSOURCE PATH_TO_SWIG PATH_TO_SQLITEPLUGIN
@@ -442,7 +442,7 @@ Then go to "Creating the SWIG Wrapped DLL Project".
 ### Linux
 
 <Callout type="info">
-The Linux batch requires Wget, Tar, Make and GCC to be installed, unless SWIG is already installed. Most of the time these are already installed.
+The Linux batch requires Wget, Tar, Make, and GCC, unless SWIG is already installed. These are typically already present.
 </Callout>
 
 <Steps>
@@ -451,7 +451,7 @@ The Linux batch requires Wget, Tar, Make and GCC to be installed, unless SWIG is
 
 ### Open a terminal
 
-Open a terminal if you are not already at one.
+Open a terminal if one is not already open.
 
 </Step>
 
@@ -459,7 +459,7 @@ Open a terminal if you are not already at one.
 
 ### Navigate to the SWIG directory
 
-`PATH_TO_RAKNET_SWIG_FILES` is the path to the swig directory. For example `/home/usr/RakNet/DependentExtensions/Swig`.
+`PATH_TO_RAKNET_SWIG_FILES` is the path to the swig directory. For example, `/home/usr/RakNet/DependentExtensions/Swig`.
 
 ```bash
 cd PATH_TO_RAKNET_SWIG_FILES
@@ -481,7 +481,7 @@ chmod u+x MakeSwig.sh
 
 ### Run the MakeSwig script
 
-`PATH_TO_RAKNETSOURCE` is the path to the RakNet source directory. For example `/home/usr/RakNet/Source`.
+`PATH_TO_RAKNETSOURCE` is the path to the RakNet source directory. For example, `/home/usr/RakNet/Source`.
 
 ```bash
 ./MakeSwig.sh PATH_TO_RAKNETSOURCE
@@ -493,8 +493,8 @@ chmod u+x MakeSwig.sh
 
 **Extra instructions for `SQLiteClientLoggerPlugin`:**
 
-- If you want to use `SQLiteClientLoggerPlugin`, skip the step above and use the next command instead.
-- `PATH_TO_SQLITEPLUGIN` is the path to the SQLite plugin directory, e.g. `/home/usr/RakNet/DependentExtensions/SQLite3Plugin`.
+- To use `SQLiteClientLoggerPlugin`, skip the step above and use the following command instead.
+- `PATH_TO_SQLITEPLUGIN` is the path to the SQLite plugin directory, e.g., `/home/usr/RakNet/DependentExtensions/SQLite3Plugin`.
 
 ```bash
 MakeSwig.sh PATH_TO_RAKNETSOURCE PATH_TO_SQLITEPLUGIN
@@ -512,7 +512,7 @@ Then skip to "Creating the C# project".
 
 ### Open a command prompt
 
-Click the start menu and click on run. In Vista click start, search, type "run", and hit enter. Type `cmd` and hit enter.
+Click the Start menu and click Run. In Vista, click Start, search for "run", and press Enter. Type `cmd` and press Enter.
 
 </Step>
 
@@ -520,7 +520,7 @@ Click the start menu and click on run. In Vista click start, search, type "run",
 
 ### Navigate to the SWIG directory
 
-`PATH_TO_RAKNET_SWIG_FILES` is the path to the swig directory. For example `C:\RakNet\DependentExtensions\Swig`.
+`PATH_TO_RAKNET_SWIG_FILES` is the path to the swig directory. For example, `C:\RakNet\DependentExtensions\Swig`.
 
 ```batch
 cd PATH_TO_RAKNET_SWIG_FILES
@@ -532,7 +532,7 @@ cd PATH_TO_RAKNET_SWIG_FILES
 
 ### Run the SWIG command
 
-`PATH_TO_RAKNETSOURCE` is the path to the RakNet source directory. For example `C:\RakNet\Source`.
+`PATH_TO_RAKNETSOURCE` is the path to the RakNet source directory. For example, `C:\RakNet\Source`.
 
 ```batch
 C:\Swig\swig -c++ -csharp -namespace RakNet -I"PATH_TO_RAKNETSOURCE" -I"SwigInterfaceFiles" -outdir SwigOutput\SwigCSharpOutput -o SwigOutput\CplusDLLIncludes\RakNet_wrap.cxx SwigInterfaceFiles\RakNet.i
@@ -544,8 +544,8 @@ C:\Swig\swig -c++ -csharp -namespace RakNet -I"PATH_TO_RAKNETSOURCE" -I"SwigInte
 
 **Extra instructions for `SQLiteClientLoggerPlugin`:**
 
-- If you want to use `SQLiteClientLoggerPlugin`, skip the step above.
-- `PATH_TO_SQLITEPLUGIN` is the path to the SQLite plugin directory, e.g. `C:\RakNet\DependentExtensions\SQLite3Plugin`.
+- To use `SQLiteClientLoggerPlugin`, skip the step above.
+- `PATH_TO_SQLITEPLUGIN` is the path to the SQLite plugin directory, e.g., `C:\RakNet\DependentExtensions\SQLite3Plugin`.
 
 ```batch
 C:\Swig\swig -c++ -csharp -namespace RakNet -I"PATH_TO_RAKNETSOURCE" -I"SwigInterfaceFiles" -I"PATH_TO_SQLITEPLUGIN" -DSWIG_ADDITIONAL_SQL_LITE -outdir SwigOutput\SwigCSharpOutput -o SwigOutput\CplusDLLIncludes\RakNet_wrap.cxx SwigInterfaceFiles\RakNet.i
@@ -567,7 +567,7 @@ Open a terminal.
 
 ### Navigate to the SWIG directory
 
-`PATH_TO_RAKNET_SWIG_FILES` is the path to the swig directory. For example `/home/usr/RakNet/DependentExtensions/Swig`.
+`PATH_TO_RAKNET_SWIG_FILES` is the path to the swig directory. For example, `/home/usr/RakNet/DependentExtensions/Swig`.
 
 ```bash
 cd PATH_TO_RAKNET_SWIG_FILES
@@ -579,7 +579,7 @@ cd PATH_TO_RAKNET_SWIG_FILES
 
 ### Run the SWIG command
 
-`PATH_TO_RAKNETSOURCE` is the path to the RakNet source directory. For example `/home/usr/RakNet/Source`.
+`PATH_TO_RAKNETSOURCE` is the path to the RakNet source directory. For example, `/home/usr/RakNet/Source`.
 
 ```bash
 swig -c++ -csharp -namespace RakNet -I"PATH_TO_RAKNETSOURCE" -I"SwigInterfaceFiles" -outdir SwigOutput/SwigCSharpOutput -o SwigOutput/CplusDLLIncludes/RakNet_wrap.cxx SwigInterfaceFiles/RakNet.i
@@ -591,8 +591,8 @@ swig -c++ -csharp -namespace RakNet -I"PATH_TO_RAKNETSOURCE" -I"SwigInterfaceFil
 
 **Extra instructions for `SQLiteClientLoggerPlugin`:**
 
-- If you want to use `SQLiteClientLoggerPlugin`, skip the step above.
-- `PATH_TO_SQLITEPLUGIN` is the path to the SQLite plugin directory, e.g. `/home/usr/RakNet/DependentExtensions/SQLite3Plugin`.
+- To use `SQLiteClientLoggerPlugin`, skip the step above.
+- `PATH_TO_SQLITEPLUGIN` is the path to the SQLite plugin directory, e.g., `/home/usr/RakNet/DependentExtensions/SQLite3Plugin`.
 
 ```bash
 swig -c++ -csharp -namespace RakNet -I"PATH_TO_RAKNETSOURCE" -I"SwigInterfaceFiles" -I"PATH_TO_SQLITEPLUGIN" -DSWIG_ADDITIONAL_SQL_LITE -outdir SwigOutput/SwigCSharpOutput -o SwigOutput/CplusDLLIncludes/RakNet_wrap.cxx SwigInterfaceFiles/RakNet.i
@@ -622,7 +622,7 @@ The following two are used if `SQLiteClientLoggerPlugin` is used:
 ### Windows
 
 <Callout type="info">
-If you do not plan on using `SQLiteClientLoggerPlugin`, `DependentExtensions\Swig\DLL_Swig\RakNet.sln` already contains a DLL project that makes the SWIG files, builds the DLL, and copies it to the C# sample. You do not need to run these steps if you use that project. In that case, run the solution, rebuild the project, and go to "Creating the C# project".
+If you do not need `SQLiteClientLoggerPlugin`, `DependentExtensions\Swig\DLL_Swig\RakNet.sln` already contains a DLL project that generates the SWIG files, builds the DLL, and copies it to the C# sample. Skip these steps if you use that project -- open the solution, rebuild, and proceed to "Creating the C# project".
 </Callout>
 
 <Steps>
@@ -631,7 +631,7 @@ If you do not plan on using `SQLiteClientLoggerPlugin`, `DependentExtensions\Swi
 
 ### Create a DLL project
 
-Create a DLL project. In MSVC 7 you would create an empty project, then under Application Settings check DLL and empty project.
+Create a DLL project. In MSVC 7, create an empty project, then under Application Settings check DLL and empty project.
 
 </Step>
 
@@ -663,7 +663,7 @@ Add to "Additional Include Directories" your directory with the source files.
 
 ### Link Winsock
 
-Import `ws2_32.lib`, or `wsock32.lib` if you don't have Winsock 2 installed. In MSVC 7 you can right click on the project, select Configuration Properties / Linker / Input / Additional Dependencies and type `ws2_32.lib` in there.
+Import `ws2_32.lib`, or `wsock32.lib` if Winsock 2 is not installed. In MSVC 7, right-click the project, select Configuration Properties / Linker / Input / Additional Dependencies, and add `ws2_32.lib`.
 
 </Step>
 
@@ -671,7 +671,7 @@ Import `ws2_32.lib`, or `wsock32.lib` if you don't have Winsock 2 installed. In 
 
 ### Set runtime libraries
 
-Set your project to use multi-threaded runtime libraries. In MSVC 7 you can right click on the project, select Configuration Properties / C/C++ / Code Generation / Runtime Library and change it to Multi-threaded (`/MT`).
+Set the project to use multi-threaded runtime libraries. In MSVC 7, right-click the project, select Configuration Properties / C/C++ / Code Generation / Runtime Library, and change it to Multi-threaded (`/MT`).
 
 </Step>
 
@@ -703,7 +703,7 @@ Optionally set your [preprocessor directives](/basics/preprocessor-directives).
 
 ### Build
 
-Hit F7 or the equivalent to build your DLL and Lib.
+Press F7 (or equivalent) to build the DLL and Lib.
 
 </Step>
 
@@ -729,7 +729,7 @@ Hit F7 or the equivalent to build your DLL and Lib.
 ### Linux
 
 <Callout type="info">
-If you ran the Linux batch tool it will have made the dynamic link and attempted to install it, so you may skip these steps if it ran successfully.
+If the Linux batch tool ran successfully, it already built the dynamic link and attempted to install it, so you can skip these steps.
 </Callout>
 
 <Steps>
@@ -738,7 +738,7 @@ If you ran the Linux batch tool it will have made the dynamic link and attempted
 
 ### Build the shared library
 
-`PATH_TO_RAKNET_SWIG_FILES` is the path to the swig directory (e.g. `../DependentExtensions/Swig`).
+`PATH_TO_RAKNET_SWIG_FILES` is the path to the swig directory (e.g., `../DependentExtensions/Swig`).
 
 ```bash
 g++ *.cpp PATH_TO_RAKNET_SWIG_FILES/SwigOutput/CplusDLLIncludes/RakNet_wrap.cxx -l pthread -I./ -shared -o RakNet
@@ -752,14 +752,14 @@ Note: `-l pthread` is lowercase L while `-I./` is uppercase i.
 
 **Extra instructions for `SQLiteClientLoggerPlugin`:**
 
-- If you wish to use `SQLiteClientLoggerPlugin`, use the following command instead:
-- `PATH_TO_SQLITEPLUGIN` is the path to the SQLite plugin directory, e.g. `/home/usr/RakNet/DependentExtensions/SQLite3Plugin`.
+- To use `SQLiteClientLoggerPlugin`, use the following command instead:
+- `PATH_TO_SQLITEPLUGIN` is the path to the SQLite plugin directory, e.g., `/home/usr/RakNet/DependentExtensions/SQLite3Plugin`.
 
 ```bash
 g++ *.cpp PATH_TO_RAKNET_SWIG_FILES/SwigOutput/CplusDLLIncludes/RakNet_wrap.cxx PATH_TO_SQLITEPLUGIN/SQLite3ClientPlugin.cpp PATH_TO_SQLITEPLUGIN/SQLite3PluginCommon.cpp PATH_TO_SQLITEPLUGIN/Logger/ClientOnly/SQLiteClientLoggerPlugin.cpp PATH_TO_SQLITEPLUGIN/Logger/SQLiteLoggerCommon.cpp -l pthread -I./ -IPATH_TO_SQLITEPLUGIN/Logger/ClientOnly -IPATH_TO_SQLITEPLUGIN/Logger -IPATH_TO_SQLITEPLUGIN -shared -o RakNet
 ```
 
-A file called `RakNet` should be created that will be copied in the next section.
+A file called `RakNet` is created, which is copied in the next section.
 
 ## Creating the C# Project
 
@@ -779,7 +779,7 @@ Create a new C# project. In the included sample a console project is used.
 
 ### Optionally create a Swig folder
 
-If you wish to keep the project cleaner, create a new folder called Swig. Right click the project and go to Add -> New Folder.
+To keep the project organized, create a new folder called Swig. Right-click the project and go to Add -> New Folder.
 
 </Step>
 
@@ -787,7 +787,7 @@ If you wish to keep the project cleaner, create a new folder called Swig. Right 
 
 ### Add generated source files
 
-Add the source files that were generated under the `SwigOutput\SwigCSharpOutput` directory to the project. Right click the project (or the folder if you added one).
+Add the source files generated under the `SwigOutput\SwigCSharpOutput` directory to the project. Right-click the project (or the folder if you created one).
 
 </Step>
 
@@ -795,7 +795,7 @@ Add the source files that were generated under the `SwigOutput\SwigCSharpOutput`
 
 ### Add existing items
 
-Go to Add -> Existing Item. Browse to the `SwigOutput\SwigCSharpOutput` directory. If you want to link to the files rather than create a copy, click on the arrow next to Add and add a link. Otherwise click Add.
+Go to Add -> Existing Item. Browse to the `SwigOutput\SwigCSharpOutput` directory. To link to the files rather than copying them, click the arrow next to Add and select "Add as Link". Otherwise, click Add.
 
 </Step>
 
@@ -803,7 +803,7 @@ Go to Add -> Existing Item. Browse to the `SwigOutput\SwigCSharpOutput` director
 
 ### Copy the DLL
 
-Copy the DLL created in the previous step to the same folder as the binary (e.g. `bin\Debug`).
+Copy the DLL created in the previous step to the same folder as the binary (e.g., `bin\Debug`).
 
 </Step>
 
@@ -811,7 +811,7 @@ Copy the DLL created in the previous step to the same folder as the binary (e.g.
 
 ### Configure for 64-bit compatibility (optional)
 
-If you wish the project to be compatible with 64-bit Vista, follow the remaining sub-steps below.
+For 64-bit Vista compatibility, follow the remaining sub-steps below.
 
 </Step>
 
@@ -819,7 +819,7 @@ If you wish the project to be compatible with 64-bit Vista, follow the remaining
 
 ### Open Build menu
 
-When the project is open there should be a menu item called Build. Click it.
+With the project open, click the Build menu item.
 
 </Step>
 
@@ -827,7 +827,7 @@ When the project is open there should be a menu item called Build. Click it.
 
 ### Open Configuration Manager
 
-Go to Configuration Manager and click it.
+Click Configuration Manager.
 
 </Step>
 
@@ -835,7 +835,7 @@ Go to Configuration Manager and click it.
 
 ### Set platform to x86
 
-On the top right there is a drop-down menu called Active Solution Platform. If x86 is in the project menu click it. If not, click New, pick x86, set Copy Settings to "Any CPU", make sure "Create new project platforms" is checked, and click OK.
+In the top-right drop-down menu "Active Solution Platform", select x86 if available. If not, click New, select x86, set Copy Settings to "Any CPU", check "Create new project platforms", and click OK.
 
 </Step>
 
@@ -843,7 +843,7 @@ On the top right there is a drop-down menu called Active Solution Platform. If x
 
 ### Verify all configurations
 
-Click on "Active Solutions Configuration" in the top left. Cycle through all items and ensure the Platform column says x86 for each.
+Click "Active Solutions Configuration" in the top left. Cycle through all items and verify the Platform column reads x86 for each.
 
 </Step>
 
@@ -874,7 +874,7 @@ A C# sample project is included under `DependentExtensions\Swig\SwigWindowsCShar
 #### Installing Mono
 
 <Callout type="info">
-Mono greater than version 2.0 is needed for full compatibility. Earlier versions work with most of RakNet but cause crashes in some of it. You may be able to install Mono using your favorite package manager; if you can, go that route. This tutorial assumes **gmcs** is installed.
+Mono version 2.0 or later is required for full compatibility. Earlier versions work with most of RakNet but cause crashes in some areas. If your package manager provides Mono, prefer that installation method. This tutorial assumes **gmcs** is installed.
 </Callout>
 
 <Steps>
@@ -932,7 +932,7 @@ make
 
 ### Install
 
-Switch to your root user, or if user is a sudo user skip to the next command. If root, type `make install`; otherwise type `sudo make install`.
+Switch to root, or skip to the next command if your user has sudo privileges. As root, run `make install`; otherwise run `sudo make install`.
 
 </Step>
 
@@ -941,7 +941,7 @@ Switch to your root user, or if user is a sudo user skip to the next command. If
 #### C# Project Setup (Linux)
 
 <Callout type="info">
-If you used the included tools and just want to run the sample you may skip this section.
+If you used the included tools and only need to run the sample, skip this section.
 </Callout>
 
 <Steps>
@@ -1015,8 +1015,8 @@ A C# sample is included under `DependentExtensions/Swig/SwigLinuxCSharpSample`. 
 
 1. `BitStream` may have problems if larger than 9 megabytes.
 
-## Important Information
+## Resource Cleanup
 
 <Callout type="warn">
-`RakPeer`, `RakString`, `FullyConnectedMesh2`, `UDPForwarder`, and `UDPProxyCoordinator` need to be released before the program ends. Any item that goes out of scope before program end just needs to be garbage collected, so items not in main or global generally do not have issues. For these, just call the GC before program end. For globals and items in main, the items can be released with the `Dispose` method if `new` was used, or `DestroyInstance` if `CreateInstance` was used.
+`RakPeer`, `RakString`, `FullyConnectedMesh2`, `UDPForwarder`, and `UDPProxyCoordinator` must be released before the program ends. Items that go out of scope before program end only need to be garbage collected, so items not in main or global scope generally do not cause issues -- call the GC before program end. For globals and items in main, release them with the `Dispose` method if `new` was used, or `DestroyInstance` if `CreateInstance` was used.
 </Callout>

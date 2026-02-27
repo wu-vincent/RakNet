@@ -5,19 +5,19 @@ description: Demonstrates 3D interpolation and ReplicaManager3 using Ogre 3D to 
 
 The Ogre 3D interpolation demo uses the graphics engine Ogre 3D to render popcorn popping.
 
-The server has a bunch of popcorn kernels, which pop and fly around. After a short while all the popcorn is deleted and respawned.
+The server manages a set of popcorn kernels that pop and fly around. After a short interval, all the popcorn is deleted and respawned.
 
-The client is a dumb client in that the client does not do any physics or handle the details of spawning or popping the corn kernels.
+The client is purely visual -- it performs no physics and does not handle the details of spawning or popping the corn kernels.
 
 ## What It Demonstrates
 
 **Specific to Ogre:**
 
-How to interpolate between the real and the visual position using a helper class `TransformationHistory`. Given a time in the past, it will tell you where you were then, using interpolation. If you hold down space you can see the client run non-interpolated, which is very choppy indeed, as it only sends 4 times a second. Let go of space and it's smooth again.
+How to interpolate between the real and visual positions using the helper class `TransformationHistory`. Given a past timestamp, it returns the interpolated position at that time. Hold down space to see the client run without interpolation -- the result is noticeably choppy, as updates are sent only 4 times per second. Release space and the display is smooth again.
 
 **Covered as part of RakNet:**
 
-`ReplicaManager3` class, which automatically handles the networking for creation, destruction, and serialization of the popcorn kernels.
+`ReplicaManager3`, which automatically handles networking for creation, destruction, and serialization of the popcorn kernels.
 
 ## Running the Demo
 
@@ -58,7 +58,7 @@ Hold down space to see the client run without interpolation.
 </Steps>
 
 <Callout type="info">
-If you want to run it over the internet, change the hardcoded `SERVER_IP` variable to the server's address.
+To run over the internet, change the hardcoded `SERVER_IP` variable to the server's address.
 </Callout>
 
 The code is located at `DependentExtensions\Ogre3DInterpDemo`.

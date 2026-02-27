@@ -3,15 +3,15 @@ title: "NAT Type Detection"
 description: "Determine your NAT type in advance to predict whether NAT punchthrough will succeed between two peers."
 ---
 
-### Determine in advance if you can complete NAT punchthrough
+## Predicting NAT punchthrough success
 
 [NAT punchthrough](/plugins/nat-punchthrough) success rate is based on what kind of algorithm the NAT uses.
 
 **Full cone NAT**: Accepts any datagrams to a port that has been previously used. Will accept the first datagram from the remote peer.
 
-**Address-Restricted cone NAT**: Accepts datagrams to a port as long as the datagram source IP address is a system we have already sent to. Will accept the first datagram if both systems send simultaneously. Otherwise, will accept the first datagram after we have sent one datagram.
+**Address-Restricted cone NAT**: Accepts datagrams to a port as long as the datagram source IP address is a system the NAT has already sent to. Accepts the first datagram if both systems send simultaneously. Otherwise, accepts the first datagram after one outbound datagram has been sent.
 
-**Port-Restricted cone NAT**: Same as address-restricted cone NAT, but we had to send to both the correct remote IP address and correct remote port. The same source address and port to a different destination uses the same mapping.
+**Port-Restricted cone NAT**: Same as address-restricted cone NAT, but the sender must target both the correct remote IP address and correct remote port. The same source address and port to a different destination uses the same mapping.
 
 **Symmetric NAT**: A different port is chosen for every remote destination. The same source address and port to a different destination uses a different mapping. Since the port will be different, the first external punchthrough attempt will fail. For this to work it requires port-prediction (`MAX_PREDICTIVE_PORT_RANGE>1`) and that the router chooses ports sequentially.
 
@@ -24,9 +24,9 @@ description: "Determine your NAT type in advance to predict whether NAT punchthr
 | *Port-Restricted cone NAT* | YES | YES | YES | NO |
 | *Symmetric NAT* | YES | YES | NO | NO |
 
-The `NatTypeDetection` plugins allow you to determine which type of NAT you have, and therefore if NAT punchthrough is likely to complete or not. This can be determined in advance of joining a game.
+The `NatTypeDetection` plugins allow you to determine which type of NAT you have, and therefore whether NAT punchthrough is likely to succeed. This can be determined in advance of joining a game.
 
-### NAT Type Detection algorithm
+## NAT Type Detection algorithm
 
 1.  Client opens two ports on the same IP address. In `NatTypeDetectionClient`, the RakNet socket is the first port, `c2` is the socket on the second port, created in `NatTypeDetectionClient::DetectNATType()`.
 2.  Server opens two ports on one IP address, and one port on three additional IP addresses. This is done in `NatTypeDetectionServer::Startup()`. The first port on the first IP address is the normal RakNet socket. The second port on the first IP address is `s1p2`. The other three addresses are bound to the sockets `s2p3`, `s3p4`, and `s4p5`.
@@ -38,7 +38,7 @@ The `NatTypeDetection` plugins allow you to determine which type of NAT you have
 8.  Client sends to another IP address on the server, from its first (already connected) port. If the IP address and port is the same, then the client uses the same external IP address and port to all connections from the same source address. This is port-restricted NAT.
 9.  Else symmetric NAT.
 
-### Client Implementation
+## Client Implementation
 
 <Steps>
 <Step>
@@ -98,7 +98,7 @@ Various utility functions are provided for this enumeration: `CanConnect()`, `NA
 </Step>
 </Steps>
 
-### Server Implementation
+## Server Implementation
 
 <Callout type="warn">
 The server must have enough external IP addresses for the detection algorithm to work (at least 4 IP addresses). The server must not be behind NAT.
@@ -152,6 +152,6 @@ Call `natTypeDetectionServer.Startup(ip2,ip3,ip4);` -- `ip2`, `ip3`, `ip4` must 
 </Step>
 </Steps>
 
-### Sample
+## Sample
 
 See the sample _Samples/NATCompleteClient_.

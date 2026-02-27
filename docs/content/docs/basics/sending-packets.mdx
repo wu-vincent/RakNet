@@ -3,13 +3,13 @@ title: "Sending Packets"
 description: "How to send packets using RakNet, including choosing data authority, reliability types, and ordering streams."
 ---
 
-### Step 1: Determine your data
+## Step 1: Determine your data
 
-As covered in [Creating Packets](/basics/creating-packets) find out what data you need and if you need a bitstream or a struct.
+As covered in [Creating Packets](/basics/creating-packets), determine what data you need and whether to use a bitstream or a struct.
 
-### Step 2: Determine the authority
+## Step 2: Determine the authority
 
-You generally want to send the trigger for an action, rather than sending the result of the action continually. Generally speaking, the source of a packet falls under three categories:
+Send the trigger for an action rather than continually sending the result. The source of a packet falls under three categories:
 
 - _From the function that does the action_
 - _From the trigger to the function that does the action_
@@ -20,47 +20,47 @@ Each method has advantages and disadvantages.
 From the function that does the action:
 
 **Example:**
-I have a function called ShootBullet which takes a variety of parameters such as type of shot, shot origin, and shot direction. Everytime ShootBullet is entered, I want to send a packet to tell the network that this happened.
+Suppose you have a function `ShootBullet` that takes parameters such as type of shot, shot origin, and shot direction. Every time `ShootBullet` is entered, you send a packet to tell the network that this happened.
 
 **Advantage:**
-This is easy to maintain. ShootBullet may be called from many different places (mouse input, keyboard input, AI) and I don't have to worry about keeping track of every place it gets sent from. Easy to implement into existing single player games.
+Easy to maintain. `ShootBullet` may be called from many different places (mouse input, keyboard input, AI) and you do not need to track every place it gets sent from. Easy to implement into existing single-player games.
 
 **Disadvantage:**
-Hard to program. If I use ShootBullet to initiate the packet, then what does the network call when it wants to perform this function? If ShootBullet initiates the packet, and the network calls ShootBullet, then another packet would get sent, creating a feedback loop. So I can either write another function, like DoShootBullet (sloppy), or pass a parameter to ShootBullet telling it whether or not to send a packet. I also have to consider authority. Can the client shoot the bullet immediately, or does the client need authorization from the server first to shoot the bullet? If it needs authorization then ShootBullet should send a packet and then return immediately, unless it was called by the network in which case it should not send the packet but do the action instead. The network may also need additional data that ShootBullet doesn't have, such as the number of bullets remaining. Sometimes I can get this from the context, sometimes not. It takes some practice and experience to code in this style and even I make bugs sometimes doing it.
+Hard to program. If `ShootBullet` initiates the packet, what does the network call when it wants to perform this function? If `ShootBullet` initiates the packet and the network calls `ShootBullet`, another packet gets sent, creating a feedback loop. You can either write another function like `DoShootBullet` (sloppy), or pass a parameter to `ShootBullet` indicating whether to send a packet. You also need to consider authority. Can the client shoot the bullet immediately, or does it need authorization from the server first? If authorization is required, `ShootBullet` should send a packet and return immediately -- unless the network called it, in which case it should skip the packet and perform the action instead. The network may also need additional data that `ShootBullet` does not have, such as the number of bullets remaining. Sometimes you can get this from context, sometimes not. It takes practice and experience to code in this style.
 
 From the trigger to the function that does the action:
 
 **Example:**
-Lets use the ShootBullet example again. However, this time rather than sending the packet from inside ShootBullet, I send the packet from trigger to ShootBullet. For example, when the user clicks the mouse, the AI decides to shoot, and the spacebar is pressed.
+Using the `ShootBullet` example again: this time, rather than sending the packet from inside `ShootBullet`, you send the packet from the trigger to `ShootBullet` -- for example, when the user clicks the mouse, the AI decides to shoot, or the spacebar is pressed.
 
 **Advantage:**
-I can call the ShootBullet function from the network without having to worry about feedback loops. I also generally have more information available to me from outside the function itself so it is easier to send this data if needed by the network.
+You can call the `ShootBullet` function from the network without worrying about feedback loops. You also generally have more information available from outside the function, making it easier to send additional data if the network needs it.
 
 **Disadvantage:**
-High maintenance. If I later add another way to shoot bullets I may forget to send a packet for it.
+High maintenance. If you later add another way to shoot bullets, you may forget to send a packet for it.
 
 From a data monitor:
 
 **Example:**
-Everytime a player's health gets to 0, send a packet. However, I don't do this where health actually gets to 0. I add it to some function that runs every frame, perhaps in the code that updates the player. When this bit of code sees that health is 0 for the first time, it sends a packet. It then records that this packet was sent and doesn't send it again.
+Every time a player's health reaches 0, send a packet. However, do not do this at the point where health actually reaches 0. Instead, add it to a function that runs every frame, perhaps in the player update code. When this code detects health at 0 for the first time, it sends a packet and records that the packet was sent so it is not sent again.
 
 **Advantage:**
-Very clean from a networking point of view. I don't have to worry about feedback and don't have to change the function that does the action. No maintenance unless someone else changes what I'm monitoring. Can implement network efficiency algorithms, such as 'Don't send this packet more than once every second'
+Very clean from a networking perspective. No feedback concerns, and no changes to the function that does the action. No maintenance unless someone changes the monitored data. Enables network efficiency algorithms such as "do not send this packet more than once per second."
 
 **Disadvantage:**
 Sloppy from a design point of view. Can only be used for certain types of data. Extra work to reset monitoring code when the object you are monitoring is reset. Requires that other programmers in the project know about it in case they decide to change how the data you are monitoring works.
 
-### Step 3: Determine what type of reliability and which ordering stream you need.
+## Step 3: Determine the reliability type and ordering stream
 
 `PacketPriority.h` contains the enums for these. You have four priorities to choose from: `IMMEDIATE_PRIORITY`, `HIGH_PRIORITY`, `MEDIUM_PRIORITY`, `LOW_PRIORITY`
 
 Each priority is sent approximately twice as often as the priority below it. So for example, if you send 2 messages `HIGH_PRIORITY` and at a similar time send another message `IMMEDIATE_PRIORITY`, the odds are the `IMMEDIATE_PRIORITY` will arrive first, although this is not guaranteed.
 
-Reliability types are covered in the [Detailed Implementation](/getting-started/detailed-implementation). You will usually want `RELIABLE_ORDERED` packets for your game. For all ordered types, you will want to pick an ordering stream, covered below.
+Reliability types are covered in the [Detailed Implementation](/getting-started/detailed-implementation). For most games, use `RELIABLE_ORDERED` packets. For all ordered types, pick an ordering stream as described below.
 
-### Step 4: Call the `Send` function in `RakPeerInterface.h`
+## Step 4: Call the `Send` function in `RakPeerInterface.h`
 
-The send method will not change your data and will make a copy, so from a programmer's point of view you are done here.
+The send method does not modify your data and makes a copy internally, so no further action is required on your part.
 
 **Ordering streams**
 
@@ -68,8 +68,8 @@ The send method will not change your data and will make a copy, so from a progra
 There are 32 ordering streams available for ordered packets and 32 ordering streams available for sequenced packets. You can think of the stream as a relative ordering stream, where all packets of the same ordering type are ordered relative to each other. Packets in different ordering streams are independent and will not wait on each other.
 </Callout>
 
-The easiest way to illustrate this is with an example. Suppose you want to order all chat messages, order all player movement packets, order all player firing packets, and sequence all remaining ammunition packets. You'd want chat messages to arrive in order, but wouldn't want a chat message to be held up because you didn't get a player movement packet that was sent earlier. Player movement packets have no relation to chat messages, so you don't care in what order they arrive. So you'd use different ordering streams for them, perhaps 0 for chat messages and 1 for player movement packets. However, lets say player firing packets had to be ordered relative to player movement packets because you wouldn't want the shot to originate from the wrong position. So you'd put player firing packets on the same stream as movement packets (stream 1), so that if a movement packet arrived later than a firing packet but was actually sent earlier the firing packet would not be given to you until the movement packet arrived.
+An example illustrates this best. Suppose you want to order all chat messages, order all player movement packets, order all player firing packets, and sequence all remaining ammunition packets. Chat messages should arrive in order, but a chat message should not be held up because a player movement packet sent earlier has not yet arrived. Player movement packets have no relation to chat messages, so their relative arrival order is irrelevant. Use different ordering streams for them -- perhaps 0 for chat messages and 1 for player movement packets. However, suppose player firing packets must be ordered relative to player movement packets because you do not want the shot to originate from the wrong position. Put player firing packets on the same stream as movement packets (stream 1), so that if a movement packet arrived later than a firing packet but was actually sent earlier, the firing packet is not delivered to you until the movement packet arrives.
 
-Packets in sequence drop older packets, so if you were to get packet 2, then 1, then 3, the end result would be you'd receive 2, 1 would get dropped, and you'd receive 3. This is useful for ammunition because ammunition only goes down. If you get an older packet it would raise the amount of ammunition you have so is wrong. Since sequenced packets are on a different set of streams than ordered packets you can use any stream number you want, such as 0. Just to be clear it would have no relation to chat messages because chat messages use the ordered stream set rather than the sequenced stream set.
+Sequenced packets drop older packets: if you receive packet 2, then 1, then 3, the result is that you receive 2, packet 1 is dropped, and you receive 3. This is useful for ammunition because ammunition only decreases. An older packet would incorrectly raise the ammunition count. Since sequenced packets use a different set of streams than ordered packets, you can use any stream number you want, such as 0. This has no relation to chat messages because chat messages use the ordered stream set rather than the sequenced stream set.
 
-Packets that are not ordered or sequenced at all, i.e. `UNRELIABLE` and `RELIABLE`, have no bearing on sequences. That parameter is ignored by the send function for those types of packets.
+Packets that are neither ordered nor sequenced (`UNRELIABLE` and `RELIABLE`) have no bearing on sequences. The ordering stream parameter is ignored by the send function for those packet types.

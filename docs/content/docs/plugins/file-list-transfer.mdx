@@ -3,9 +3,9 @@ title: "FileListTransfer"
 description: "Send and receive lists of files over the network using the FileListTransfer plugin and FileList utility class."
 ---
 
-### Send and receive file(s) more easily
+## Sending and receiving files over the network
 
-The `FileListTransfer` plugin is designed to send a list of files that have been read into the `FileList` class. It is similar to the [DirectoryDeltaTransfer](/plugins/directory-delta-transfer) plugin, except that it doesn't send deltas based on pre-existing files or actually write the files to disk. It solely handles the networking part of sending files.
+The `FileListTransfer` plugin sends a list of files that have been read into the `FileList` class. It is similar to the [DirectoryDeltaTransfer](/plugins/directory-delta-transfer) plugin, except that it does not send deltas based on pre-existing files or write the files to disk. It solely handles the networking part of sending files.
 
 <Steps>
 <Step>
@@ -28,7 +28,7 @@ Client: Encode the files you want to send into the `FileList` class.
 
 ### Send files (client)
 
-Client: Call `Send(...)` with your `FileList` class instance, a user-defined ID to identify this set of files, parameters to pass to `RakPeerInterface::Send()` or `TCPInterface::Send()`, and a boolean indicating if the files should be compressed or not. Compression is not very fast, so it's best to leave that off unless bandwidth is at a premium.
+Client: Call `Send(...)` with your `FileList` class instance, a user-defined ID to identify this set of files, parameters to pass to `RakPeerInterface::Send()` or `TCPInterface::Send()`, and a boolean indicating whether to compress the files. Compression is not fast, so leave it off unless bandwidth is at a premium.
 
 </Step>
 </Steps>

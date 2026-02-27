@@ -7,15 +7,15 @@ description: "Maintain a list of running game servers so players can discover an
 **Deprecated:** See Master Server 2 for the updated implementation.
 </Callout>
 
-A master game server is a server that maintains a list of running game servers. It's almost required these days because otherwise your players have no way to find other active games to connect to.
+A master game server is a server that maintains a list of running game servers. It is effectively required because otherwise your players have no way to find other active games to connect to.
 
-This is the sample implementation of a master game server using RakNet. There are many features you may wish to add on your own as this is just a shell.
+This is the sample implementation of a master game server using RakNet. There are many features you may wish to add on your own, as this is a minimal shell.
 
-The code is class-based, one class for the master server and another for the master client, which your game should use to talk to the master server. To include this functionality, just make one instantiation of `MasterServer` or `MasterClient` as appropriate.
+The code is class-based, one class for the master server and another for the master client, which your game uses to talk to the master server. To include this functionality, create one instantiation of `MasterServer` or `MasterClient` as appropriate.
 
-`MasterServer` will generally be a console application or a simple windowed application. To run it, just call `Initialize()` once, then `Update()` once per frame. You can also derive and implement `OnModifiedPacket()` if you want. `MasterServerMain` contains test code which is an excellent overview of the master server's capabilities. It's a good idea to host this on a domain name rather than a specific IP so you can change servers without forcing your players to update. For example, if your game's website is `mutantkillerfrogs.com` you can code the `MasterClient` to connect to this domain, which will be resolved to an IP.
+`MasterServer` is typically a console application or a simple windowed application. To run it, call `Initialize()` once, then `Update()` once per frame. You can also derive and implement `OnModifiedPacket()` as needed. `MasterServerMain` contains test code that provides an excellent overview of the master server's capabilities. Host this on a domain name rather than a specific IP so you can change servers without forcing your players to update. For example, if your game's website is `mutantkillerfrogs.com`, you can code the `MasterClient` to connect to this domain, which resolves to an IP.
 
-`MasterClient` is a client that game servers should include and manage. It would be a good idea to connect to a domain name rather than a specific IP (see above).
+`MasterClient` is a client that game servers include and manage. Connect to a domain name rather than a specific IP (see above).
 
 See `MasterClient.h`, `MasterServer.h`, and `MasterCommon.h` for full details on what the master server and master client can do.
 

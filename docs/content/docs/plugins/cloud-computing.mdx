@@ -3,9 +3,9 @@ title: "Cloud Computing"
 description: "Share client memory and events through a distributed server cloud for use cases like server browsers, in-game statistics, and cloud computing."
 ---
 
-### Client memory / events accessible through a server cloud
+## Client memory and events accessible through a server cloud
 
-Sometimes you want a large number of clients that are not connected and do not necessarily know about each other to share memory or to get notifications of events. For example:
+Sometimes a large number of clients that are not connected and do not necessarily know about each other need to share memory or receive notifications of events. For example:
 
 - A high performance server browser
 - In-game statistics for millions of players
@@ -14,7 +14,7 @@ Sometimes you want a large number of clients that are not connected and do not n
 The "Cloud" in `CloudServer` means that the system supports distributed servers. Any client can `Post()` to or `Get()` from any server. `Post()` operations can be subscribed to or `Get()` by other clients, regardless of what server that client is subscribed to. Servers can be added or removed at runtime, and the system will continue to work as expected. This allows the system to be scaled according to your player load, using your own servers or virtual servers such as [Rackspace](/basics/rackspace-interface).
 
 <Callout type="info">
-The design of the system assumes that all servers are connected in a fully connected mesh. You should authenticate other servers before adding them with `CloudServer::AddServer()`. The [TwoWayAuthentication](/plugins/two-way-authentication) and [ConnectionGraph2](/plugins/connection-graph) plugins can help with this. Or just run/modify the CloudServer sample, which does this already.
+The design of the system assumes that all servers are connected in a fully connected mesh. Authenticate other servers before adding them with `CloudServer::AddServer()`. The [TwoWayAuthentication](/plugins/two-way-authentication) and [ConnectionGraph2](/plugins/connection-graph) plugins can help with this. Alternatively, run or modify the CloudServer sample, which does this already.
 </Callout>
 
 The servers should be accessible by the internet through a static IP address, either without a router, or with the ports opened.
@@ -68,11 +68,11 @@ Assign a secret unique name for the application and use that as the `Cloud_DataK
 
 _In-game statistics_
 
-Suppose you want to track number of kills across all running games ever. Furthermore, the game has millions of players, so it is not viable to have each client individually hit a single database server. You also want to hide the database server from the public. The cloud system can help here, mirroring common statistics in memory. Each game client will `Post()` kills to the cloud. Each server in the cloud has a local client used to update the database. The local client uses the `Get()` function to query or subscribe to kill posts by the game clients. The local client will also periodically write to the database server. Similarly, the local client will read from the central database to get an updated kill count, and `Post()` this data to the cloud. Lastly, the game clients use the `Get()` function with the `specificSystems` parameter set to their own server to subscribe to the updated kill count.
+Suppose you want to track number of kills across all running games ever. The game has millions of players, so it is not viable to have each client individually hit a single database server. You also want to hide the database server from the public. The cloud system helps here by mirroring common statistics in memory. Each game client calls `Post()` to upload kills to the cloud. Each server in the cloud has a local client used to update the database. The local client uses `Get()` to query or subscribe to kill posts by the game clients, and periodically writes to the database server. Similarly, the local client reads from the central database to get an updated kill count and calls `Post()` to publish this data to the cloud. Game clients use `Get()` with the `specificSystems` parameter set to their own server to subscribe to the updated kill count.
 
 _Cloud computing_
 
-Sometimes you want to split a problem across many clients. For example, rendering lighting in your game levels. The cloud system can help by acting as a distributed event coordinator. Each client that wants to process part of the problem will call `CloudClient::Post()`, potentially with no data, to signal that it is ready to perform processing. The server will have a local client on `127.0.0.1` that contains the actual problem to solve. This local client will subscribe to ready signals. When the notification arrives, part of the problem is split off and `Post()` is used to assign the task. If the local client on the server gets the `Cloud_ClientCallback::OnDeletion()` call, then one of the processing clients lost the connection or crashed. The data being processed can be reassigned to another client.
+Suppose you want to split a problem across many clients -- for example, rendering lighting in your game levels. The cloud system acts as a distributed event coordinator. Each client that wants to process part of the problem calls `CloudClient::Post()`, potentially with no data, to signal that it is ready to perform processing. The server has a local client on `127.0.0.1` that contains the actual problem to solve. This local client subscribes to ready signals. When the notification arrives, part of the problem is split off and `Post()` assigns the task. If the local client on the server gets the `Cloud_ClientCallback::OnDeletion()` call, one of the processing clients lost the connection or crashed. The data being processed can then be reassigned to another client.
 
 **Distributed CloudServer Implementation**
 

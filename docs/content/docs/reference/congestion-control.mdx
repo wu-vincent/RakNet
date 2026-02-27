@@ -5,8 +5,6 @@ description: "Technical documentation of RakNet's UDT-based AIMD congestion cont
 
 _By Yunhong Gu, Aug. 2009_
 
-### Overview
-
 UDT uses an AIMD (additive increase multiplicative decrease) style congestion control algorithm. The algorithm controls the sending rate by tuning the packet sending period (i.e. how often to send out one packet). This period is presented by the symbol **SND** in the rest of this document. The sending rate is increased every 10 milliseconds according to Section 3 if and only if at least one acknowledgement (ACK) has been received since the last rate increase. The rate will be decreased according to Section 4 upon receiving a packet loss report (negative acknowledgement, or NAK). The rate may or may not be decreased on a timeout event, see Section 5.
 
 Note that the packet sending period is different from the inter-packet time. The former includes the time that is required to send out a packet, which can be significant in high speed networks. The latter does not include the packet sending time.
@@ -23,7 +21,7 @@ The congestion control includes two phases: it starts with a slow start phase an
 
 **Implementation Note 1.3**: The window control is independent of flow control. However, they can be enforced at the same place in the sender. The sender should stop sending once the number of the on-flight packets reaches either the congestion window size or the flow window size, until a new ACK comes.
 
-### Preliminary
+## Preliminary
 
 #### Assumptions
 
@@ -106,7 +104,7 @@ AS = 1 / average_interval
 
 The average packet arrival interval also requires a median filter, similar to that for link capacity. The thresholds are the same: 8x for upper threshold and 1/8 for lower threshold.
 
-### When an ACK comes
+## When an ACK comes
 
 <Callout type="info">
 **This event and only this event can trigger the increase of a packet sending rate (or reduce packet sending period SND) and the update of the size of the congestion window (CWND).**
@@ -145,7 +143,7 @@ CWND = AS * (RTT + SYN) + 16
 
 **During the regular phase, sending rate cannot be increased more than once during any SYN time.**
 
-### When an NAK comes
+## When an NAK comes
 
 #### Congestion Period
 
@@ -188,7 +186,7 @@ For the first NAK in the congestion period, UDT decreases its sending rate by 1/
 For the following NAKs, UDT uses a random number (`DecRandom`) to decide if the rate should be decreased or not.
 The sending rate should not be decreased by more than 1/2 in each congestion period, so UDT will stop decreasing after the 6th decrease (`DecCount <= 5`), as `1.125^6 = 2`.
 
-### Retransmission
+## Retransmission
 
 The expiration of the RTO timer can trigger the retransmission of packets and may decrease the sending rate as well. Note that RTO is NOT set per packet/message; it is a system timer and it is reset by every ACK and NAK.
 

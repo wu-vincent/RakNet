@@ -3,7 +3,7 @@ title: "Compiler Setup (Xcode)"
 description: "How to compile RakNet as a static library for Mac OS X and iOS using Xcode."
 ---
 
-Although RakNet is cross-platform, not all of the samples provided will compile/run on Mac OS X or iOS. Here we show you how to compile RakNet for Mac OS X and iOS, along with one of the samples for testing.
+Although RakNet is cross-platform, not all of the samples provided compile or run on Mac OS X or iOS. This page covers how to compile RakNet for Mac OS X and iOS, along with one of the samples for testing.
 
 ## Compiling as a static library for Mac OS X
 
@@ -83,7 +83,7 @@ You should get a successful compilation.
 
 ## Testing the static library
 
-For testing, we're going to use the sample _"Chat Example"_ provided with RakNet. You can find it in the _"Samples/Chat Example"_ folder. This sample has 2 source files, named _"Chat Example Server.cpp"_ and _"Chat Example Client.cpp"_. We are going to create two projects from those files (one project for the Server, and another for the Client).
+For testing, use the _"Chat Example"_ sample provided with RakNet, located in the _"Samples/Chat Example"_ folder. This sample has 2 source files: _"Chat Example Server.cpp"_ and _"Chat Example Client.cpp"_. The following steps create two projects from those files (one for the Server and another for the Client).
 
 Inside the folder where you have your workspace, create another folder named _Samples_, and copy _"Chat Example Server.cpp"_ and _"Chat Example Client.cpp"_ into that folder.
 
@@ -130,7 +130,7 @@ If your folder structure is exactly the same as the one used for this tutorial, 
 
 ### Link with the RakNet library
 
-Link _ChatExampleServer_ project with our RakNet static library, by going to **_Build Phases_**, section **_Link Binary With Libraries_**, clicking the **'+'** button and picking our RakNet library as shown:
+Link the _ChatExampleServer_ project with the RakNet static library by going to **_Build Phases_**, section **_Link Binary With Libraries_**, clicking the **'+'** button, and picking the RakNet library as shown:
 
 ![](/images/xcode_linkwithlibrary.jpg)
 
@@ -201,7 +201,7 @@ You should now have 2 products ready to run (ChatExampleClient and ChatExampleSe
 ## Compiling as a static library for iOS
 
 Compiling RakNet as a static library for iOS is essentially the same as for Mac OS X.
-You can create a new project for the iOS library, or you can just create another Target for your Mac OS X static library project, and change what SDK to use:
+You can create a new project for the iOS library, or create another Target for your Mac OS X static library project and change the SDK:
 
 ![](/images/xcode_changesdk.jpg)
 

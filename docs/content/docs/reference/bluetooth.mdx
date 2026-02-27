@@ -5,9 +5,9 @@ description: "Guide to integrating Bluetooth communication with RakNet across Wi
 
 ## Windows bluetooth integration
 
-### Can be supported in C using sockets and native libraries
+### Supported via C sockets and native libraries
 
-Bluetooth support is relatively easy to add.
+Adding Bluetooth support is straightforward.
 
 1.  Include `Ws2bth.h`
 2.  Modify socket calls in `SocketLayer.cpp`, refer to the MSDN Bluetooth programming documentation.
@@ -16,38 +16,38 @@ Bluetooth support is relatively easy to add.
 
 ## Linux bluetooth integration
 
-### Can be supported in C using the BlueZ library
+### Supported via the BlueZ library
 
-Linux uses the [BlueZ](http://www.bluez.org) library to interface with Bluetooth devices. There is a great resource on BlueZ at the MIT CSAIL BlueZ introduction page.
+Linux uses the [BlueZ](http://www.bluez.org) library to interface with Bluetooth devices. The MIT CSAIL BlueZ introduction page is a useful reference.
 
 ## Mac bluetooth integration
 
-### Indirectly send through IOBluetoothL2CAPChannelRef?
+### Indirect access via IOBluetoothL2CAPChannelRef
 
-Mac Bluetooth support is provided through the `IOBluetooth` library, written in Objective-C. C equivalents are available by suffixing `Ref` to the name, for example `IOBluetoothObjectRef` contains the interface in C. You are expected to create instances of `IOBluetoothL2CAPChannel` which represent a communication channel. L2CAP is an unreliable communications channel. The equivalent reliable communications channel uses RFCOMM.
+Mac Bluetooth support is provided through the `IOBluetooth` library, written in Objective-C. C equivalents are available by suffixing `Ref` to the name (e.g., `IOBluetoothObjectRef`). Create instances of `IOBluetoothL2CAPChannel` to represent a communication channel. L2CAP is an unreliable channel; the equivalent reliable channel uses RFCOMM.
 
 <Callout type="info">
-It doesn't appear to be possible to get direct socket access to Bluetooth on the Mac. However, it may be possible to use RakNet and `IOBluetoothL2CAPChannel` together by using RakNet's `SocketLayer::SetSocketLayerOverride()`, and thereby changing RakNet's `sendto` and `recvfrom` calls to use `IOBluetoothL2CAPChannel` instead.
+Direct socket access to Bluetooth on Mac does not appear to be possible. However, RakNet and `IOBluetoothL2CAPChannel` may work together by using `SocketLayer::SetSocketLayerOverride()` to redirect RakNet's `sendto` and `recvfrom` calls to `IOBluetoothL2CAPChannel`.
 </Callout>
 
 ## iPhone bluetooth integration
 
-### Bluetooth exposed through GameKit
+### Bluetooth exposed via GameKit
 
-The only interface for Bluetooth communications is through the higher level framework `GameKit`. `GameKit` uses Objective-C.
+The only Bluetooth communications interface is through the higher-level framework `GameKit`, which uses Objective-C.
 
-Similar to the Mac, it may be possible to indirectly send through RakNet using `SocketLayer::SetSocketLayerOverride()` through the `sendData:toPeers` method exposed by `GKSession`, and sending that data unreliably.
+As with the Mac, it may be possible to send through RakNet indirectly using `SocketLayer::SetSocketLayerOverride()` via the `sendData:toPeers` method exposed by `GKSession`, sending data unreliably.
 
 ## Android bluetooth integration
 
-### BlueZ used for underlying support, however not accessible to implementation
+### BlueZ used internally but not exposed to applications
 
 <Callout type="warn">
 Bluetooth does NOT appear to be exposed by the Android NDK. The NDK's headers do not include Bluetooth-specific headers, tokens, etc.
 </Callout>
 
--   Android uses BlueZ (w/ l2cap, etc.) as the underlying Bluetooth API (at the Linux OS level, underneath the Android Dalvik VM). All of the Android SDK (Java) Bluetooth classes end up using this API. The Android NDK cross-compiler provides access to many of the Android system's underlying libraries. However, Bluetooth does NOT appear to be exposed by the NDK. The NDK's headers do not include Bluetooth-specific headers, tokens, etc.
+-   Android uses BlueZ (with l2cap, etc.) as the underlying Bluetooth API at the Linux OS level, beneath the Dalvik VM. All Android SDK (Java) Bluetooth classes use this API. The NDK cross-compiler provides access to many of the system's underlying libraries, but Bluetooth is not exposed. The NDK headers do not include Bluetooth-specific headers or tokens.
 -   For a list of supported native libraries, see the Android NDK overview documentation.
--   There is indication in the forums and Stack Overflow that Bluetooth cannot be accessed directly via the NDK.
--   It looks like Bluetooth support via the NDK was possible at one point via a hack involving the HTC released BlueZ sources.
--   A possible work around is to use the Android SDK's Java Bluetooth libraries for discovery, establishing connections, etc. and delegating the actual communications streams to RakNet by passing the in/out streams to RakNet via a JNI bridge.
+-   Forum and Stack Overflow discussions indicate that Bluetooth cannot be accessed directly via the NDK.
+-   Bluetooth support via the NDK was reportedly possible at one point through a hack involving HTC-released BlueZ sources.
+-   A possible workaround: use the Android SDK's Java Bluetooth libraries for discovery and connection establishment, then delegate communication streams to RakNet by passing the in/out streams via a JNI bridge.

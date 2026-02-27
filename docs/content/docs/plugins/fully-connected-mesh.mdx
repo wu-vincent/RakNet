@@ -7,9 +7,9 @@ description: "Automatically connect all peers in a peer to peer game using the o
 **Deprecated:** This plugin has been superseded by [FullyConnectedMesh2](/plugins/fully-connected-mesh2), which adds verified join and host migration support.
 </Callout>
 
-### Automatically connect all peers in a peer to peer game
+## Automatically connect all peers in a peer to peer game
 
-The fully connected mesh implementation reads connection messages from RakNet and tries to connect to all systems on the network. On a new connection, it will tell the remote system of all systems it knows about. When that packet arrives, that system will then try to connect to all those systems in turn. You can optionally specify a password which you can use to allow certain systems to join the mesh and other systems to not do so.
+The fully connected mesh implementation reads connection messages from RakNet and attempts to connect to all systems on the network. On a new connection, it tells the remote system about all known systems. When that packet arrives, the remote system then attempts to connect to all those systems in turn. You can optionally specify a password to control which systems may join the mesh.
 
 <Callout type="info">
 The implementation requires that a `ConnectionGraph` plugin is also attached to the `RakPeer`.

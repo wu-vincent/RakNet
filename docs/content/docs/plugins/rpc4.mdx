@@ -3,7 +3,7 @@ title: "RPC4"
 description: "Call C functions on local and remote systems using the RPC4 plugin with string-based function registration."
 ---
 
-### Call C functions on local and remote systems
+## Calling C functions on local and remote systems
 
 `RPC4` contains mappings between string identifiers for functions, and a pointer to those functions.
 
@@ -56,6 +56,6 @@ bool CallBlocking(const char *uniqueID,
                   RakNet::BitStream *returnData);
 ```
 
-`Signal` will call all functions registered with that identifier using `RegisterSlot()`, including potentially on the same system. `CallBlocking()` will call a single function on a single system, registered with `RegisterBlockingFunction()`. `CallBlocking()` does not return until the remote system replies or the connection to that system is lost.
+`Signal` calls all functions registered with that identifier using `RegisterSlot()`, including potentially on the same system. `CallBlocking()` calls a single function on a single system, registered with `RegisterBlockingFunction()`. `CallBlocking()` does not return until the remote system replies or the connection to that system is lost.
 
 See _Samples/RPC4_ for a demonstration of this plugin.

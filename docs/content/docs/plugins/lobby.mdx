@@ -5,17 +5,15 @@ description: "Provide PostgreSQL-driven matchmaking with friends, rooms, emails,
 
 ## Lobby Server
 
-### Database support for friends, rooms, emails, ranking, and more
-
-The lobby server is a plugin that provides [PostgreSQL](http://www.postgresql.org/) database driven functionality for persistent game data and matchmaking. The lobby server itself does not require significant user interaction - instead, commands are carried out via the `LobbyClient_PC` class.
+The lobby server is a plugin that provides [PostgreSQL](http://www.postgresql.org/) database-driven functionality for persistent game data and matchmaking. The lobby server itself does not require significant user interaction -- instead, commands are carried out via the `LobbyClient_PC` class.
 
 The Lobby Server is split into two classes. `LobbyServer` itself solely provides networking functionality, calling interfaces to a generic database via virtual functions. `LobbyServerPostgreSQL`, found at `DependentExtensions\Lobby\LobbyServer_PostgreSQL\LobbyServer_PostgreSQL.h` is an implementation of `LobbyServer` that uses PostgreSQL to power the database.
 
-The basic class has functions to connect to the database, and create and destroy the basic required tables. The sample found at `Samples/LobbyServerTest/LobbyServerTest.cpp`, in the project `LobbyServer`, demonstrates this fairly clearly.
+The basic class has functions to connect to the database and to create and destroy the required tables. The sample at `Samples/LobbyServerTest/LobbyServerTest.cpp`, in the project `LobbyServer`, demonstrates this.
 
-One additional requirement is the use of the `Functor` class. A functor is a class in RakNet that implements a specific unit of functionality that is run asynchronously in a `FunctionThread`, another utility class that is part of RakNet. For the most part you don't have to care about this - however, there is one functor you do have to care about, which is the one to add new titles (games/applications) to the database.
+One additional requirement is the use of the `Functor` class. A functor is a class in RakNet that implements a specific unit of functionality that runs asynchronously in a `FunctionThread`, another utility class that is part of RakNet. The key functor to be aware of is the one that adds new titles (games/applications) to the database.
 
-How to do this is illustrated in the sample:
+The following sample illustrates this:
 
 ```cpp
 /// This functor asynchronously adds a title to the database. Full sample in
@@ -53,7 +51,7 @@ lobbyServer.PushFunctor(functor);
 
 This adds a title to the database with various properties indicating what types of operations are allowed for this title. See the class declaration `AddTitle_Data` in `DependentExtensions\Lobby\TitleValidationDBSpec.h` for a complete explanation of each parameter. Many other functors are available to perform various database operations. The directories found at `DependentExtensions/*_PostgreRepository` contain these implementations, while `DependentExtensions\Lobby\*DBSpec.h` contain the data members and documentation for this functionality. Test applications and demos for the various functors can be found in the projects `TitleValidationDB_PostgreSQLTest`, `RankingServerDB_PostgreSQLTest`, and `LobbyDB_PostgreSQLTest`.
 
-See `LobbyServerTest` for a console application that will run the `LobbyServer`.
+See `LobbyServerTest` for a console application that runs the `LobbyServer`.
 
 **Required files (using [PostgreSQL](http://www.postgresql.org/)):**
 
@@ -63,17 +61,13 @@ See `LobbyServerTest` for a console application that will run the `LobbyServer`.
 -   All source files in `DependentExtensions\Lobby\RankingServerDB_PostgreRepository`
 -   All source files in `DependentExtensions\Lobby\TitleValidationDB_PostgreRepository`
 -   All source files in `DependentExtensions\PostgreSQLInterface`
--   All source files in `Samples\LobbyServerTest`, should you want to use the default console application.
+-   All source files in `Samples\LobbyServerTest`, if you want to use the default console application.
 
 <Callout type="warn">
-**Dependencies:** PostgreSQL 8.2 or newer is required, installed at C:\\Program Files\\PostgreSQL\\8.2. Change the project property paths should your installation directory be different. Do not forget to check development tools in the PostgreSQL installer or the headers and libs will not be installed.
+**Dependencies:** PostgreSQL 8.2 or newer is required, installed at C:\\Program Files\\PostgreSQL\\8.2. Change the project property paths if your installation directory differs. Ensure you check development tools in the PostgreSQL installer, or the headers and libs will not be installed.
 </Callout>
 
 ## Lobby Client (PC)
-
-### User interface to the database
-
-**Quick start:**
 
 <Steps>
 <Step>
@@ -88,7 +82,7 @@ Attach the plugin to an instance of `RakPeerInterface`, and connect to the serve
 
 ### Set callback interface
 
-Call `SetCallbackInterface()` with a derived implementation of `LobbyClientInterfaceCB`. The general design of the system is that all calls are asynchronous, so each call will return its results (success or failure) to your registered callback.
+Call `SetCallbackInterface()` with a derived implementation of `LobbyClientInterfaceCB`. All calls are asynchronous, so each call returns its results (success or failure) to your registered callback.
 
 </Step>
 
@@ -104,7 +98,7 @@ If you do not already have an account, call `RegisterAccount` to create a user a
 
 ### Set title login ID
 
-Call `SetTitleLoginId()` with information identifying what title you are playing (can be done later if multiple games are allowed per lobby). This should have been hardcoded into the application, returned when the title was added to the server (as documented above).
+Call `SetTitleLoginId()` with information identifying what title you are playing (can be done later if multiple games are allowed per lobby). This value is hardcoded into the application, returned when the title was added to the server (as documented above).
 
 </Step>
 
@@ -112,7 +106,7 @@ Call `SetTitleLoginId()` with information identifying what title you are playing
 
 ### Log in
 
-Call `Login()` with the account you just created (or previously had stored). Wait for `LobbyClientInterfaceCB::Login_Result()` to indicate success. If you have friends, they should get `LobbyClientInterfaceCB::FriendStatus_Notify()` calls that you are online.
+Call `Login()` with the account you created (or previously stored). Wait for `LobbyClientInterfaceCB::Login_Result()` to indicate success. If you have friends, they receive `LobbyClientInterfaceCB::FriendStatus_Notify()` calls indicating you are online.
 
 </Step>
 
@@ -128,7 +122,7 @@ Use `DownloadRooms()` to get a list of all rooms, based on search filters, follo
 
 ### Start the game
 
-Once the game starts, you will get `LobbyClientInterfaceCB::StartGame_Notify()`. This will give you the IP addresses of all players, participants, who the moderator is, user handles, and other information relevant to playing the game. At this point you can disconnect from the lobby. If you do not, you are automatically sent back to the main lobby (outside of any room).
+Once the game starts, you receive `LobbyClientInterfaceCB::StartGame_Notify()`. This provides the IP addresses of all players, participants, who the moderator is, user handles, and other information relevant to playing the game. At this point you can disconnect from the lobby. If you do not, you are automatically sent back to the main lobby (outside of any room).
 
 </Step>
 </Steps>
@@ -138,4 +132,4 @@ For a complete list of functions, with documented parameters, see `DependentExte
 **Required files**
 
 -   All source files in `DependentExtensions\Lobby`, except for `LobbyServer.h` and `LobbyServer.cpp`
--   All source files in `Samples\LobbyClientTest`, should you want to use the default console application as a framework to base your own GUI implementation on.
+-   All source files in `Samples\LobbyClientTest`, if you want to use the default console application as a framework for your own GUI implementation.

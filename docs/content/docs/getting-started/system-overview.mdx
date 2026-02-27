@@ -3,7 +3,7 @@ title: "System Overview"
 description: "Architecture overview of RakNet's network communication, plugin system, and bandwidth overhead."
 ---
 
-### System Architecture
+## System Architecture
 
 RakNet has code that falls into three categories: network communication, plugins that use network communication, and general game functionality.
 
@@ -11,11 +11,11 @@ Network communication is provided by two user classes. `RakPeerInterface`, and `
 
 `TCPInterface` is a wrapper for TCP, and is used to communicate with external systems that are based on TCP. For example, the [EmailSender](/utilities/email-sender) class, used to report crashes from remote servers, interfaces with TCP. It is also supported by most plugin modules, and is suggested for file transfers such as with the autopatcher.
 
-Plugins in RakNet are classes that you 'attach' to an instance of `RakPeer` or `PacketizedTCP`. This uses [chain of responsibility](http://en.wikipedia.org/wiki/Chain-of-responsibility_pattern) design pattern. Attached plugins update automatically when `Receive()` is called on the attachee, and filter or inject messages into the network stream. Functionality includes host determination in a peer to peer environment, file transfers, NAT traversal, voice communication, remote procedure calls, and game object replication.
+Plugins in RakNet are classes that you attach to an instance of `RakPeer` or `PacketizedTCP`. This uses the [chain of responsibility](http://en.wikipedia.org/wiki/Chain-of-responsibility_pattern) design pattern. Attached plugins update automatically when `Receive()` is called on the attachee, and filter or inject messages into the network stream. Functionality includes host determination in a peer to peer environment, file transfers, NAT traversal, voice communication, remote procedure calls, and game object replication.
 
 General game functionality includes the master server (note: the hosted service at masterserver2.raknet.com is now defunct), crash reporting, email sending through Gmail pop servers, and an SQL logging server.
 
-### RakPeer internal architecture
+## RakPeer Internal Architecture
 
 **RakPeer.h** provides the base functionality for UDP communication, and it is expected that most applications will use `RakPeer` as opposed to TCP. On start, `RakPeer` starts two threads - one thread to wait for incoming datagrams, and another to perform periodic updates, such as determining lost connections, or pings. The user specifies the maximum number of connections and an array of `RemoteSystem` structures is internally allocated to this size. Each connection or connection attempt is assigned to a `RemoteSystem` structure, which contains a class to manage congestion control between the two systems. Connections are identified by `SystemAddress` or `RakNetGUID`, the latter of which is randomly generated and unique per instance of `RakPeer`.
 
@@ -31,7 +31,7 @@ Incoming datagrams are checked for the byte sequence that indicates if the sende
 
 Connected messages are first processed by `RakPeer`. This is currently only used for periodic pings and to detect lost connections should the user not send data within a given threshold. All other messages are processed by plugins, or returned to the user. Calling `RakPeer::Receive()` ticks all plugins' update functions one time, and returns one message. Messages returned to the user are returned from `RakPeer::Receive()`, one message per call. It is necessary to call `Receive()` in a loop to get all messages, until no further messages are returned.
 
-### Other systems
+## Other Systems
 
 The **`NetworkIDObject`** class provides the ability for systems to refer to common objects and is used by object member remote function calls. Each object has a 64 bit random number assigned and can be used to lookup pointers through a hash.
 

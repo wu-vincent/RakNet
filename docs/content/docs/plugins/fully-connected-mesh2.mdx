@@ -3,9 +3,9 @@ title: "Fully Connected Mesh 2"
 description: "Consistently join a fully connected mesh topology with automatic host determination and migration using FullyConnectedMesh2."
 ---
 
-### Consistently join a fully connected mesh. Automatically determine who is host.
+## Consistent mesh joining with automatic host determination
 
-`FullyConnectedMesh2` solves two problems with peer to peer games. First, how to connect to a list of systems maintained by the session host, with correct behavior on a failed connection. Secondly, to determine and automatically migrate a session host. A session host is needed for authoritative behavior, for example the host may send out game end notifications or may control the AI.
+`FullyConnectedMesh2` solves two problems with peer-to-peer games. First, how to connect to a list of systems maintained by the session host, with correct behavior on a failed connection. Second, how to determine and automatically migrate a session host. A session host is needed for authoritative behavior -- for example, the host may send game-end notifications or control AI.
 
 **Properly joining a fully connected mesh:**
 
@@ -115,12 +115,12 @@ Do host migration if necessary when you get `ID_FCM2_NEW_HOST` during gameplay.
 </Step>
 </Steps>
 
-Host calculation starts automatically once one or more remote connections have been added with `AddParticipant()`. Until host calculation has completed, `GetHostSystem()` will return your own guid and `GetConnectedHost()` will return `UNASSIGNED_RAKNET_GUID`. You will get `ID_FCM2_NEW_HOST` as soon as the host is known. The host will generally be whichever system has been running the longest of all systems added with `AddParticipant()`.
+Host calculation starts automatically once one or more remote connections have been added with `AddParticipant()`. Until host calculation completes, `GetHostSystem()` returns your own GUID and `GetConnectedHost()` returns `UNASSIGNED_RAKNET_GUID`. You receive `ID_FCM2_NEW_HOST` as soon as the host is known. The host is generally whichever system has been running the longest of all systems added with `AddParticipant()`.
 
 `GetParticipantList()` and `GetHostOrder()` can be used to find out which systems were added with `AddParticipant()`.
 
 <Callout type="info">
-If the game does not immediately start networked, you should call `ResetHostCalculation()` to reinitialize the host timer when network play is now relevant. Otherwise, a user could play a game in single player, connect to a network session, and then be considered the host because his system was running the longest, although he was the last to join the network session. A good time to call `ResetHostCalculation()` is just before attempting to join a network room or lobby.
+If the game does not immediately start networked, call `ResetHostCalculation()` to reinitialize the host timer when network play becomes relevant. Otherwise, a user could play in single player, connect to a network session, and then be considered the host because their system was running the longest, even though they were the last to join. Call `ResetHostCalculation()` before attempting to join a network room or lobby.
 </Callout>
 
 **Reading ID_FCM2_NEW_HOST:**

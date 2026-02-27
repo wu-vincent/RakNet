@@ -3,7 +3,7 @@ title: "Compiler Setup"
 description: "How to set up RakNet in your project using source files, a DLL, or a static library."
 ---
 
-RakNet includes the source, along with the projects to make the DLL and static lib, and samples. It no longer includes pre-built DLLs or libraries - this is due to incompatibilities across compilers. We recommend using the source directly, however you can also use the DLL or static lib projects to build your own.
+RakNet includes the source, along with the projects to make the DLL and static lib, and samples. It no longer includes pre-built DLLs or libraries due to incompatibilities across compilers. Using the source directly is recommended, but you can also use the DLL or static lib projects to build your own.
 
 Projects to build the DLL/Static Lib, and the samples, are provided for Microsoft Visual Studio .Net 2003 and 2005. Users of other compilers will have to make their own projects.
 
@@ -76,7 +76,7 @@ Optionally set your [preprocessor directives.](/basics/preprocessor-directives)
 
 ### Create a DLL project
 
-I'll assume you know how to do this. In MSVC 7 you would create an empty project, then under Application Settings you check DLL and empty project.
+In MSVC 7, create an empty project, then under Application Settings check DLL and empty project.
 
 </Step>
 
@@ -160,11 +160,11 @@ Then hit F7 or the equivalent to build your DLL and Lib.
 
 ### Game Setup
 
-1.  Copy the DLL you just created to your game in the same directory as the exe. The lib can be in any directory you want.
+1.  Copy the DLL you created to your game directory, alongside the exe. The lib can be in any directory.
 2.  Add the .lib to your project
 3.  Add all header files from /Source to your project
 
-If you want to jump right in, refer to the [Basic code tutorial](/getting-started/tutorial).
+To get started immediately, refer to the [Basic code tutorial](/getting-started/tutorial).
 For more detail, refer to [Detailed Implementation](/getting-started/detailed-implementation).
 </Tab>
 <Tab value="Static Lib">

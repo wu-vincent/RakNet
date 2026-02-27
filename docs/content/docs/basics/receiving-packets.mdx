@@ -3,9 +3,9 @@ title: "Receiving Packets"
 description: "How to receive and process incoming network packets by identifying their type and decoding data from structs or bitstreams."
 ---
 
-### Receiving a packet
+## Receiving a packet
 
-When a packet comes in on the network, i.e. `Receive` returns non-zero, there are three steps involved in handling it:
+When a packet arrives on the network (i.e., `Receive` returns non-zero), there are three steps to handle it:
 
 1. Determine the packet type. This is returned by the following code
 
@@ -21,7 +21,7 @@ unsigned char GetPacketIdentifier(Packet *p) {
 
 2. Process the data
 
-### Receiving a structure
+## Receiving a structure
 
 If you originally sent a structure, you can cast it back as follows:
 
@@ -48,14 +48,14 @@ void DoMyPacketHandler(Packet *packet) {
 <Callout type="info">
 **Usability notes:**
 
--   We cast the packet data to a pointer to the appropriate type of struct to avoid the copy overhead that would occur if we were to actually create the struct. However, in this case if we change any of the data in the struct it will change the packet as well. This may or may not be what we want. Take care when relaying messages as a server, as this can cause unintended bugs.
--   The assert, while not necessary, is very useful for catching difficult to find bugs if we assign the wrong identifier or the wrong size when sending the packet.
--   The if statement is useful just in case someone manages to send a packet of invalid size or type in order to try to crash the client or server. This has never happened in practice, but it can't hurt to be safe.
+-   The packet data is cast to a pointer to the appropriate struct type to avoid copy overhead. However, modifying the struct data also modifies the packet. Take care when relaying messages as a server, as this can cause unintended bugs.
+-   The assert, while not necessary, is useful for catching hard-to-find bugs from assigning the wrong identifier or wrong size when sending the packet.
+-   The if statement guards against packets of invalid size or type that could crash the client or server.
 </Callout>
 
-### Receiving a bitstream
+## Receiving a bitstream
 
-If you originally sent a bitstream, we create a bitstream to unparse the data in the same order we wrote it. We create a bitstream, using the data and the length of the packet. We then use the Read functions where we formerly used the Write functions, the ReadCompressed functions where we formerly used WriteCompressed, and follow the same logical branching if we wrote any data conditionally. This is all shown in the following example which would read in the data for the mine we created in [creating packets](/basics/creating-packets).
+If you originally sent a bitstream, create a bitstream to unparse the data in the same order it was written. Construct a bitstream using the packet data and length. Use the `Read` functions where you formerly used `Write`, `ReadCompressed` where you formerly used `WriteCompressed`, and follow the same logical branching if any data was written conditionally. The following example reads the data for the mine created in [Creating Packets](/basics/creating-packets).
 
 ```cpp
 void DoMyPacketHandler(Packet *packet) {
@@ -82,4 +82,4 @@ void DoMyPacketHandler(Packet *packet) {
 }
 ```
 
-3. Deallocate the packet by passing it to `DeallocatePacket(Packet *packet)` of the `RakPeerInterface` instance that you got it from.
+3. Deallocate the packet by passing it to `DeallocatePacket(Packet *packet)` on the same `RakPeerInterface` instance that returned it.

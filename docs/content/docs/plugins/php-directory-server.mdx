@@ -7,16 +7,16 @@ description: "List game servers using a shared PHP webhost as a lightweight alte
 **Deprecated:** This system has been supplanted by `PHPDirectoryServer2`. See the updated implementation in the samples.
 </Callout>
 
-### Use a shared webhost to list games
+## Using a Shared Webhost to List Games
 
-The [Lightweight Database](/plugins/lightweight-database) plugin is powerful, but requires an instance of RakNet running on a dedicated server. In some cases this is more than is needed and the burden of running a dedicated server is undesirable. For these instances, RakNet provides `DirectoryServer.php`, found under `Samples\PHPDirectoryServer`.
+The [Lightweight Database](/plugins/lightweight-database) plugin is powerful but requires a dedicated RakNet server instance. When running a dedicated server is unnecessary or undesirable, RakNet provides `DirectoryServer.php`, found under `Samples\PHPDirectoryServer`.
 
 <Steps>
 <Step>
 
 ### Upload the PHP script
 
-Upload `Samples\PHPDirectoryServer\DirectoryServer.php` to your PHP capable webhost (which is any standard shared webhost). Go to your newly uploaded webpage, click the reveal button, and enter a password and other settings if desired.
+Upload `Samples\PHPDirectoryServer\DirectoryServer.php` to a PHP-capable webhost (any standard shared webhost). Navigate to the uploaded webpage, click the reveal button, and enter a password and other settings as needed.
 
 </Step>
 
@@ -61,7 +61,7 @@ PHPDirectoryServer phpDirectoryServer(httpConnection, "/raknet/DirectoryServer.p
 
 ### Set fields and upload/download
 
-You can then set columns, upload your table, or download the existing tables:
+Set columns, upload your table, or download existing tables:
 
 ```cpp
 // Set fields with columnname / value
@@ -78,7 +78,7 @@ phpDirectoryServer.DownloadTable("");
 </Step>
 </Steps>
 
-To update the system, you should pass packets from `TCPInterface` to both interfaces and also call `Update()`. This is complicated by the fact that TCP packets may not contain an entire webpage response, the webpage may contain error codes, and not all messages from the webpage are necessarily relevant to our directory server. The sample demonstrates how to do this. The following is an abbreviated excerpt:
+To update the system, pass packets from `TCPInterface` to both interfaces and call `Update()`. TCP packets may not contain a complete webpage response, the webpage may return error codes, and not all messages from the webpage are relevant to the directory server. The sample demonstrates the full approach. The following is an abbreviated excerpt:
 
 ```cpp
 Packet *packet = tcp.Receive();
@@ -111,9 +111,9 @@ httpConnection.Update();
 phpDirectoryServer.Update();
 ```
 
-### Reserved columns
+## Reserved Columns
 
-Certain columns are reserved and returned to you in a query. These column names are not allowed for use by the end-user, and will assert if attempted:
+Certain columns are reserved and returned in query results. These column names cannot be used by the end-user and trigger an assertion if attempted:
 
 | Constant | Description |
 |---|---|
@@ -124,10 +124,10 @@ Certain columns are reserved and returned to you in a query. These column names 
 | `__PHP_DIRECTORY_SERVER_PASSWORD` | Password passed to the PHP server (internal) |
 | `__GAME_LISTING_TIMEOUT` | How long to list this server before auto expiring (internal) |
 
-`__SYSTEM_ADDRESS` will also be returned indicating the external IP that was used to upload to the webpage.
+`__SYSTEM_ADDRESS` is also returned, indicating the external IP used to upload to the webpage.
 
 <Callout type="info">
-Due to technical limitations only one upload can be processed at a time. This is not a problem if your server is only hosting one game. Calling `PHPDirectoryServer::UploadTable()` while an upload is pending will overwrite the prior upload. You can perform another upload when `HTTPConnectionIsBusy()` returns `false`.
+Due to technical limitations, only one upload can be processed at a time. This is not an issue if your server hosts a single game. Calling `PHPDirectoryServer::UploadTable()` while an upload is pending overwrites the prior upload. Perform another upload only when `HTTPConnectionIsBusy()` returns `false`.
 </Callout>
 
 ## See Also

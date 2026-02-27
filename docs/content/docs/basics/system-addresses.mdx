@@ -3,11 +3,11 @@ title: "System Addresses"
 description: "Understanding SystemAddress structs for identifying networked systems by IP and port, and when to prefer RakNetGUID instead."
 ---
 
-### What are `SystemAddress`es?
+## What are `SystemAddress`es?
 
-`SystemAddress`es are structs containing the binary IP address and port of a system on the network. The structure is defined in the file `RakNetTypes.h`. Here's some cases where you'll need `SystemAddress`:
+`SystemAddress`es are structs containing the binary IP address and port of a system on the network. The structure is defined in `RakNetTypes.h`. Here are cases where you need `SystemAddress`:
 
--   The server got a message from a particular client and wants to relay to all other clients. You would specify the sender `SystemAddress` (given in the `Packet::systemAddress` field) in the `Send` function with broadcast as true. Some item in the gameworld, such as a mine, belongs to a particular player and you want to give the appropriate person points for the kill.
+-   The server received a message from a particular client and wants to relay it to all other clients. Specify the sender `SystemAddress` (from the `Packet::systemAddress` field) in the `Send` function with broadcast set to true. An item in the game world, such as a mine, belongs to a particular player and you want to give the appropriate person points for the kill.
 -   You want to send a message to any peer on a peer to peer network.
 
 **Utility functions:**
@@ -22,8 +22,8 @@ description: "Understanding SystemAddress structs for identifying networked syst
 
 2. When using the client server model, clients DO NOT know the `SystemAddress` of who originally sent the packet. As far as a client is concerned all packets originate with the server. Therefore if it is necessary that a client know the `SystemAddress` of another client you must add a `SystemAddress` field into the data struct. You can either have the sending client fill this field in, or you can have the server fill it out when it gets the packet from the original sender.
 
-3. The system address for a particular instance of `RakPeer` won't change over the course of the connection, with the exception of the [Router2](/plugins/router2) plugin. However, it is not necessarily the same to all other systems (such as if that system were behind a symmetric NAT). For a unique identifier, use `rakNetGUID`, found in the `Packet` structure. `RakPeerInterface` has functions to operate on `RakNetGUID`.
+3. The system address for a particular instance of `RakPeer` does not change over the course of the connection, with the exception of the [Router2](/plugins/router2) plugin. However, it is not necessarily the same as seen by all other systems (such as when behind a symmetric NAT). For a unique identifier, use `rakNetGUID`, found in the `Packet` structure. `RakPeerInterface` has functions to operate on `RakNetGUID`.
 
 <Callout type="info">
-It is preferred that you refer to remote systems by `RakNetGUID`, instead of `SystemAddress`. `RakNetGUID` is a unique identifier for an instance of `RakPeer`, while `SystemAddress` is not. And it is necessary to exclusively use `RakNetGUID` if you plan to use the [Router2](/plugins/router2) plugin.
+Prefer referring to remote systems by `RakNetGUID` instead of `SystemAddress`. `RakNetGUID` is a unique identifier for an instance of `RakPeer`, while `SystemAddress` is not. You must use `RakNetGUID` exclusively if you plan to use the [Router2](/plugins/router2) plugin.
 </Callout>

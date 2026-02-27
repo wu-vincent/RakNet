@@ -3,18 +3,18 @@ title: "Timestamping"
 description: "How RakNet automatically adjusts timestamps so events on different computers can be compared in the same timeframe."
 ---
 
-### How to refer to events on different computers in the same timeframe
+## Referring to events on different computers in the same timeframe
 
-A timestamp is nothing more than the local system time. Unfortunately, every system has a different local system time. If you were simply to send the system time over the network you'd get the value of the other machine's clock which tells you nothing about when the event happened because you only know your own system time, not anyone else's. The timestamping feature of RakNet allows times to be read relative to your own system, allowing you to concentrate on the game and not worry about the local times of other systems. It does this transparently and automatically, and gives a fairly high degree of precision even with fluctuating pings.
+A timestamp is the local system time. Every system has a different local system time. If you send the system time over the network, you get the value of the other machine's clock -- which tells you nothing about when the event happened, since you only know your own system time. RakNet's timestamping feature converts times to be relative to your own system, so you can focus on the game and not worry about remote system clocks. It does this transparently and automatically, with a high degree of precision even with fluctuating pings.
 
 ![](/images/timestamp.jpg)
 
-Suppose an event were to happen on a client where the local system time on that client is 2000, the local system time on the server was 12000, and the local system time on another client was 8000. If the packet were not time-stamp adjusted the server would get the time 2000, or 10000 ms ago when actually it happened ping / 2 ms ago, which is probably around 100. Likewise, the client would get 2000 which would be 6000 ms ago from its own system time from 8000.
+Suppose an event happens on a client where the local system time is 2000, the server's local system time is 12000, and another client's local system time is 8000. Without timestamp adjustment, the server receives the time 2000, which is 10000 ms ago from its perspective -- when the event actually happened roughly ping/2 ms ago (probably around 100 ms). Similarly, the other client receives 2000, which is 6000 ms ago from its own system time of 8000.
 
-Fortunately, RakNet deals with this for you, compensating for both system time and ping. Using relative time, the server would see that the event happened roughly to ping/2 ms ago, and the other client would see the event happened roughly ping/2 ms (relative to each client) ago. To make a long story short, you can just use timestamps as long as you encode your packets correctly and don't have to worry about it otherwise.
+RakNet handles this for you, compensating for both system time and ping. Using relative time, the server sees that the event happened roughly ping/2 ms ago, and the other client sees the event happened roughly ping/2 ms (relative to each client) ago. In short, you can use timestamps directly as long as you encode your packets correctly.
 
 See [Creating Packets](/basics/creating-packets) for instructions on how to encode timestamps into your packets.
 
 <Callout type="info">
-It's recommended that you use the time functions found in `GetTime.h` to get your system time as this is a high resolution timer. You can also use the Windows function `timeGetTime()`, but this is less accurate. Timestamping also depends on automatic pinging, so you will need to call the function `SetOccasionalPing` for it to maintain accuracy.
+Use the time functions in `GetTime.h` for your system time, as this is a high-resolution timer. You can also use the Windows function `timeGetTime()`, but it is less accurate. Timestamping depends on automatic pinging, so call `SetOccasionalPing` to maintain accuracy.
 </Callout>

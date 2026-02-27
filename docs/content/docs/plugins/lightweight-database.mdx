@@ -11,17 +11,17 @@ description: "Implement a simple master game server listing using in-memory tabl
 
 ![Directory Server Listing](/images/DirectoryServerListing.jpg)
 
-There are just two classes you can use. One for the master game server (`LightweightDatabaseServer`), and one for the client (`LightweightDatabaseClient`), which your game should use to talk to the master game server. To include this functionality, just make one instantiation of `LightweightDatabaseServer` or `LightweightDatabaseClient` as appropriate.
+There are two classes you can use. One for the master game server (`LightweightDatabaseServer`), and one for the client (`LightweightDatabaseClient`), which your game uses to talk to the master game server. To include this functionality, create one instantiation of `LightweightDatabaseServer` or `LightweightDatabaseClient` as appropriate.
 
-Your master game server (which uses `LightweightDatabaseServer`) will generally be a console application or a simple windowed application, whose only purpose is to wait for game servers to inform they are available, or to reply to player systems who want to know what game servers are available.
+Your master game server (which uses `LightweightDatabaseServer`) is typically a console application or a simple windowed application, whose only purpose is to wait for game servers to report availability, or to reply to player systems that want to know what game servers are available.
 
-`LightweightDatabaseServer` uses in-memory tables to manage the game servers. Just like in a real database, you can define what fields you want in a table. Check the documentation for `LightweightDatabaseServer::AddTable` and `LightweightDatabaseServer::GetTable`. Those functions return a table to which you can add columns (fields).
+`LightweightDatabaseServer` uses in-memory tables to manage the game servers. As with a real database, you can define what fields you want in a table. See the documentation for `LightweightDatabaseServer::AddTable` and `LightweightDatabaseServer::GetTable`. Those functions return a table to which you can add columns (fields).
 
-It's a good idea to host your master game server on a domain name rather than a specific IP so you can change servers without forcing your players to update. For example, if your game's website is `mutantkillerfrogs.com` you can code the `MasterClient` to connect to this domain, which will be resolved to an IP.
+Host your master game server on a domain name rather than a specific IP so you can change servers without forcing your players to update. For example, if your game's website is `mutantkillerfrogs.com`, you can code the `MasterClient` to connect to this domain, which resolves to an IP.
 
-`LightweightDatabaseClient` is a client that game servers should use to inform the master game server they are available for use. That is done by connecting to the master game server and adding a new row in the master game server's table. Use `LightweightDatabaseClient::UpdateRow` for that.
+`LightweightDatabaseClient` is a client that game servers use to inform the master game server they are available. Connect to the master game server and add a new row in its table via `LightweightDatabaseClient::UpdateRow`.
 
-Note you'll also use `LightweightDatabaseClient` for the player system to connect to the master game server, but just for queries to find available game servers.
+Note that you also use `LightweightDatabaseClient` for the player system to connect to the master game server, but only for queries to find available game servers.
 
 See `Samples\LightweightDatabase` for full details on how to use those classes.
 

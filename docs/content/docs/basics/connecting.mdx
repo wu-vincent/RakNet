@@ -3,9 +3,9 @@ title: "Connecting"
 description: "How to discover and connect to remote systems using direct IP, LAN broadcast, cloud plugins, lobby servers, or master servers."
 ---
 
-### Find who to connect to
+## Finding systems to connect to
 
-There are 5 ways to find other systems to connect to:
+There are five ways to find other systems to connect to:
 
 1.  Direct IP entry (you already know it)
 2.  LAN Broadcast
@@ -15,7 +15,7 @@ There are 5 ways to find other systems to connect to:
 
 #### Direct IP Entry
 
-The simplest and easiest way from a coding perspective is to either hardcode an IP address or domain name, or present a GUI to the user asking them to enter the IP address of the other system they would like to connect to. Most of the samples use this method. Back when networked games first came out, this was the only option available.
+The simplest approach from a coding perspective is to either hardcode an IP address or domain name, or present a GUI for the user to enter the IP address of the remote system. Most of the samples use this method.
 
 Advantages:
 
@@ -39,7 +39,7 @@ In `RakPeerInterface.h`, the `Ping` function can do this, as follows
 rakPeer->Ping("255.255.255.255", REMOTE_GAME_PORT, onlyReplyOnAcceptingConnections);
 ```
 
-`REMOTE_GAME_PORT` should be whatever port the other system is running the application you care about on. `onlyReplyOnAcceptingConnections` is a boolean indicating if the other system should reply, even if they have no connections available for you to connect to.
+`REMOTE_GAME_PORT` is the port the remote system is running the target application on. `onlyReplyOnAcceptingConnections` is a boolean indicating whether the other system should reply even if it has no connections available.
 
 Open systems will reply with `ID_UNCONNECTED_PONG`. From the sample:
 
@@ -54,7 +54,7 @@ if (p->data[0] == ID_UNCONNECTED_PONG) {
 }
 ```
 
-In order to send custom user data, call `RakPeer::SetOfflinePingResponse(customUserData, lengthInBytes)`; RakNet will copy the data passed to it and return this data appended to `ID_UNCONNECTED_PONG`.
+To send custom user data, call `RakPeer::SetOfflinePingResponse(customUserData, lengthInBytes)`. RakNet copies the data and returns it appended to `ID_UNCONNECTED_PONG`.
 
 Note: there is a hardcoded define `MAX_OFFLINE_DATA_LENGTH` in `RakPeer.cpp` limiting the length of your custom user data. Change this value and recompile if your data is larger than this define.
 
@@ -65,7 +65,7 @@ Advantages:
 
 Disadvantages:
 
--   Won't work for the general internet
+-   Does not work over the general internet
 -   Not as flexible as the lightweight database plugin
 
 #### CloudServer/CloudClient
@@ -84,7 +84,7 @@ Disadvantages:
 
 #### Lobby / RoomsPlugin
 
-If you are not using a service that already provides a lobby, on the PC we provide database code that has similar functionality. The lobby server provides a database driven service for players to interact and start games. It provides features such as friends, matchmaking, emails, ranking, instant messaging, quick match, rooms, and room moderation.
+If you are not using a service that already provides a lobby, RakNet includes database code with similar functionality on PC. The lobby server provides a database-driven service for players to interact and start games, including features such as friends, matchmaking, emails, ranking, instant messaging, quick match, rooms, and room moderation.
 
 See the samples Lobby2Server_PGSQL and Lobby2Client for a demonstration of how to use this feature.
 
@@ -114,8 +114,8 @@ Disadvantages:
 
 -   Special licensing if you need the server sources
 
-### Initiate connection attempt
-Once you know the IP address of the remote system(s) to connect to, use `RakPeerInterface::Connect()` to initiate an asynchronous connection attempt. The parameters to connect are:
+## Initiating a connection attempt
+Once you know the IP address of the remote system, call `RakPeerInterface::Connect()` to initiate an asynchronous connection attempt. The parameters are:
 
 ```cpp
 ConnectionAttemptResult Connect(const char *host,
@@ -133,23 +133,23 @@ ConnectionAttemptResult Connect(const char *host,
 -   `remotePort` is the port that the remote system is listening on, which you passed to the `Startup()` function
 -   `passwordData` is optional binary data to send with the connection request. If this data does not match what was passed to `RakPeerInterface::SetPassword()`, the remote system will reply with `ID_INVALID_PASSWORD`.
 -   `passwordDataLength` is the length, in bytes, of `passwordData`
--   `publicKey` is the public key parameter that was passed to `InitializeSecurity()` on the remote system. If you don't use security, pass `0`.
+-   `publicKey` is the public key parameter passed to `InitializeSecurity()` on the remote system. If you do not use security, pass `0`.
 -   `connectionSocketIndex` is the index into the array of socket descriptors passed to `socketDescriptors` in `RakPeer::Startup()` to determine the one to send on.
--   `sendConnectionAttemptCount` is how many datagrams to send before giving up as unable to connect. This is also used for MTU detection, with 3 different MTU sizes. So the default of 12 means send each MTU size 4 times, which should be sufficient to tolerate any reasonable packet loss. Lower values mean that `ID_CONNECTION_ATTEMPT_FAILED` would be returned to you faster.
+-   `sendConnectionAttemptCount` is how many datagrams to send before giving up. This is also used for MTU detection, with 3 different MTU sizes. The default of 12 means each MTU size is sent 4 times, which is sufficient to tolerate reasonable packet loss. Lower values cause `ID_CONNECTION_ATTEMPT_FAILED` to be returned faster.
 -   `timeBetweenSendConnectionAttemptsMS` is how many milliseconds to wait before sending another connection attempt. A good value is 4 times the expected ping.
 -   `timeoutTime` is how many milliseconds to wait, for this particular connection, before dropping the remote system if a message cannot be delivered. The default value of `0` means use the global value from `SetTimeoutTime()`.
 
-`Connect()` will return `CONNECTION_ATTEMPT_STARTED` for a successful attempt, something else on failure.
+`Connect()` returns `CONNECTION_ATTEMPT_STARTED` on a successful attempt, or another value on failure.
 
-Note: `Connect()` returning true does NOT mean you are connected. If successful the message `ID_CONNECTION_REQUEST_ACCEPTED` should be received. If not you will receive one of the error messages.
+Note: `Connect()` returning successfully does NOT mean you are connected. On success, the message `ID_CONNECTION_REQUEST_ACCEPTED` is received. Otherwise, you receive one of the error messages.
 
-### Connectivity messages returned as the first byte of the `Packet::data` structure
+## Connectivity messages returned as the first byte of `Packet::data`
 
 **Connection closed**: `ID_DISCONNECTION_NOTIFICATION`, `ID_CONNECTION_LOST`
 **New connection**: `ID_NEW_INCOMING_CONNECTION`, `ID_CONNECTION_REQUEST_ACCEPTED`
 **Connection attempt failed**: `ID_CONNECTION_ATTEMPT_FAILED`, `ID_REMOTE_SYSTEM_REQUIRES_PUBLIC_KEY`, `ID_OUR_SYSTEM_REQUIRES_SECURITY`, `ID_PUBLIC_KEY_MISMATCH`, `ID_ALREADY_CONNECTED`, `ID_NO_FREE_INCOMING_CONNECTIONS`, `ID_CONNECTION_BANNED`, `ID_INVALID_PASSWORD`, `ID_INCOMPATIBLE_PROTOCOL_VERSION`, `ID_IP_RECENTLY_CONNECTED`
 
-### Troubleshooting `ID_CONNECTION_ATTEMPT_FAILED`
+## Troubleshooting `ID_CONNECTION_ATTEMPT_FAILED`
 
 <Callout type="error">
 `ID_CONNECTION_ATTEMPT_FAILED` is the generic message meaning no communication was established with the remote system. Possible reasons include:
@@ -164,4 +164,4 @@ Note: `Connect()` returning true does NOT mean you are connected. If successful 
 -   Your IP address was banned with `RakPeerInterface::AddToBanList()`. Note that some plugins, such as the connection filter, have the option to ban IP addresses automatically.
 </Callout>
 
-Assuming you are able to connect, it is time to go onto the section: [Creating Packets](/basics/creating-packets)
+Once connected, proceed to [Creating Packets](/basics/creating-packets).

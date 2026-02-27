@@ -3,7 +3,7 @@ title: "TeamManager"
 description: "Manage teams and team members with support for join conditions, locking, resizing, buffered requests, and full replication across all systems."
 ---
 
-### Manages lists of teams and team members. Supports client/server and peer to peer
+## Team and member management for client/server and peer-to-peer
 
 `TeamManager` reduces the work involved with managing teams and team members. Functionality includes:
 
@@ -28,7 +28,7 @@ Define your game classes to represent teams and team members. Your game classes 
 
 ### Add TM_Team / TM_TeamMember instances
 
-Have those game classes contain a corresponding `TM_Team` or `TM_TeamMember` instance. Operations on teams will be performed by those instances. Use `SetOwner()` to refer to the parent object when using composition.
+Have those game classes contain a corresponding `TM_Team` or `TM_TeamMember` instance. Operations on teams are performed by those instances. Use `SetOwner()` to refer to the parent object when using composition.
 
 </Step>
 
@@ -44,7 +44,7 @@ Call `TeamManager::SetTopology()` for client/server or peer to peer.
 
 ### Add a world
 
-Call `AddWorld()` to instantiate a `TM_World` object which will contain references to your `TM_TeamMember` and `TM_Team` instances.
+Call `AddWorld()` to instantiate a `TM_World` object that contains references to your `TM_TeamMember` and `TM_Team` instances.
 
 </Step>
 
@@ -92,7 +92,7 @@ As the peer to peer session host changes, call `SetHost()` (not necessary if usi
 
 ### Order of deserialization
 
-`DeserializeConstruction()` must be called on `TM_Team` before `DeserializeConstruction()` is called on `TM_TeamMember` that is a member of that team. If using `ReplicaManager3`, you can simply call `ReplicaManager3::Reference()` on `TM_TeamMember` later than any `ReplicaManager3::Reference()` calls to `TM_Team`.
+`DeserializeConstruction()` must be called on `TM_Team` before `DeserializeConstruction()` is called on `TM_TeamMember` that is a member of that team. If using `ReplicaManager3`, call `ReplicaManager3::Reference()` on `TM_TeamMember` later than any `ReplicaManager3::Reference()` calls to `TM_Team`.
 
 </Step>
 </Steps>

@@ -53,7 +53,7 @@ Add a main file to your project. Do this by right clicking on the project name, 
 
 ### Set the include path
 
-Since we put files in a directory other than the project, we need to include that directory in the include search path so we don't have to type out the entire path every time we #include something. Do this by right clicking the "Chat Server" project name in the project tab. Select properties. In the top pane, change the drop down menu to "All Configurations." Select C/C++ / General / Additional Include Directories. To that item, add the path to the Source directory of your RakNet download, and hit OK.
+Since the source files are in a directory other than the project, add that directory to the include search path to avoid typing out the full path in every `#include`. Right-click the "Chat Server" project name in the project tab. Select properties. In the top pane, change the drop down menu to "All Configurations." Select C/C++ / General / Additional Include Directories. Add the path to the Source directory of your RakNet download, and hit OK.
 
 ![](/images/tutorial5.jpg)
 
@@ -93,13 +93,13 @@ You are ready to begin adding code to main.cpp.
 
 ### 1. Design
 
-Lets make the chat server as basic as possible to begin with. It will have two main modes: server and client. The server will receive a client message. The client will send a message on startup. We'll hardcode most of the input variables so we don't clutter the code with non-networking stuff.
+The chat server starts as basic as possible. It has two main modes: server and client. The server receives a client message. The client sends a message on startup. Most input variables are hardcoded to keep the code focused on networking.
 
 ### 2. First compile
 
 Create your main function. Query the user as to whether they want to run a client or server. Create the peer instance, and call `Startup` with the appropriate parameters for a Server or Client. Destroy the peer at the end.
 
-Try writing it on your own first. When you are done, see [code sample 1](#tutorial-sample-1) below.
+See [code sample 1](#tutorial-sample-1) below for the reference implementation.
 
 <Callout type="warn">
 Hit F7 or the equivalent to build. It should build successfully at this point. If it doesn't, refer to the [FAQ](/reference/faq) which gives many reasons for why something won't build and how to fix it.
@@ -107,17 +107,17 @@ Hit F7 or the equivalent to build. It should build successfully at this point. I
 
 ### 3. Adding functionality
 
-Now that we have a client and server instantiated, we need to know what it can do. The best way to find out is to go to the source: `RakPeerInterface.h`. It contains all the functions for the class, plus detailed comments on each function. See the comments for the `Startup` and `Connect` functions. You should also take a look at `SetMaximumIncomingConnections`.
+Now that the client and server are instantiated, explore the available API. The primary reference is `RakPeerInterface.h`, which contains all the functions for the class with detailed comments on each. Review the comments for the `Startup` and `Connect` functions, as well as `SetMaximumIncomingConnections`.
 
 In the code, after the server was created, add code to start the server. That takes certain parameters - set whatever you wish, based on the description provided in the comments.
 
 Do something similar with the client. After the code where it is created, add code to connect it. It takes an IP - add code to read an IP. For the server port, either put code to read the port, or hardcode the server port you entered above. For the client port, either put code to read it, or put 0 to automatically choose.
 
-This is all you need to do to start a server or connect a client. To determine if the connection was successful, we need to be able to read messages from the network system. In `RakPeerInterface.h` you'll find a `Receive` function. This function returns a `Packet` structure, which is defined in `RakNetTypes.h`. It encapsulates one message and is quite simple. Go look at that now.
+This is all that is needed to start a server or connect a client. To determine if the connection was successful, read messages from the network system. In `RakPeerInterface.h`, the `Receive` function returns a `Packet` structure, defined in `RakNetTypes.h`. It encapsulates one message and is straightforward.
 
-As you can see from the "char *data" member, all packets contain an array of bytes. These bytes can be anything you want. The length of the array is indicated by the length and bitSize fields. The convention RakNet uses is the first byte is always an identifier that tells you what the rest of the data is. These identifiers are defined in [MessageIdentifiers.h](/basics/network-messages). Go look at that now.
+The `char *data` member shows that all packets contain an array of bytes. These bytes can be anything you want. The length of the array is indicated by the `length` and `bitSize` fields. By convention, the first byte is always an identifier that tells you what the rest of the data is. These identifiers are defined in [MessageIdentifiers.h](/basics/network-messages).
 
-You'll see there are quite a few pre-defined enumerations. You should quickly read the comments on each of them. We only care about the connectivity enumerations for now. So your next programming step is as follows:
+There are many pre-defined enumerations. Read the comments on each of them. For now, only the connectivity enumerations matter. The next programming step is as follows:
 
 1.  Create a loop for the main body of your program.
 2.  In that loop, call `Receive` and store the pointer returned in a pointer variable of type `Packet`.
@@ -125,11 +125,11 @@ You'll see there are quite a few pre-defined enumerations. You should quickly re
 4.  Print out the comment that goes along with that enumeration.
 5.  As specified in the comments, when you are done with the `Packet` pointer deallocate it by passing it to the `DeallocatePacket` method.
 
-Try writing it on your own first. When you are done, see [code sample 2](#tutorial-sample-2) below.
+See [code sample 2](#tutorial-sample-2) below for the reference implementation.
 
 At this point you should be able to run two instances (In Visual Studio, hit ctrl-F5 twice) and connect to each other. If you cannot connect, then refer to the [FAQ](/reference/faq).
 
-This is the output from my version of the sample:
+Expected output from the sample:
 
 **Server output**
 
@@ -151,13 +151,13 @@ Starting the client.
 Our connection request has been accepted.
 ```
 
-We are now ready to send input.
-Your next programming steps are:
+The next step is to send input.
+The next programming steps are:
 
 1.  Add a user defined enumeration to send as the first byte of your game messages.
 2.  When the client successfully connects, send a string using `RakString()`. Read it on the server, and print it out.
 
-When you are done, see [code sample 3](#tutorial-sample-3) below.
+See [code sample 3](#tutorial-sample-3) below for the reference implementation.
 
 The client output should be similar to before. The server output should also print "Hello World"
 

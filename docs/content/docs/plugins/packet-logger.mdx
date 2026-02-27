@@ -3,9 +3,9 @@ title: "PacketLogger"
 description: "Log all incoming and outgoing RakNet messages for debugging, with support for console, file, and thread-safe output."
 ---
 
-### Log incoming and outgoing messages for debugging
+## Log incoming and outgoing messages for debugging
 
-The `PacketLogger` is a plugin that will print all incoming and outgoing messages for debugging. It parses the message where necessary, indicating if a message is an RPC, or a timestamp. It also converts the numerical `MessageID` into the corresponding string. The output by default is comma delineated, readable as a CSV file, and goes to the console with `printf()`.
+The `PacketLogger` plugin prints all incoming and outgoing messages for debugging. It parses the message where necessary, indicating if a message is an RPC or a timestamp. It also converts the numerical `MessageID` into the corresponding string. The output by default is comma-delineated, readable as a CSV file, and goes to the console with `printf()`.
 
 To change the output destination, derive from `PacketLogger` and override `WriteLog()`.
 

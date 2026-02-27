@@ -3,7 +3,7 @@ title: "Network Messages"
 description: "Reference for all built-in RakNet message identifiers returned as the first byte of received packets."
 ---
 
-### Messages from the network engine
+## Messages from the network engine
 
 <Callout type="info">
 Certain packets that you get will not be from your code, using your defined types, but are instead from the network engine. The first byte of each packet that originated from the API will map to one of the following enumerations. Possible recipient systems are in brackets. To convert these enumerations to a string, use `PacketLogger::BaseIDTOString()`.

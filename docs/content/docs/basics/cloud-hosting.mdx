@@ -3,13 +3,13 @@ title: "Cloud Hosting"
 description: "How to set up, configure, and scale RakNet servers using Rackspace cloud hosting."
 ---
 
-### Cloud hosting through Rackspace
+## Cloud hosting through Rackspace
 
 <Callout type="info">
 Services such as the [autopatcher](/plugins/autopatcher) require a server running RakNet. Technically, [NATPunchthroughServer](/plugins/nat-punchthrough) does as well, although a free server was previously provided. While it is possible to run your server using a traditional host, such as Hypernia, these services will cost you about $150 USD a month. Scaling up the services also requires time-consuming installation of the codebase and it is not possible to do so programmatically.
 </Callout>
 
-RakNet was tested with two cloud hosting providers: Amazon AWS and Rackspace Cloud. I could not get Amazon AWS to work with incoming UDP connections. Furthermore, performance on loopback using the BigPacketTest project was very bad. Rackspace did not have these problems and the cost for their lowest-end Linux servers is low. I also provide a [C++ interface to Rackspace](/basics/rackspace-interface) allowing you to programmatically control your servers, so it's a good starting point.
+RakNet was tested with two cloud hosting providers: Amazon AWS and Rackspace Cloud. Amazon AWS did not work reliably with incoming UDP connections, and loopback performance using the BigPacketTest project was poor. Rackspace did not have these problems, and the cost for their lowest-end Linux servers is low. RakNet also includes a [C++ interface to Rackspace](/basics/rackspace-interface) for programmatic server control, making it a practical starting point.
 
 **Signing up**
 
@@ -17,11 +17,11 @@ RakNet was tested with two cloud hosting providers: Amazon AWS and Rackspace Clo
 
 **Creating the server**
 
-The first step is to create a server, using Hosting / Cloud Servers / Add Server. This will bring up a menu asking if you want Linux or Windows, and how much RAM. The low-end Linux servers are cheaper than the Windows servers. RakNet should work with either. Cloud server and NAT punchthrough server both take minimal RAM. The Autopatcher takes a lot of RAM however, I recommend four gigabytes to serve 256 concurrent users or eight gigabytes to serve 512.
+The first step is to create a server, using Hosting / Cloud Servers / Add Server. This brings up a menu asking whether you want Linux or Windows and how much RAM. The low-end Linux servers are cheaper than the Windows servers. RakNet works with either. Cloud server and NAT punchthrough server both take minimal RAM. The Autopatcher takes significant RAM, however: four gigabytes to serve 256 concurrent users, or eight gigabytes to serve 512.
 
 ![](/images/cloudhosting2.jpg)
 
-Once your server has been created, you will get an email telling you the password and login IP.
+Once your server has been created, you receive an email with the password and login IP.
 
 ![](/images/cloudhosting3.jpg)
 
@@ -53,7 +53,7 @@ Use that web browser to download RakNet.
 
 ### Install a compiler
 
-On Windows, you can download Visual C++ 2010 Express for free. Installation will require a reboot.
+On Windows, you can download Visual C++ 2010 Express for free. Installation requires a reboot.
 
 </Step>
 
@@ -61,11 +61,11 @@ On Windows, you can download Visual C++ 2010 Express for free. Installation will
 
 ![](/images/cloudhosting5.jpg)
 
-Once your server is setup, open the RakNet solution and compile normally. You now have a working server, using the IP address you connected to using Remote Desktop.
+Once your server is set up, open the RakNet solution and compile normally. You now have a working server at the IP address you connected to via Remote Desktop.
 
 **Backing up and scaling the server**
 
-Once you have the server setup the way you want it, you can create an image of the server, which is essentially a hard drive backup. This is important for scalability, because you can create a new instance of the server with the same configuration as your image.
+Once you have the server set up the way you want it, create an image of the server, which is essentially a hard drive backup. This is important for scalability because you can create a new instance of the server with the same configuration as your image.
 
 ![](/images/cloudhosting6.jpg)
 

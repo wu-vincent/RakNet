@@ -3,9 +3,9 @@ title: "Directory Delta Transfer"
 description: "Automatically send file differences between directories to synchronize user-moddable content across systems."
 ---
 
-### Send file differences between directories automatically
+## Send file differences between directories automatically
 
-`DirectoryDeltaTransfer.h` is useful if you allow user-moddable content. For example, if each server has a `/skins` directory, you could run this plugin to upload that directory to the clients. Each client that does not already have a particular skin will get it. You will get download progress notifications via a user-supplied callback. `DirectoryDeltaTransfer` relies on the `FileListTransfer` plugin to actually transmit the files.
+`DirectoryDeltaTransfer.h` is useful if you allow user-moddable content. For example, if each server has a `/skins` directory, you could run this plugin to upload that directory to the clients. Each client that does not already have a particular skin will get it. You will get download progress notifications via a user-supplied callback. `DirectoryDeltaTransfer` relies on the `FileListTransfer` plugin to transmit the files.
 
 <Steps>
 <Step>

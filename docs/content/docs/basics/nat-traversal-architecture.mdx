@@ -3,17 +3,17 @@ title: "NAT Traversal Architecture"
 description: "Architecture guide for combining UPNP, NAT type detection, NAT punchthrough, and FullyConnectedMesh2 for peer-to-peer connectivity."
 ---
 
-### How to combine MasterServer2, UPNP, NAT type detection, FullyConnectedMesh2, and NAT punchthrough for P2P games
+## Combining MasterServer2, UPNP, NAT type detection, FullyConnectedMesh2, and NAT punchthrough for P2P games
 
-Systems involved for peer to peer game listing and connectivity on the PC, Mac, Linux, or mobiles.
+Systems involved for peer-to-peer game listing and connectivity on PC, Mac, Linux, or mobile platforms.
 
 <Callout type="info">
 The MasterServer2 service previously hosted at `masterserver2.raknet.com` is now defunct. The architecture steps below that reference it may need to be adapted to use your own server infrastructure.
 </Callout>
 
-- MasterServer2: A server that can hold lists of games, and data describing those games
+- MasterServer2: A server that holds lists of games and data describing those games
 - [UPNP](http://miniupnp.free.fr/): Tells the router to create a port mapping, in order to allow incoming connections. This is a programmatic way of the user manually editing the router configuration
-- [NAT type detection](/plugins/nat-type-detection): (Optional) Find out if we have a router, and how restrictive that router is
+- [NAT type detection](/plugins/nat-type-detection): (Optional) Determine whether you have a router and how restrictive it is
 - [FullyConnectedMesh2](/plugins/fully-connected-mesh2): Manages the complexity of joining a group of systems at the same time
 - [NAT punchthrough](/plugins/nat-punchthrough): Attempt to connect systems for cases where UPNP fails
 - [Router2](/plugins/router2) (Optional) - Use other player's bandwidth for routers that cannot connect
@@ -69,7 +69,7 @@ If UPNP succeeds, the forwarding entry will stay open for a large period of time
 
 **Step 4 (Optional): `FullyConnectedMesh2::ResetHostCalculation()`**
 
-`FullyConnectedMesh2` will attempt to determine the host of the peer to peer session based on who has been running the longest. `ResetHostCalculation()` updates the timer of how long the multiplayer session has been active. If you do not call this, then time spent in single player, menus, loading screens, etc. will be counted which should normally not be. If you do care if the host is kept in order of players joining the session, you can skip this step.
+`FullyConnectedMesh2` determines the host of the peer-to-peer session based on who has been running the longest. `ResetHostCalculation()` updates the timer of how long the multiplayer session has been active. If you do not call this, time spent in single player, menus, loading screens, etc. is counted, which is normally undesirable. If you want the host to be determined by the order players joined the session, skip this step.
 
 **Step 5A: Joining - Download from Master Server 2**
 
@@ -116,9 +116,9 @@ If `tcp->HasFailedConnectionAttempt()` returns something other than `UNASSIGNED_
 
 **Step 5B: Joining - Connect to the session host**
 
-The results from the master server will include a field `__addr` (the IP address that uploaded the row) and if you follow what I do in step 6, the `RakNetGuid` of that system in `__rowId`. It may also include a field `routerIsOpen` if you did that in step 6.
+The results from the master server include a field `__addr` (the IP address that uploaded the row) and, if you follow the approach in step 6, the `RakNetGuid` of that system in `__rowId`. The results may also include a field `routerIsOpen` if you set that in step 6.
 
-If `routerIsOpen` is there and the value is non-zero, then you can just use `rakPeer->Connect(...)` to connect the host directly because either UPNP succeeded, they already have a forwarding entry for your game, or they do not have a router.
+If `routerIsOpen` is present and the value is non-zero, you can use `rakPeer->Connect(...)` to connect to the host directly because either UPNP succeeded, they already have a forwarding entry for your game, or they do not have a router.
 
 If `routerIsOpen` is zero, then it is required that you previously connected to the NAT punchthrough server in step 1, and you use [`NATPunchthroughClient`](/plugins/nat-punchthrough) to connect.
 
@@ -136,7 +136,7 @@ NAT punchthrough, if it fails, will return `ID_NAT_TARGET_NOT_CONNECTED`, `ID_NA
 
 **Step 5C: Joining - Connect as a fully connected mesh**
 
-Provided that your game uses a fully connected mesh topology, then upon `ID_CONNECTION_REQUEST_ACCEPTED`, you should try to connect to the peers in the session. `FullyConnectedMesh2` has a feature 'verified joins' to facilitate this. First, ask the host to join the game session using your own game logic. In ComprehensivePCGame I send `ID_USER_PACKET_ENUM` to do so. If the game is joinable at the time the HOST should execute `StartVerifiedJoin()`
+If your game uses a fully connected mesh topology, then upon `ID_CONNECTION_REQUEST_ACCEPTED`, connect to the peers in the session. `FullyConnectedMesh2` has a "verified joins" feature to facilitate this. First, ask the host to join the game session using your own game logic. In ComprehensivePCGame, `ID_USER_PACKET_ENUM` is sent for this purpose. If the game is joinable at the time, the HOST executes `StartVerifiedJoin()`.
 
 ```cpp
 case ID_USER_PACKET_ENUM:
@@ -188,7 +188,7 @@ If you do not need a fully-connected mesh, but can play with a partial mesh, you
 
 **Step 6: Creating - Post to Master Server 2**
 
-New game sessions should be posted to Master Server 2. In the following code I post the name of the game, how long until the row times out, my `RakPeer` GUID, and whether or not my router is open to incoming connections (optional).
+Post new game sessions to Master Server 2. The following code posts the name of the game, how long until the row times out, the `RakPeer` GUID, and whether the router is open to incoming connections (optional).
 
 ```cpp
 #define MASTER_SERVER_ADDRESS "masterserver2.raknet.com"
@@ -220,7 +220,7 @@ httpConnection2->TransmitRequest(rsRequest, MASTER_SERVER_ADDRESS, MASTER_SERVER
 
 **Step 7: Update Master Server 2 while the session is joinable**
 
-One of the systems in the game session must be responsible for updating Master Server 2. Otherwise, the session will be delisted since master server 2 will assume that system crashed with no further updates. If you use `FullyConnectedMesh2`, then the current host can do this every n seconds, based on `__timeoutSec`.
+One of the systems in the game session must be responsible for updating Master Server 2. Otherwise, the session is delisted because the master server assumes the system crashed with no further updates. If you use `FullyConnectedMesh2`, the current host can do this every _n_ seconds, based on `__timeoutSec`.
 
 ```cpp
 // This system has become host
@@ -250,7 +250,7 @@ Updating a room is identical to posting a new room (step 6).
 
 **Step 8: Delist the game if and when the session is no longer joinable**
 
-If at some point in your game new players are not accepted, you can delist the game from Master Server 2. This will also happen automatically if you just stop updating.
+If at some point in your game new players are not accepted, you can delist the game from Master Server 2. This also happens automatically if you stop updating.
 
 ```cpp
 RakString rsRequest = RakString::FormatForDELETE(RakString(
@@ -269,16 +269,16 @@ For players that failed NATPunchthrough, you can route their connections through
 `UDPProxyClient` will return `ID_UDP_PROXY_GENERAL`. Byte 1 indicates the return value. Success is returned on `ID_UDP_PROXY_FORWARDING_SUCCEEDED`. The remote system will get `ID_UDP_PROXY_FORWARDING_NOTIFICATION` on success. Anything else means failure.
 
 <Callout type="warn">
-If these solutions fail, or you do not use them, then it is not possible to complete a peer to peer gaming session. Leave the game session on the server. You should show a dialog box to the user that they need to manually open ports on their router before they can play. Or you can just try a different session.
+If these solutions fail, or you do not use them, it is not possible to complete a peer-to-peer gaming session. Leave the game session on the server. Show a dialog box to the user indicating they need to manually open ports on their router before they can play, or try a different session.
 </Callout>
 
 See the sample _Samples/NATCompleteClient_ for Router2 and UDPProxyClient
 
 ## The simpler way
 
-### Just UPNP and NatPunchthroughClient
+### UPNP and NatPunchthroughClient only
 
-UPNP enabled routers are common these days. Therefore, this simpler solution will work in nearly all cases, and is recommended unless you are writing a back-end service with multiple fallbacks.
+UPNP-enabled routers are common. This simpler solution works in nearly all cases and is recommended unless you are writing a back-end service with multiple fallbacks.
 
 <Steps>
 
@@ -294,7 +294,7 @@ Connect to a hosting server running NATPunchthroughServer. For example, your own
 
 ### Open UPNP
 
-Call the `OpenUPNP()` function in step 3 above. It doesn't matter if the function succeeds or not, because you do the next steps regardless.
+Call the `OpenUPNP()` function in step 3 above. It does not matter whether the function succeeds, because you proceed with the next steps regardless.
 
 </Step>
 

@@ -3,9 +3,7 @@ title: "StringCompressor"
 description: Encode and decode strings safely with Huffman compression and predefined string tables.
 ---
 
-## Encode and Decode Strings Safely
-
-The `StringCompressor` class, found in `StringCompressor.h`, will encode and decode a given string in a safe fashion, protecting from overruns.
+`StringCompressor`, found in `StringCompressor.h`, encodes and decodes strings safely, protecting against buffer overruns.
 
 Sender:
 
@@ -21,9 +19,9 @@ char buffer[TRUNCATION_LENGTH];
 stringCompressor->DecodeString(buffer, TRUNCATION_LENGTH, &bitStream, languageId);
 ```
 
-The first parameter is the string to encode/decode. The second parameter is the maximum number of characters to read/write. If the string is longer than this, only that many bytes will be sent/read. The third parameter is the bitstream to write to or read from. The last parameter indicates what character frequency table to use, which must be the same on both systems.
+The first parameter is the string to encode or decode. The second parameter is the maximum number of characters to read or write. If the string exceeds this length, only that many bytes are sent or read. The third parameter is the bitstream to write to or read from. The last parameter specifies the character frequency table, which must match on both systems.
 
-The string will be compressed using Huffman encoding based on the indicated frequency table, denoted by `languageId`. The default frequency table at index 0 is statically defined in `StringCompressor.h` with the variable `englishCharacterFrequencies`. In order to add your own frequency tables, call `GenerateTreeFromStrings()` with the desired language ID.
+The string is compressed using Huffman encoding based on the frequency table identified by `languageId`. The default frequency table at index 0 is statically defined in `StringCompressor.h` with the variable `englishCharacterFrequencies`. To add your own frequency tables, call `GenerateTreeFromStrings()` with the desired language ID.
 
 <Callout type="info">
 If your application is using the `CString` class, you can enable support for this by defining `_CSTRING_COMPRESSOR` in `StringCompressor.h`. Similarly, if your application is using `std::string`, you can enable support by defining `_STD_STRING_COMPRESSOR` in `StringCompressor.h`.
@@ -31,17 +29,15 @@ If your application is using the `CString` class, you can enable support for thi
 
 ## StringTable
 
-### Predefine Static Strings to Reduce Bandwidth
-
-The `StringTable` class is identical to the `StringCompressor` class, with the addition of the `AddString` function.
+`StringTable` is identical to `StringCompressor`, with the addition of the `AddString` function.
 
 ```cpp
 void AddString(const char *str, bool copyString);
 ```
 
-`str` is the string to add. `copyString` should be true if your string is not persistent, false if it is statically in memory (only a pointer will be stored).
+`str` is the string to add. Set `copyString` to true if the string is not persistent, or false if it resides in static memory (only a pointer is stored).
 
-`AddString` will check an internal array to see if this string has already been registered. If not, it will internally store a two byte identifier representing this string. Further sends using the `StringTable` class will only send that two byte identifier, rather than the whole string, which is faster and takes less bandwidth if your string is 3 or more characters long. If you send a string which has not been added with `AddString()`, the function acts the same as if you called `stringCompressor`, but at the cost of 1 extra bit.
+`AddString` checks an internal array to see if the string is already registered. If not, it stores a two-byte identifier representing the string. Subsequent sends using `StringTable` transmit only that two-byte identifier instead of the full string, reducing bandwidth for strings of 3 or more characters. If you send a string not previously added with `AddString()`, the function behaves the same as `stringCompressor`, at the cost of 1 extra bit.
 
 <Callout type="warn">
 Both systems must have the same set of strings registered in advance, in the same order, and both systems must use `StringTable` and `StringCompressor` in the corresponding send and receive calls. You cannot mix and match the two.

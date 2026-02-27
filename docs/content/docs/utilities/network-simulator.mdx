@@ -3,7 +3,7 @@ title: "Network Simulator"
 description: Simulate packet loss, ping fluctuations, and bandwidth limits for testing RakNet applications.
 ---
 
-If you are using RakNet locally, chances are you will not have real-world problems like packet loss and ping fluctuations. RakNet provides some functions to simulate those problems.
+When testing RakNet locally, you typically do not encounter real-world problems like packet loss and ping fluctuations. RakNet provides functions to simulate these conditions.
 
 ## Functions
 
@@ -15,7 +15,7 @@ ApplyNetworkSimulator(double maxSendBPS,
                       unsigned short extraPingVariance)
 ```
 
-Enables simulated ping and packet loss to the outgoing data flow. To simulate bi-directional ping and packet loss, you should call this on both the sender and the recipient, with half the total ping and `maxSendBPS` value on each.
+Enables simulated ping and packet loss on the outgoing data flow. To simulate bi-directional ping and packet loss, call this on both the sender and the recipient, with half the total ping and `maxSendBPS` value on each.
 
 | Parameter | Description |
 |---|---|
@@ -29,7 +29,7 @@ Enables simulated ping and packet loss to the outgoing data flow. To simulate bi
 bool IsNetworkSimulatorActive(void)
 ```
 
-Returns whether you previously called `ApplyNetworkSimulator`.
+Returns whether `ApplyNetworkSimulator` has been called.
 
 <Callout type="info">
 To simulate realistic network conditions, call `ApplyNetworkSimulator` on both the sender and recipient with half the desired total ping and bandwidth values on each side.

@@ -11,7 +11,7 @@ Define any of these values in `RakNetDefinesOverrides.h` to override. These are 
 | `_FILE_AND_LINE_` | `__FILE__,__LINE__` | Set to `"",0` to strip out file and line info for memory tracking from the EXE. |
 | `__BITSTREAM_NATIVE_END` | commented out | Define to NOT support endian swapping in BitStream. Faster, but only use if all systems have the same endianness. |
 | `MAX_ALLOCA_STACK_ALLOCATION` | `1048576` | Maximum stack size to use with `_alloca` before falling back to new and delete. |
-| `USE_WAIT_FOR_MULTIPLE_EVENTS` | defined | Use WaitForSingleObject instead of sleep. Plays nicer with other systems and uses less CPU, but gives worse RakNet performance. |
+| `USE_WAIT_FOR_MULTIPLE_EVENTS` | defined | Use WaitForSingleObject instead of sleep. More cooperative with other systems and uses less CPU, but gives worse RakNet performance. |
 | `_USE_RAK_MEMORY_OVERRIDE` | `0` | Enable RakMemoryOverride for custom memory tracking. See RakMemoryOverride.h. |
 | `OPEN_SSL_CLIENT_SUPPORT` | `0` | Enable OpenSSL for TCPInterface. Required for SendEmail with Google POP servers. Requires OpenSSL header search paths. |
 | `BITSTREAM_STACK_ALLOCATION_SIZE` | `256` | Threshold at which to do malloc/free rather than pushing data onto a fixed stack for the BitStream class. |

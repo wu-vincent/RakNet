@@ -3,9 +3,9 @@ title: "C++ Interface to Rackspace Cloud Servers API"
 description: "How to programmatically manage Rackspace cloud servers from C++ using the RakNet Rackspace class and TCPInterface."
 ---
 
-### Programmatically manage application servers
+## Programmatic server management
 
-Rackspace provides an HTTPS based API. RakNet supports HTTPS when using the class [`TCPInterface`](/utilities/tcp-interface) and compiled with `OPEN_SSL_CLIENT_SUPPORT` set to `1`, defined in `RakNetDefines.h`.
+Rackspace provides an HTTPS-based API. RakNet supports HTTPS when using the class [`TCPInterface`](/utilities/tcp-interface) and compiled with `OPEN_SSL_CLIENT_SUPPORT` set to `1`, defined in `RakNetDefines.h`.
 
 **Setup:**
 
@@ -31,7 +31,7 @@ while (1) {
 
 The first three lines create an instance of `TCPInterface`, `Rackspace`, and the event handler for `Rackspace` respectively. The fourth line starts the `TCPInterface` class so outgoing connections can be initiated. The call to `Authenticate` logs into Rackspace and internally stores a key that can be used for subsequent operations. See the comments in `Rackspace.h` with the `Authenticate()` function for more details on these parameters. The two lines in the inner loop pass connection events to the Rackspace class.
 
-Provided that authentication succeeds, `Authenticate` will return something other than `UNASSIGNED_SYSTEM_ADDRESS` to show that the connection completed. You will shortly thereafter get the callback `OnAuthenticationResult` with `eventType` set to `RET_Success_204`. After that you can call the other various functions exposed by the Rackspace class.
+On successful authentication, `Authenticate` returns something other than `UNASSIGNED_SYSTEM_ADDRESS` to indicate the connection completed. Shortly thereafter, the callback `OnAuthenticationResult` fires with `eventType` set to `RET_Success_204`. After that, you can call the other functions exposed by the Rackspace class.
 
 <Callout type="warn">
 If the connection is immediately closed with no response from the server, you probably forgot to compile with `OPEN_SSL_CLIENT_SUPPORT` set to `1` in RakNetDefines.h or RakNetDefinesOverrides.h.
@@ -45,7 +45,7 @@ rackspaceApi.ListImages();
 
 Wait for callback `OnListImagesResult(RackspaceEventType eventType, const char *htmlAdditionalInfo)`
 
-The callback will return HTML event codes 200, 203, 400, 500, 503, 401, 400, or 413. 200 and 203 indicate success. The event code will be returned in the `eventType` parameter. The actual HTML will be returned in `htmlAdditionalInfo`. Example output:
+The callback returns HTTP status codes 200, 203, 400, 500, 503, 401, or 413. Codes 200 and 203 indicate success. The status code is returned in the `eventType` parameter. The actual response body is returned in `htmlAdditionalInfo`. Example output:
 
 ```text
 HTTP/1.1 200 OK
@@ -95,11 +95,11 @@ Connection: keep-alive
 </images>
 ```
 
-RakNet does not currently parse the XML for you. There is an XML parser found at DependentExtensions/XML if you do not have your own.
+RakNet does not parse the XML for you. An XML parser is available at DependentExtensions/XML if you do not have your own.
 
 **Executing custom commands:**
 
-Rackspace provides an XML Schema with the list of operations and parameters for the API. Some commands are more complicated than what the `Rackspace` class provides. For these commands, you can call `Rackspace::AddOperation()` directly. For example, here is the command to create a server:
+Rackspace provides an XML Schema with the list of operations and parameters for the API. Some commands are more complex than what the `Rackspace` class exposes. For these commands, call `Rackspace::AddOperation()` directly. For example, the following creates a server:
 
 ```cpp
 RakNet::RakString xml("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -116,7 +116,7 @@ You could extend the XML to support loading an image with files, for example.
 
 **Examples of server management with RakNet:**
 
-Reboot crashed servers - Run one master server that monitors the other servers. The master server can be at a fixed IP address, or you can use DynDNS (There is also a C++ DynDNS class under /Source). When you start a Rackspace server, have the Rackspace server connect to the master server. If the master server at some point gets `ID_CONNECTION_LOST`, have the master server call `Rackspace::RebootServer`.
+Reboot crashed servers - Run one master server that monitors the other servers. The master server can be at a fixed IP address, or you can use DynDNS (a C++ DynDNS class is available under /Source). When you start a Rackspace server, have it connect to the master server. If the master server receives `ID_CONNECTION_LOST`, have it call `Rackspace::RebootServer`.
 
 Matching capacity - Again run a master server. Using `CloudServer` and `CloudClient`, inform the master server of the current connection load of each Rackspace server. If all servers are full or nearly so, use `Rackspace::CreateServer` to create a new server instance based on an image of your application. Similarly, if a server is completely empty, you can use `Rackspace::DeleteServer` to not incur the extra cost.
 

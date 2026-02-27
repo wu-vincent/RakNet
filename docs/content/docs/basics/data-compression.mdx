@@ -45,7 +45,7 @@ See `Samples\Compression` for a full example.
 SetCompileFrequencyTable(bool doCompile)
 ```
 
-Enables or disables frequency table tracking. This is required to get a frequency table, which is used in `GenerateCompressionLayer()`. This value persists between connect calls and defaults to false (no frequency tracking). You can call this at any time -- however you should only call it when disconnected. Otherwise you will only track part of the values sent over the network.
+Enables or disables frequency table tracking. This is required to get a frequency table, which is used in `GenerateCompressionLayer()`. This value persists between connect calls and defaults to false (no frequency tracking). You can call this at any time; however, call it only when disconnected. Otherwise you only track part of the values sent over the network.
 
 ### GenerateCompressionLayer
 
@@ -53,7 +53,7 @@ Enables or disables frequency table tracking. This is required to get a frequenc
 GenerateCompressionLayer(unsigned long inputFrequencyTable[256], bool inputLayer)
 ```
 
-This is an optional function to generate the compression layer based on the input frequency table, which you get with `GetOutgoingFrequencyTable`. You should call this twice -- once with `inputLayer` as `true` and once as `false`. The frequency table passed here with `inputLayer=true` should match the frequency table on the recipient with `inputLayer=false`, and vice versa. Calling this function when there is an existing layer will overwrite the old layer.
+Generates the compression layer based on the input frequency table, which you obtain with `GetOutgoingFrequencyTable`. Call this twice: once with `inputLayer` as `true` and once as `false`. The frequency table passed here with `inputLayer=true` must match the frequency table on the recipient with `inputLayer=false`, and vice versa. Calling this function when there is an existing layer overwrites the old layer.
 
 ### DeleteCompressionLayer
 
@@ -61,7 +61,7 @@ This is an optional function to generate the compression layer based on the inpu
 DeleteCompressionLayer(bool inputLayer)
 ```
 
-Delete the output or input layer as specified. This is not necessary to call and is only valuable for freeing memory. You should only call this when disconnected.
+Deletes the output or input layer as specified. This is not necessary to call and is only useful for freeing memory. Call this only when disconnected.
 
 ### GetOutgoingFrequencyTable
 
@@ -69,7 +69,7 @@ Delete the output or input layer as specified. This is not necessary to call and
 GetOutgoingFrequencyTable(unsigned long outputFrequencyTable[256])
 ```
 
-Returns the frequency of outgoing bytes into the output frequency table. The purpose is to save to file as either a master frequency table from a sample game session for passing to `GenerateCompressionLayer()`. You should only call this when disconnected. Requires that you first enable data frequency tracking by calling `SetCompileFrequencyTable(true)`.
+Returns the frequency of outgoing bytes into the output frequency table. The purpose is to save to file as a master frequency table from a sample game session for passing to `GenerateCompressionLayer()`. Call this only when disconnected. Requires that you first enable data frequency tracking by calling `SetCompileFrequencyTable(true)`.
 
 ### GetCompressionRatio
 
@@ -85,4 +85,4 @@ Returns a number `n > 0.0f` where lower numbers are better. `n == 1.0f` means yo
 float GetDecompressionRatio()
 ```
 
-Returns a number `n > 0.0f` where higher numbers are better. `n == 1.0f` means the incoming data was decompressed to be just as large as it was when it came in. This shows how effective your compression rates are.
+Returns a number `n > 0.0f` where higher numbers are better. `n == 1.0f` means the incoming data was decompressed to the same size as the compressed payload. This shows how effective your compression rates are.

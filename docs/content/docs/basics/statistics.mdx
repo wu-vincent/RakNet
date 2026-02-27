@@ -3,11 +3,11 @@ title: "Statistics"
 description: "How to retrieve and interpret RakNet's network traffic statistics using RakNetStatistics and the StatisticsHistory plugin."
 ---
 
-### How to read and interpret RakNet's statistical data
+## Reading and interpreting statistical data
 
-Statistical data is important for an online game because it lets you see where your traffic bottlenecks are.
+Statistical data is important for an online game because it reveals where your traffic bottlenecks are.
 
-`RakPeerInterface` provides the structure `RakNetStatistics` which is returned by the `GetStatistics()` function present in `RakPeerInterface`. This structure is defined in _Source/RakNetStatistics.h_. The function `StatisticsToString` is also provided which will convert these statistics to a formatted buffer.
+`RakPeerInterface` provides the structure `RakNetStatistics` which is returned by the `GetStatistics()` function present in `RakPeerInterface`. This structure is defined in _Source/RakNetStatistics.h_. The function `StatisticsToString` converts these statistics to a formatted buffer.
 
 <Callout type="info">
 A running total is kept for the following enumerations. Use `StatisticsToString()` for a human-readable formatted output of all statistics.
@@ -56,7 +56,7 @@ ACTUAL_BYTES_SENT,
 ACTUAL_BYTES_RECEIVED,
 ```
 
-If you want to track statistics over time, we also provide _Source/StatisticsHistoryPlugin.h,_ used by the sample _StatisticsHistoryTest_. It tracks values for some user-defined amount of time and does various calculations on the data set. `RakPeerInterface::GetStatistics()` is read automatically. Here is sample code that tracks a sin and cos wave.
+To track statistics over time, use _Source/StatisticsHistoryPlugin.h_, demonstrated by the sample _StatisticsHistoryTest_. It tracks values for a user-defined duration and performs various calculations on the data set. `RakPeerInterface::GetStatistics()` is read automatically. The following sample code tracks a sin and cos wave.
 
 ```cpp
 DataStructures::Queue<StatisticsHistory::TimeAndValue> histogram;

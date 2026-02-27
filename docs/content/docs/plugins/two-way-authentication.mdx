@@ -3,11 +3,11 @@ title: "TwoWayAuthentication"
 description: "Securely verify a shared password between two connected systems using mutual authentication with one-way hashing."
 ---
 
-### Securely verify a password known in advance by a pair of systems
+## Securely verifying a password known in advance by a pair of systems
 
-Normally with RakNet you can transmit data securely using [secure connections](/basics/secure-connections). However, sometimes a pair of systems may not have secure connections active. For example, on mobiles the security code may take too much memory, be too slow, or not compile. In this case you can still verify a remote system using a password known to two systems in advance. RakNet implements this using two-way authentication. Instead of sending the password itself, a one-way hash of the password is sent. The hash is verified as correct or not, and the results returned to the user.
+Normally with RakNet you can transmit data securely using [secure connections](/basics/secure-connections). However, sometimes a pair of systems may not have secure connections active. For example, on mobile devices the security code may take too much memory, be too slow, or not compile. In this case, you can still verify a remote system using a password known to both systems in advance. RakNet implements this using two-way authentication. Instead of sending the password itself, a one-way hash of the password is sent. The hash is verified as correct or not, and the result is returned to the user.
 
-Usage:
+**Usage:**
 
 ```cpp
 // Attach the plugin to an instance of RakPeerInterface
@@ -19,7 +19,7 @@ twoWayAuthenticationPlugin.AddPassword("PWD0", "Password0");
 twoWayAuthenticationPlugin.Challenge("PWD0", remoteSystemAddressOrGuid);
 ```
 
-If the other system is also running the two-way authentication plugin, and had also set the same password, you will get `ID_TWO_WAY_AUTHENTICATION_INCOMING_CHALLENGE_SUCCESS` and the other system will get `ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_SUCCESS`. If the other system is running the plugin but has a different password, they will get `ID_TWO_WAY_AUTHENTICATION_INCOMING_CHALLENGE_FAILURE` and you will get `ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_FAILURE`. If the other system is not running the plugin you will get `ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_TIMEOUT`.
+If the other system is also running the two-way authentication plugin and has set the same password, you receive `ID_TWO_WAY_AUTHENTICATION_INCOMING_CHALLENGE_SUCCESS` and the other system receives `ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_SUCCESS`. If the other system is running the plugin but has a different password, it receives `ID_TWO_WAY_AUTHENTICATION_INCOMING_CHALLENGE_FAILURE` and you receive `ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_FAILURE`. If the other system is not running the plugin, you receive `ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_TIMEOUT`.
 
 In the case of
 

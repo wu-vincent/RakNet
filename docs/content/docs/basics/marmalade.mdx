@@ -3,9 +3,9 @@ title: "Marmalade Support"
 description: "Step-by-step guide for integrating RakNet with the Marmalade SDK for iOS and Android development."
 ---
 
-### How to integrate with the Marmalade SDK
+## Integrating with the Marmalade SDK
 
-Marmalade is a SDK that enables you to write games for iOS and Android using Native C++. It is not a game engine, although it includes graphic libraries and other tools. As Marmalade can compile Native C++, it can compile RakNet and therefore enable you to use RakNet on those platforms in a consistent way.
+Marmalade is an SDK that enables you to write games for iOS and Android using native C++. It is not a game engine, although it includes graphics libraries and other tools. Because Marmalade compiles native C++, it can compile RakNet and therefore enables you to use RakNet on those platforms in a consistent way.
 
 <Steps>
 
@@ -21,7 +21,7 @@ Download and install Marmalade Beta 5.1 or later. This requires registration and
 
 ### Create RakNet solution
 
-Assuming you have RakNet downloaded, go to DependentExtensions/Marmalade and double click RakNet.mkb. If Marmalade is installed correctly, this will create a directory build_raknet_vc9 or similar. If necessary to add or remove RakNet source files, edit in a text editor the .mkb and .mkf files where the RakNet source files are listed and double click the .mkb again.
+With RakNet downloaded, go to DependentExtensions/Marmalade and double-click RakNet.mkb. If Marmalade is installed correctly, this creates a directory such as build_raknet_vc9. To add or remove RakNet source files, edit the .mkb and .mkf files where the RakNet source files are listed, then double-click the .mkb again.
 
 </Step>
 
@@ -29,7 +29,7 @@ Assuming you have RakNet downloaded, go to DependentExtensions/Marmalade and dou
 
 ### Build RakNet library
 
-Find the .sln solution file in the directory created in step 2. Open it, and build for all platforms you care about. Build / batch build / select all / build will do this as well. Assuming this worked, you will now have object files created in a directory such as DependentExtensions/Marmalade/build_raknet_vc9/Debug_RakNet_vc9_x86
+Find the .sln solution file in the directory created in step 2. Open it and build for all platforms you need. Build / Batch Build / Select All / Build accomplishes this as well. On success, object files are created in a directory such as DependentExtensions/Marmalade/build_raknet_vc9/Debug_RakNet_vc9_x86.
 
 </Step>
 
@@ -44,7 +44,7 @@ option module_path="../../DependentExtensions/Marmalade"
 subproject RakNet
 ```
 
-The path under option module_path should be modified to point to wherever you installed RakNet. There is an example of this under Samples/Marmalade. After doing so you will need to double click the .mkb file to regenerate your project solution.
+Modify the path under option module_path to point to your RakNet installation. An example is available under Samples/Marmalade. After making this change, double-click the .mkb file to regenerate your project solution.
 
 <Callout type="warn">
 If, upon building RakNet, you get a build error "unresolved external symbol `_strtoull` ..." then you need to either update Marmalade to a newer version, or comment out the last `strtoull` in `RakNetGUID::FromString` in `RakNetTypes.h`, then build step 3 again.
